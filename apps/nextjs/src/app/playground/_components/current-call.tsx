@@ -45,7 +45,7 @@ export function PhoneCallProvider({
     },
   );
 
-  useSyncCallState(phoneCall?.sessionId, {
+  useSyncCallState(callId ?? undefined, phoneCall?.sessionId, {
     onEnd: () => {
       setCallId(null);
     },

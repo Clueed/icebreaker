@@ -2,6 +2,7 @@ import { useSIPProvider } from "react-sipjs";
 
 import { toast } from "@acme/ui/toast";
 
+import { useOptimisticPhoneCallMutation } from "~/app/playground/_components/optimistic-phone-call-update";
 import { api } from "~/trpc/react";
 
 function useStartCall({
@@ -11,14 +12,7 @@ function useStartCall({
   guessId: string;
   phoneNumber: { base: string; extension: string };
 }) {
-  const { mutateAsync: createCall } = api.phoneCall.create.useMutation({
-    onSuccess: () => {
-      toast.success("Call created");
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+  const { createPhoneCall } = useOptimisticPhoneCallMutation();
 
   const { sessionManager } = useSIPProvider();
 
@@ -39,10 +33,22 @@ function useStartCall({
       }
 
       const sessionId = inviter.id;
-      return await createCall({
-        sessionId,
-        guessId,
-      });
+      const state = inviter.state;
+      return await createPhoneCall(
+        {
+          sessionId,
+          guessId,
+          state,
+        },
+        {
+          onSuccess: () => {
+            toast.success("Call created");
+          },
+          onError: (error) => {
+            toast.error(error.message);
+          },
+        },
+      );
     },
   };
 }

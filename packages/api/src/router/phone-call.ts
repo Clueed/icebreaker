@@ -1,10 +1,10 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
-import { desc, eq } from "@acme/db";
+import { and, desc, eq } from "@acme/db";
 import { CreatePhoneCallSchema, PhoneCall } from "@acme/db/schema";
 
-import { takeUniqueOrThrow } from "../helpers";
+import { findFirstOrThrow, takeUniqueOrThrow } from "../helpers";
 import { publicProcedure } from "../trpc";
 
 export const phoneCallRouter = {
@@ -26,7 +26,7 @@ export const phoneCallRouter = {
 
       return ctx.db.query.PhoneCall.findFirst({
         where: eq(PhoneCall.id, input.id),
-      });
+      }).then(findFirstOrThrow("find phone call"));
     }),
 
   create: publicProcedure
@@ -37,6 +37,24 @@ export const phoneCallRouter = {
         .values(input)
         .returning({ id: PhoneCall.id })
         .then(takeUniqueOrThrow("create phone call"));
+    }),
+
+  update: publicProcedure
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        sessionId: z.string(),
+        data: CreatePhoneCallSchema.pick({ state: true }),
+      }),
+    )
+    .mutation(({ ctx, input: { id, sessionId, data } }) => {
+      return (
+        ctx.db
+          .update(PhoneCall)
+          .set(data)
+          // .where(eq(PhoneCall.id, id));
+          .where(and(eq(PhoneCall.id, id), eq(PhoneCall.sessionId, sessionId)))
+      );
     }),
 
   delete: publicProcedure.input(z.string()).mutation(({ ctx, input }) => {

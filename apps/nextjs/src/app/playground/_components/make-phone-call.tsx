@@ -19,6 +19,7 @@ import {
 import { Input } from "@acme/ui/input";
 import { toast } from "@acme/ui/toast";
 
+import { CallInfo } from "~/app/playground/_components/call-info";
 import { usePhoneCall } from "~/app/playground/_components/current-call";
 import { api } from "~/trpc/react";
 
@@ -46,6 +47,7 @@ export function MakePhoneCall({
       ) : (
         <Button onClick={startCall}>Make Call</Button>
       )}
+      {currentCallId && <CallInfo callId={currentCallId} />}
     </div>
   );
 }

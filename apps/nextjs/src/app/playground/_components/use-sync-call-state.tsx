@@ -6,17 +6,23 @@ import { SessionState } from "sip.js";
 
 import { toast } from "@acme/ui/toast";
 
+import { useOptimisticPhoneCallMutation } from "~/app/playground/_components/optimistic-phone-call-update";
+import { api } from "~/trpc/react";
+
 export function useSyncCallState(
+  callId?: string,
   sessionId?: string,
   options: {
     onEnd?: () => void;
   } = {},
 ) {
+  const { updatePhoneCall } = useOptimisticPhoneCallMutation();
+
   const { sessions } = useSIPProvider();
   const session = sessionId && sessions[sessionId];
 
   useEffect(() => {
-    if (!sessionId) {
+    if (!sessionId || !callId) {
       return;
     }
 
@@ -26,8 +32,22 @@ export function useSyncCallState(
     }
 
     const listener = (newSessionState: SessionState) => {
+      updatePhoneCall(
+        {
+          id: callId,
+          sessionId: sessionId,
+          data: {
+            state: newSessionState,
+          },
+        },
+        {
+          onError: (err) => {
+            toast.error(err.message);
+          },
+        },
+      );
       const newCallState = mapSipStateToCallState(newSessionState);
-      if (newCallState === "ended") {
+      if (newCallState === "Terminated") {
         options.onEnd?.();
         return;
       }
@@ -44,14 +64,14 @@ export function useSyncCallState(
 const mapSipStateToCallState = (state: SessionState) => {
   switch (state) {
     case SessionState.Initial:
-      return "started";
+      return "Initial";
     case SessionState.Establishing:
-      return "started";
+      return "Establishing";
     case SessionState.Established:
-      return "active";
+      return "Established";
     case SessionState.Terminating:
-      return "ended";
+      return "Terminating";
     case SessionState.Terminated:
-      return "ended";
+      return "Terminated";
   }
 };

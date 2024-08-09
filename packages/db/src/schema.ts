@@ -2,6 +2,7 @@ import { relations, sql } from "drizzle-orm";
 import {
   integer,
   json,
+  pgEnum,
   pgTable,
   primaryKey,
   text,
@@ -13,9 +14,9 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 const timeStampColumns = {
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
   updatedAt: timestamp("updatedAt", {
-    mode: "date",
+    mode: "string",
     withTimezone: true,
   }).$onUpdateFn(() => sql`now()`),
 };
@@ -66,10 +67,21 @@ export const CreateGuessSchema = createInsertSchema(Guess, {
 });
 
 // PhoneCall
+
+const phoneCallStateList = [
+  "Initial",
+  "Establishing",
+  "Established",
+  "Terminating",
+  "Terminated",
+] as const;
+export const phoneCallStateEnum = pgEnum("state", phoneCallStateList);
+
 export const PhoneCall = pgTable("phone_call", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   sessionId: varchar("sessionId", { length: 256 }).notNull(),
   guessId: uuid("guessId").notNull(),
+  state: phoneCallStateEnum("state").notNull(),
   ...timeStampColumns,
 });
 
@@ -80,6 +92,7 @@ export const phoneCallRelation = relations(PhoneCall, ({ one }) => ({
 export const CreatePhoneCallSchema = createInsertSchema(PhoneCall, {
   sessionId: z.string().max(256),
   guessId: z.string().uuid(),
+  state: z.enum(phoneCallStateList),
 }).omit({
   id: true,
   createdAt: true,
