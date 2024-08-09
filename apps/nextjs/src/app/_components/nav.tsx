@@ -6,12 +6,10 @@ import { AuthShowcase } from "~/app/_components/auth-showcase";
 
 async function NavBar() {
   return (
-    <nav>
-      <div className="container mx-auto flex items-center justify-between">
-        <div>ICEBREAKER</div>
-        <div>
-          <AuthShowcase />
-        </div>
+    <nav className="container mx-auto flex items-center justify-between py-4">
+      <div>ICEBREAKER</div>
+      <div>
+        <AuthShowcase />
       </div>
     </nav>
   );
