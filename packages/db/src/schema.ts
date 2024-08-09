@@ -13,6 +13,8 @@ import {
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+import { encryptedText } from "./helpers/encrypted-text";
+
 const timeStampColumns = {
   createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
   updatedAt: timestamp("updatedAt", {
@@ -101,10 +103,9 @@ export const CreatePhoneCallSchema = createInsertSchema(PhoneCall, {
 
 // SipCredential
 export const SipCredentials = pgTable("sip_credentials", {
-  id: uuid("id").notNull().primaryKey().defaultRandom(),
-  username: varchar("username", { length: 256 }).notNull(),
-  password: varchar("password", { length: 256 }).notNull(),
-  userId: uuid("userId").notNull(),
+  userId: uuid("id").notNull().primaryKey(),
+  username: encryptedText("username").notNull(),
+  password: encryptedText("password").notNull(),
   ...timeStampColumns,
 });
 
@@ -117,7 +118,6 @@ export const CreateSipCredentialsSchema = createInsertSchema(SipCredentials, {
   password: z.string().min(1).max(256),
   userId: z.string().uuid(),
 }).omit({
-  id: true,
   createdAt: true,
   updatedAt: true,
 });

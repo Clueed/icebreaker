@@ -28,6 +28,20 @@ export function useSyncCallState(
 
     if (!session) {
       toast.error("Call Sync: No session found");
+      updatePhoneCall(
+        {
+          id: callId,
+          sessionId: sessionId,
+          data: {
+            state: "Terminated",
+          },
+        },
+        {
+          onError: (err) => {
+            toast.error(err.message);
+          },
+        },
+      );
       return;
     }
 

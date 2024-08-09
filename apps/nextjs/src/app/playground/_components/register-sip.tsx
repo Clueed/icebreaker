@@ -18,13 +18,29 @@ import {
 } from "@acme/ui/form";
 import { Input } from "@acme/ui/input";
 
+import { api } from "~/trpc/react";
+
 const FormSchema = z.object({
   username: z.string().min(1),
   password: z.string().min(2),
 });
 
-function RegisterSip() {
+function RegisterSip({ userId }: { userId: string }) {
+  const [remoteCredentials] = api.sipCredentials.get.useSuspenseQuery({
+    userId,
+  });
   const { connectAndRegister, connectStatus } = useSIPProvider();
+  const [remoteCredentialsAttempted, setRemoteCredentialsAttempted] =
+    React.useState(false);
+
+  if (
+    remoteCredentialsAttempted &&
+    remoteCredentials &&
+    connectStatus === CONNECT_STATUS.WAIT_REQUEST_CONNECT
+  ) {
+    connectAndRegister(remoteCredentials);
+    setRemoteCredentialsAttempted(true);
+  }
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -34,8 +50,13 @@ function RegisterSip() {
     },
   });
 
+  const { mutate: setRemoteCredentials } = api.sipCredentials.set.useMutation(
+    {},
+  );
+
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
     connectAndRegister(data);
+    setRemoteCredentials({ userId, ...data });
   };
 
   if (connectStatus === CONNECT_STATUS.CONNECTED) {
