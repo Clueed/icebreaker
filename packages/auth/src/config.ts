@@ -4,8 +4,9 @@ import type {
   Session as NextAuthSession,
 } from "next-auth";
 import { skipCSRFCheck } from "@auth/core";
+import Google from "@auth/core/providers/google";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import Discord from "next-auth/providers/discord";
+import google from "next-auth/providers/google";
 
 import { db } from "@acme/db/client";
 import { Account, Session, User } from "@acme/db/schema";
@@ -38,7 +39,12 @@ export const authConfig = {
       }
     : {}),
   secret: env.AUTH_SECRET,
-  providers: [Discord],
+  providers: [
+    google({
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
+    }),
+  ],
   callbacks: {
     session: (opts) => {
       if (!("user" in opts))
@@ -51,6 +57,17 @@ export const authConfig = {
           id: opts.user.id,
         },
       };
+    },
+    signIn: async ({ profile }) => {
+      return profile?.email?.endsWith("@softwaregini.com") ?? false;
+    },
+    authorized({ auth }) {
+      // require auth for every page (exceptions in middleware matcher)
+      const isLoggedIn = !!auth?.user;
+      if (!isLoggedIn) {
+        return false;
+      }
+      return true;
     },
   },
 } satisfies NextAuthConfig;
