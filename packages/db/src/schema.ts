@@ -1,6 +1,7 @@
 import { relations, sql } from "drizzle-orm";
 import {
   integer,
+  json,
   pgTable,
   primaryKey,
   text,
@@ -11,6 +12,81 @@ import {
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+const timeStampColumns = {
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt", {
+    mode: "date",
+    withTimezone: true,
+  }).$onUpdateFn(() => sql`now()`),
+};
+
+export const Org = pgTable("org", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  name: varchar("name", { length: 256 }).notNull().unique(),
+  ...timeStampColumns,
+});
+
+export const orgRelation = relations(Org, ({ many }) => ({
+  guesse: many(Guess),
+}));
+
+export const CreateOrgSchema = createInsertSchema(Org, {
+  name: z.string().max(256),
+}).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+// Guess
+export const Guess = pgTable("guess", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  orgId: uuid("org").notNull(),
+  phoneNumber: json("phoneNumber")
+    .$type<{ base: string; extension: string }>()
+    .notNull(),
+  ...timeStampColumns,
+});
+
+export const guessRelation = relations(Guess, ({ many, one }) => ({
+  org: one(Org, { fields: [Guess.orgId], references: [Org.id] }),
+  phoneCalls: many(PhoneCall),
+}));
+
+export const CreateGuessSchema = createInsertSchema(Guess, {
+  phoneNumber: z.object({
+    base: z.string().max(256),
+    extension: z.string().max(256),
+  }),
+  orgId: z.string().uuid(),
+}).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+// PhoneCall
+export const PhoneCall = pgTable("phone_call", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  sessionId: varchar("sessionId", { length: 256 }).notNull(),
+  guessId: uuid("guessId").notNull(),
+  ...timeStampColumns,
+});
+
+export const phoneCallRelation = relations(PhoneCall, ({ one }) => ({
+  guess: one(Guess, { fields: [PhoneCall.guessId], references: [Guess.id] }),
+}));
+
+export const CreatePhoneCallSchema = createInsertSchema(PhoneCall, {
+  sessionId: z.string().max(256),
+  guessId: z.string().uuid(),
+}).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+// Reference
 export const Post = pgTable("post", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   title: varchar("name", { length: 256 }).notNull(),

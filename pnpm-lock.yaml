@@ -108,6 +108,12 @@ importers:
       react-dom:
         specifier: catalog:react18
         version: 18.3.1(react@18.3.1)
+      react-sipjs:
+        specifier: ^0.0.5
+        version: 0.0.5(react@18.3.1)
+      sip.js:
+        specifier: ^0.21.2
+        version: 0.21.2
       superjson:
         specifier: 2.2.1
         version: 2.2.1
@@ -401,7 +407,7 @@ importers:
         version: 7.35.0(eslint@9.7.0)
       eslint-plugin-react-hooks:
         specifier: rc
-        version: 5.1.0-rc-e948a5ac-20240807(eslint@9.7.0)
+        version: 5.1.0-rc-9d2da591-20240808(eslint@9.7.0)
       eslint-plugin-turbo:
         specifier: ^2.0.8
         version: 2.0.8(eslint@9.7.0)
@@ -2140,8 +2146,8 @@ packages:
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
 
-  eslint-plugin-react-hooks@5.1.0-rc-e948a5ac-20240807:
-    resolution: {integrity: sha512-cc94nzLi7ZC4ZetSaA5z5bH5o1dYBxfPckudUT3Ddn1d5WXTk9Cn1NpM+HE+OZ5zrmbq/oBLxovfllOm0P9KXg==}
+  eslint-plugin-react-hooks@5.1.0-rc-9d2da591-20240808:
+    resolution: {integrity: sha512-yI6jfxprwD6nIQbyWsyFzxf7CpBAm2oncUmszXQMJivYs+tcuWMKe8FBZUGjBNPCPAh89MjxOTJ6F7B+ZGNQmw==}
     engines: {node: '>=10'}
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0
@@ -3249,6 +3255,11 @@ packages:
       '@types/react':
         optional: true
 
+  react-sipjs@0.0.5:
+    resolution: {integrity: sha512-AOrZ9TxHHFWqyQgg1EF9JcIQhg0mL3RBzeZHjCx66L1zzdVtivpib0WPYLHqLqubQAsQF/ff061+4gsZYbY5qA==}
+    peerDependencies:
+      react: ^18.2.0
+
   react-style-singleton@2.2.1:
     resolution: {integrity: sha512-ZWj0fHEMyWkHzKYUr2Bs/4zU6XLmq9HsgBURm7g5pAVfyn49DgUiNgY2d4lXRlYSiCif9YBGpQleewkcqddc7g==}
     engines: {node: '>=10'}
@@ -3392,6 +3403,10 @@ packages:
   signal-exit@4.1.0:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
     engines: {node: '>=14'}
+
+  sip.js@0.21.2:
+    resolution: {integrity: sha512-tSqTcIgrOd2IhP/rd70JablvAp+fSfLSxO4hGNY6LkWRY1SKygTO7OtJEV/BQb8oIxtMRx0LE7nUF2MaqGbFzA==}
+    engines: {node: '>=10.0'}
 
   slash@3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
@@ -5516,7 +5531,7 @@ snapshots:
       safe-regex-test: 1.0.3
       string.prototype.includes: 2.0.0
 
-  eslint-plugin-react-hooks@5.1.0-rc-e948a5ac-20240807(eslint@9.7.0):
+  eslint-plugin-react-hooks@5.1.0-rc-9d2da591-20240808(eslint@9.7.0):
     dependencies:
       eslint: 9.7.0
 
@@ -6668,6 +6683,11 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.3.3
 
+  react-sipjs@0.0.5(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      sip.js: 0.21.2
+
   react-style-singleton@2.2.1(@types/react@18.3.3)(react@18.3.1):
     dependencies:
       get-nonce: 1.0.1
@@ -6829,6 +6849,8 @@ snapshots:
   signal-exit@3.0.7: {}
 
   signal-exit@4.1.0: {}
+
+  sip.js@0.21.2: {}
 
   slash@3.0.0: {}
 
