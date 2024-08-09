@@ -5,10 +5,10 @@ import { and, desc, eq } from "@acme/db";
 import { CreatePhoneCallSchema, PhoneCall } from "@acme/db/schema";
 
 import { findFirstOrThrow, takeUniqueOrThrow } from "../helpers";
-import { publicProcedure } from "../trpc";
+import { protectedProcedure } from "../trpc";
 
 export const phoneCallRouter = {
-  all: publicProcedure.query(({ ctx }) => {
+  all: protectedProcedure.query(({ ctx }) => {
     // return ctx.db.select().from(schema.PhoneCall).orderBy(desc(schema.PhoneCall.id));
     return ctx.db.query.PhoneCall.findMany({
       orderBy: desc(PhoneCall.updatedAt),
@@ -16,7 +16,7 @@ export const phoneCallRouter = {
     });
   }),
 
-  byId: publicProcedure
+  byId: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
       // return ctx.db
@@ -29,7 +29,7 @@ export const phoneCallRouter = {
       }).then(findFirstOrThrow("find phone call"));
     }),
 
-  create: publicProcedure
+  create: protectedProcedure
     .input(CreatePhoneCallSchema)
     .mutation(({ ctx, input }) => {
       return ctx.db
@@ -39,7 +39,7 @@ export const phoneCallRouter = {
         .then(takeUniqueOrThrow("create phone call"));
     }),
 
-  update: publicProcedure
+  update: protectedProcedure
     .input(
       z.object({
         id: z.string().uuid(),
@@ -57,7 +57,7 @@ export const phoneCallRouter = {
       );
     }),
 
-  delete: publicProcedure.input(z.string()).mutation(({ ctx, input }) => {
+  delete: protectedProcedure.input(z.string()).mutation(({ ctx, input }) => {
     return ctx.db.delete(PhoneCall).where(eq(PhoneCall.id, input));
   }),
 } satisfies TRPCRouterRecord;

@@ -1,14 +1,19 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
+
+
 import { desc, eq } from "@acme/db";
 import { CreateOrgSchema, Org } from "@acme/db/schema";
 
+
+
 import { takeUniqueOrThrow } from "../helpers";
-import { publicProcedure } from "../trpc";
+import { protectedProcedure, publicProcedure } from "../trpc";
+
 
 export const orgRouter = {
-  all: publicProcedure.query(({ ctx }) => {
+  all: protectedProcedure.query(({ ctx }) => {
     // return ctx.db.select().from(schema.Org).orderBy(desc(schema.Org.id));
     return ctx.db.query.Org.findMany({
       orderBy: desc(Org.updatedAt),
@@ -16,7 +21,7 @@ export const orgRouter = {
     });
   }),
 
-  byId: publicProcedure
+  byId: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
       // return ctx.db
@@ -29,15 +34,17 @@ export const orgRouter = {
       });
     }),
 
-  create: publicProcedure.input(CreateOrgSchema).mutation(({ ctx, input }) => {
-    return ctx.db
-      .insert(Org)
-      .values(input)
-      .returning({ id: Org.id })
-      .then(takeUniqueOrThrow("org create"));
-  }),
+  create: protectedProcedure
+    .input(CreateOrgSchema)
+    .mutation(({ ctx, input }) => {
+      return ctx.db
+        .insert(Org)
+        .values(input)
+        .returning({ id: Org.id })
+        .then(takeUniqueOrThrow("org create"));
+    }),
 
-  delete: publicProcedure.input(z.string()).mutation(({ ctx, input }) => {
+  delete: protectedProcedure.input(z.string()).mutation(({ ctx, input }) => {
     return ctx.db.delete(Org).where(eq(Org.id, input));
   }),
 } satisfies TRPCRouterRecord;

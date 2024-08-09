@@ -9,7 +9,7 @@ import { findFirstOrThrow, takeUniqueOrThrow } from "../helpers";
 import { protectedProcedure, publicProcedure } from "../trpc";
 
 export const guessRouter = {
-  all: publicProcedure.query(({ ctx }) => {
+  all: protectedProcedure.query(({ ctx }) => {
     // return ctx.db.select().from(schema.Guess).orderBy(desc(schema.Guess.id));
     return ctx.db.query.Guess.findMany({
       orderBy: desc(Guess.updatedAt),
@@ -17,7 +17,7 @@ export const guessRouter = {
     });
   }),
 
-  byId: publicProcedure
+  byId: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
       // return ctx.db
@@ -30,7 +30,7 @@ export const guessRouter = {
       }).then(findFirstOrThrow("guess"));
     }),
 
-  create: publicProcedure
+  create: protectedProcedure
     .input(CreateGuessSchema)
     .mutation(({ ctx, input }) => {
       return ctx.db
@@ -40,7 +40,7 @@ export const guessRouter = {
         .then(takeUniqueOrThrow("guess create"));
     }),
 
-  delete: publicProcedure.input(z.string()).mutation(({ ctx, input }) => {
+  delete: protectedProcedure.input(z.string()).mutation(({ ctx, input }) => {
     return ctx.db.delete(Guess).where(eq(Guess.id, input));
   }),
 } satisfies TRPCRouterRecord;

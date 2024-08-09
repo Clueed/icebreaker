@@ -7,7 +7,7 @@ import { CreatePostSchema, Post } from "@acme/db/schema";
 import { protectedProcedure, publicProcedure } from "../trpc";
 
 export const postRouter = {
-  all: publicProcedure.query(({ ctx }) => {
+  all: protectedProcedure.query(({ ctx }) => {
     // return ctx.db.select().from(schema.post).orderBy(desc(schema.post.id));
     return ctx.db.query.Post.findMany({
       orderBy: desc(Post.id),
