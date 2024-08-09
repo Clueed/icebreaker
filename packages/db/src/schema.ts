@@ -99,6 +99,29 @@ export const CreatePhoneCallSchema = createInsertSchema(PhoneCall, {
   updatedAt: true,
 });
 
+// SipCredential
+export const SipCredentials = pgTable("sip_credentials", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  username: varchar("username", { length: 256 }).notNull(),
+  password: varchar("password", { length: 256 }).notNull(),
+  userId: uuid("userId").notNull(),
+  ...timeStampColumns,
+});
+
+export const sipCredentialsRelation = relations(SipCredentials, ({ one }) => ({
+  user: one(User, { fields: [SipCredentials.userId], references: [User.id] }),
+}));
+
+export const CreateSipCredentialsSchema = createInsertSchema(SipCredentials, {
+  username: z.string().min(1).max(256),
+  password: z.string().min(1).max(256),
+  userId: z.string().uuid(),
+}).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Reference
 export const Post = pgTable("post", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
