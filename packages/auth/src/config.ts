@@ -61,6 +61,14 @@ export const authConfig = {
     signIn: async ({ profile }) => {
       return profile?.email?.endsWith("@softwaregini.com") ?? false;
     },
+    authorized({ auth }) {
+      // require auth for every page (exceptions in middleware matcher)
+      const isLoggedIn = !!auth?.user;
+      if (!isLoggedIn) {
+        return false;
+      }
+      return true;
+    },
   },
 } satisfies NextAuthConfig;
 
