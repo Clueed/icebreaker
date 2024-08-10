@@ -152,9 +152,6 @@ export const User = pgTable("user", {
     withTimezone: true,
   }),
   image: varchar("image", { length: 255 }),
-  // custom
-  //   sipUserName: varchar("sip_username", { length: 255 }),
-  //   sipPassword: varchar("sip_password", { length: 255 }),
 });
 
 export const UserRelations = relations(User, ({ many }) => ({
