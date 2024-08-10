@@ -35,7 +35,7 @@ function RegisterSip({ userId }: { userId: string }) {
     React.useState(false);
 
   if (
-    remoteCredentialsAttempted &&
+    remoteCredentialsAttempted === false &&
     remoteCredentials &&
     connectStatus === CONNECT_STATUS.WAIT_REQUEST_CONNECT
   ) {
