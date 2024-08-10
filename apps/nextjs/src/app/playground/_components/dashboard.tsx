@@ -18,45 +18,35 @@ export function Dashboard({ userId }: { userId: string }) {
   const [currentCallId, setCurrentCallId] = React.useState<string | null>(null);
 
   return (
-    <SIPProvider
-      options={{
-        domain: "sipgate.de",
-        webSocketServer: "wss://sip.sipgate.de",
-      }}
-    >
-      <div>
-        PlaygroundPage
-        <OrgList
-          currentOrgId={currentOrgId}
-          setCurrentOrgId={setCurrentOrgId}
-        />
-        <CreateOrgForm setCurrentOrgId={setCurrentOrgId} />
-        {currentOrgId && (
+    <div>
+      PlaygroundPage
+      <OrgList currentOrgId={currentOrgId} setCurrentOrgId={setCurrentOrgId} />
+      <CreateOrgForm setCurrentOrgId={setCurrentOrgId} />
+      {currentOrgId && (
+        <div>
+          <AddNewGuessForm
+            setCurrentGuessId={setCurrentGuessId}
+            currentOrgId={currentOrgId}
+          />
+        </div>
+      )}
+      {currentGuessId && (
+        <PhoneCallProvider
+          callId={currentCallId}
+          setCallId={setCurrentCallId}
+          guessId={currentGuessId}
+        >
           <div>
-            <AddNewGuessForm
-              setCurrentGuessId={setCurrentGuessId}
-              currentOrgId={currentOrgId}
+            <div>Guess: {currentGuessId}</div>
+            <MakePhoneCall
+              currentGuessId={currentGuessId}
+              currentCallId={currentCallId}
+              setCurrentCallId={setCurrentCallId}
             />
           </div>
-        )}
-        {currentGuessId && (
-          <PhoneCallProvider
-            callId={currentCallId}
-            setCallId={setCurrentCallId}
-            guessId={currentGuessId}
-          >
-            <div>
-              <div>Guess: {currentGuessId}</div>
-              <MakePhoneCall
-                currentGuessId={currentGuessId}
-                currentCallId={currentCallId}
-                setCurrentCallId={setCurrentCallId}
-              />
-            </div>
-          </PhoneCallProvider>
-        )}
-      </div>
+        </PhoneCallProvider>
+      )}
       <RegisterSip userId={userId} />
-    </SIPProvider>
+    </div>
   );
 }
