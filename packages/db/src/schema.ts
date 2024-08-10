@@ -13,6 +13,8 @@ import {
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+import { encryptedText } from "./helpers/encrypted-text";
+
 const timeStampColumns = {
   createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
   updatedAt: timestamp("updatedAt", {
@@ -99,6 +101,27 @@ export const CreatePhoneCallSchema = createInsertSchema(PhoneCall, {
   updatedAt: true,
 });
 
+// SipCredential
+export const SipCredentials = pgTable("sip_credentials", {
+  userId: uuid("id").notNull().primaryKey(),
+  username: encryptedText("username").notNull(),
+  password: encryptedText("password").notNull(),
+  ...timeStampColumns,
+});
+
+export const sipCredentialsRelation = relations(SipCredentials, ({ one }) => ({
+  user: one(User, { fields: [SipCredentials.userId], references: [User.id] }),
+}));
+
+export const CreateSipCredentialsSchema = createInsertSchema(SipCredentials, {
+  username: z.string().min(1).max(256),
+  password: z.string().min(1).max(256),
+  userId: z.string().uuid(),
+}).omit({
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Reference
 export const Post = pgTable("post", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
@@ -129,9 +152,6 @@ export const User = pgTable("user", {
     withTimezone: true,
   }),
   image: varchar("image", { length: 255 }),
-  // custom
-  //   sipUserName: varchar("sip_username", { length: 255 }),
-  //   sipPassword: varchar("sip_password", { length: 255 }),
 });
 
 export const UserRelations = relations(User, ({ many }) => ({

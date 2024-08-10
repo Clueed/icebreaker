@@ -5,6 +5,7 @@ import { guessRouter } from "./router/guess";
 import { orgRouter } from "./router/org";
 import { phoneCallRouter } from "./router/phone-call";
 import { postRouter } from "./router/post";
+import { sipCredentialsRouter } from "./router/sip-credentials";
 import { createTRPCRouter } from "./trpc";
 
 export const appRouter = createTRPCRouter({
@@ -13,6 +14,7 @@ export const appRouter = createTRPCRouter({
   org: orgRouter,
   guess: guessRouter,
   phoneCall: phoneCallRouter,
+  sipCredentials: sipCredentialsRouter,
 });
 
 // export type definition of API

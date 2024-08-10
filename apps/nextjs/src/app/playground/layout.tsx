@@ -1,13 +1,16 @@
 import React from "react";
 
 import NavBar from "~/app/_components/nav";
+import SipProviderConfigured from "~/app/playground/_components/sip-provider";
 
-function PlaygroundLayout({ children }: { children: React.ReactNode }) {
+async function PlaygroundLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div>
-      <NavBar />
-      {children}
-    </div>
+    <SipProviderConfigured>
+      <div>
+        <NavBar />
+        {children}
+      </div>
+    </SipProviderConfigured>
   );
 }
 

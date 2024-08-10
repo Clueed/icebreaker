@@ -1,16 +1,11 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
-
-
 import { desc, eq } from "@acme/db";
 import { CreateOrgSchema, Org } from "@acme/db/schema";
 
-
-
 import { takeUniqueOrThrow } from "../helpers";
-import { protectedProcedure, publicProcedure } from "../trpc";
-
+import { protectedProcedure } from "../trpc";
 
 export const orgRouter = {
   all: protectedProcedure.query(({ ctx }) => {
