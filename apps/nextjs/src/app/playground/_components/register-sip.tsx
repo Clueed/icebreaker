@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from "@acme/ui/form";
 import { Input } from "@acme/ui/input";
+import { toast } from "@acme/ui/toast";
 
 import { api } from "~/trpc/react";
 
@@ -38,6 +39,7 @@ function RegisterSip({ userId }: { userId: string }) {
     remoteCredentials &&
     connectStatus === CONNECT_STATUS.WAIT_REQUEST_CONNECT
   ) {
+    toast("Connecting to SIP with remote saved credentials");
     connectAndRegister(remoteCredentials);
     setRemoteCredentialsAttempted(true);
   }
