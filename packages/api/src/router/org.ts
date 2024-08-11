@@ -4,7 +4,7 @@ import { z } from "zod";
 import { desc, eq } from "@acme/db";
 import { CreateOrgSchema, Org } from "@acme/db/schema";
 
-import { takeUniqueOrThrow } from "../helpers";
+import { findFirstOrThrow, takeUniqueOrThrow } from "../helpers";
 import { protectedProcedure } from "../trpc";
 
 export const orgRouter = {
@@ -26,7 +26,13 @@ export const orgRouter = {
 
       return ctx.db.query.Org.findFirst({
         where: eq(Org.id, input.id),
-      });
+      }).then(findFirstOrThrow("org byId"));
+    }),
+
+  update: protectedProcedure
+    .input(z.object({ id: z.string(), data: CreateOrgSchema.partial() }))
+    .mutation(({ ctx, input: { id, data } }) => {
+      return ctx.db.update(Org).set(data).where(eq(Org.id, id));
     }),
 
   create: protectedProcedure

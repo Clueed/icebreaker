@@ -1,5 +1,3 @@
-"use client";
-
 import type { AppRouterInputs } from "node_modules/@acme/api/dist/root";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -45,7 +43,7 @@ export function AddNewGuessForm({
   });
 
   const utils = api.useUtils();
-  const { mutateAsync: createOrg } = api.guess.create.useMutation({
+  const { mutateAsync: createGuess } = api.guess.create.useMutation({
     onSuccess: async (guess) => {
       toast("guess created");
       await utils.guess.all.invalidate();
@@ -57,7 +55,7 @@ export function AddNewGuessForm({
   });
 
   const onSubmit = async ({ base, extension }: z.infer<typeof FormSchema>) => {
-    const newGuess = await createOrg({
+    const newGuess = await createGuess({
       orgId: currentOrgId,
       phoneNumber: {
         base,
