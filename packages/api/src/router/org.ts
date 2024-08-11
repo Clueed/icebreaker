@@ -4,7 +4,7 @@ import { z } from "zod";
 import { desc, eq } from "@acme/db";
 import { CreateOrgSchema, Org } from "@acme/db/schema";
 
-import { takeUniqueOrThrow } from "../helpers";
+import { findFirstOrThrow, takeUniqueOrThrow } from "../helpers";
 import { protectedProcedure } from "../trpc";
 
 export const orgRouter = {
@@ -26,7 +26,7 @@ export const orgRouter = {
 
       return ctx.db.query.Org.findFirst({
         where: eq(Org.id, input.id),
-      });
+      }).then(findFirstOrThrow("org byId"));
     }),
 
   create: protectedProcedure
