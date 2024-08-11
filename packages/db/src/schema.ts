@@ -26,6 +26,7 @@ const timeStampColumns = {
 export const Org = pgTable("org", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   name: varchar("name", { length: 256 }).notNull().unique(),
+  selectedGuessId: uuid("selected_guess_id"),
   ...timeStampColumns,
 });
 
@@ -142,6 +143,32 @@ export const CreatePostSchema = createInsertSchema(Post, {
   createdAt: true,
   updatedAt: true,
 });
+
+// UserSettings
+
+export const UserSettings = pgTable("user_settings", {
+  userId: uuid("userId").notNull().primaryKey(),
+  lastViewedOrgId: uuid("lastViewedOrgId"),
+  ...timeStampColumns,
+});
+
+export const CreateUserSettingsSchema = createInsertSchema(UserSettings, {
+  userId: z.string().uuid(),
+  lastViewedOrgId: z.string().uuid(),
+}).omit({
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const UserSettingsRelations = relations(UserSettings, ({ one }) => ({
+  user: one(User, { fields: [UserSettings.userId], references: [User.id] }),
+  lastViewedOrg: one(Org, {
+    fields: [UserSettings.lastViewedOrgId],
+    references: [Org.id],
+  }),
+}));
+
+// User
 
 export const User = pgTable("user", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),

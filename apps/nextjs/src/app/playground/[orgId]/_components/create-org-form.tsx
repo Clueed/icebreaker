@@ -1,6 +1,7 @@
 "use client";
 
 import type { AppRouterInputs } from "node_modules/@acme/api/dist/root";
+import { redirect, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -26,11 +27,7 @@ const FormSchema = z.object({
   }),
 });
 
-export function CreateOrgForm({
-  setCurrentOrgId,
-}: {
-  setCurrentOrgId: (orgId: string) => void;
-}) {
+export function CreateOrgForm({}: {}) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -50,9 +47,11 @@ export function CreateOrgForm({
     },
   });
 
+  // TODO: move to server action 
+  const { push } = useRouter();
   const onSubmit = async (args: AppRouterInputs["org"]["create"]) => {
     const newOrg = await createOrg(args);
-    setCurrentOrgId(newOrg.id);
+    push(`/playground/${newOrg.id}`);
   };
 
   return (

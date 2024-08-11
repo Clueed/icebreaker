@@ -6,9 +6,9 @@ import { SessionState } from "sip.js";
 
 import { toast } from "@acme/ui/toast";
 
-import { useEndCall } from "~/app/playground/_components/use-end-call";
-import useStartCall from "~/app/playground/_components/use-start-call";
-import { useSyncCallState } from "~/app/playground/_components/use-sync-call-state";
+import { useEndCall } from "~/app/playground/[orgId]/_components/use-end-call";
+import useStartCall from "~/app/playground/[orgId]/_components/use-start-call";
+import { useSyncCallState } from "~/app/playground/[orgId]/_components/use-sync-call-state";
 import { api } from "~/trpc/react";
 
 const PhoneCallContext = createContext<

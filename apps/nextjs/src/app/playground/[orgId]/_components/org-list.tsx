@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { redirect, useRouter } from "next/navigation";
 import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 
 import { Button } from "@acme/ui/button";
@@ -17,18 +18,18 @@ import { api } from "~/trpc/react";
 
 type Checked = DropdownMenuCheckboxItemProps["checked"];
 
-export function OrgList({
-  currentOrgId,
-  setCurrentOrgId,
-}: {
-  currentOrgId: string | null;
-  setCurrentOrgId: (id: string | null) => void;
-}) {
+export function OrgList({ currentOrgId }: { currentOrgId: string | null }) {
   const { data: orgs } = api.org.all.useQuery();
 
   const [showStatusBar, setShowStatusBar] = React.useState<Checked>(true);
   const [showActivityBar, setShowActivityBar] = React.useState<Checked>(false);
   const [showPanel, setShowPanel] = React.useState<Checked>(false);
+
+  // TODO: move to server action
+  const { push } = useRouter();
+  const handleOnCheckedChange = (orgId: string) => {
+    push(`/playground/${orgId}`);
+  };
 
   return (
     <DropdownMenu>
@@ -41,7 +42,7 @@ export function OrgList({
           <DropdownMenuCheckboxItem
             key={org.id}
             checked={org.id === currentOrgId}
-            onCheckedChange={() => setCurrentOrgId(org.id)}
+            onCheckedChange={() => handleOnCheckedChange(org.id)}
           >
             {org.name}
           </DropdownMenuCheckboxItem>

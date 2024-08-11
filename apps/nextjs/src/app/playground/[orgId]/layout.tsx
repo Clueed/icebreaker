@@ -1,7 +1,7 @@
 import React from "react";
 
 import NavBar from "~/app/_components/nav";
-import SipProviderConfigured from "~/app/playground/_components/sip-provider";
+import SipProviderConfigured from "~/app/playground/[orgId]/_components/sip-provider";
 
 async function PlaygroundLayout({ children }: { children: React.ReactNode }) {
   return (
