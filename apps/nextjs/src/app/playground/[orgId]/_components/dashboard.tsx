@@ -2,6 +2,9 @@
 
 import React from "react";
 import { SIPProvider } from "react-sipjs";
+import { set } from "zod";
+
+import { toast } from "@acme/ui/toast";
 
 import { AddNewGuessForm } from "~/app/playground/[orgId]/_components/add-new-guess-form";
 import { CreateOrgForm } from "~/app/playground/[orgId]/_components/create-org-form";
@@ -9,6 +12,7 @@ import { PhoneCallProvider } from "~/app/playground/[orgId]/_components/current-
 import { MakePhoneCall } from "~/app/playground/[orgId]/_components/make-phone-call";
 import { OrgList } from "~/app/playground/[orgId]/_components/org-list";
 import RegisterSip from "~/app/playground/[orgId]/_components/register-sip";
+import { api } from "~/trpc/react";
 
 export function Dashboard({
   userId,
@@ -17,10 +21,27 @@ export function Dashboard({
   userId: string;
   orgId: string;
 }) {
-  const [currentGuessId, setCurrentGuessId] = React.useState<string | null>(
-    null,
-  );
+  const [{ selectedGuessId }] = api.org.byId.useSuspenseQuery({ id: orgId });
+
+  const utils = api.useUtils();
+  const { mutate: updateOrg } = api.org.update.useMutation({
+    onSettled: async () => {
+      await utils.org.all.invalidate();
+      await utils.org.byId.invalidate({ id: orgId });
+    },
+    onError: (error) => {
+      toast.error("error updating org: " + error.message);
+    },
+  });
+
+  console.log("selectedGuessId", selectedGuessId);
+
   const [currentCallId, setCurrentCallId] = React.useState<string | null>(null);
+
+  function setSelectedGuessId(guessId: string): void {
+    console.log("setSelectedGuessId", guessId);
+    updateOrg({ id: orgId, data: { selectedGuessId: guessId } });
+  }
 
   return (
     <div>
@@ -29,20 +50,20 @@ export function Dashboard({
       <CreateOrgForm />
       <div>
         <AddNewGuessForm
-          setCurrentGuessId={setCurrentGuessId}
+          setCurrentGuessId={setSelectedGuessId}
           currentOrgId={orgId}
         />
       </div>
-      {currentGuessId && (
+      {selectedGuessId && (
         <PhoneCallProvider
           callId={currentCallId}
           setCallId={setCurrentCallId}
-          guessId={currentGuessId}
+          guessId={selectedGuessId}
         >
           <div>
-            <div>Guess: {currentGuessId}</div>
+            <div>Guess: {selectedGuessId}</div>
             <MakePhoneCall
-              currentGuessId={currentGuessId}
+              currentGuessId={selectedGuessId}
               currentCallId={currentCallId}
               setCurrentCallId={setCurrentCallId}
             />

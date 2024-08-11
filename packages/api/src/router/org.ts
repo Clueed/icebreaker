@@ -29,6 +29,12 @@ export const orgRouter = {
       }).then(findFirstOrThrow("org byId"));
     }),
 
+  update: protectedProcedure
+    .input(z.object({ id: z.string(), data: CreateOrgSchema.partial() }))
+    .mutation(({ ctx, input: { id, data } }) => {
+      return ctx.db.update(Org).set(data).where(eq(Org.id, id));
+    }),
+
   create: protectedProcedure
     .input(CreateOrgSchema)
     .mutation(({ ctx, input }) => {
