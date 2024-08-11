@@ -80,7 +80,6 @@ export function Dashboard({
             <MakePhoneCall
               currentGuessId={selectedGuessId}
               currentCallId={currentCallId}
-              setCurrentCallId={setCurrentPhoneCallId}
             />
           </div>
         </PhoneCallProvider>

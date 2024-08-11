@@ -2,6 +2,7 @@
 
 import type { AppRouterInputs } from "node_modules/@acme/api/dist/root";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { skipToken } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useSIPProvider } from "react-sipjs";
 import { z } from "zod";
@@ -26,15 +27,26 @@ import { api } from "~/trpc/react";
 export function MakePhoneCall({
   currentGuessId,
   currentCallId,
-  setCurrentCallId,
 }: {
   currentGuessId: string;
   currentCallId: string | null;
-  setCurrentCallId: (callId: string | null) => void;
 }) {
   const [{ phoneNumber }] = api.guess.byId.useSuspenseQuery({
     id: currentGuessId,
   });
+  const { data: phoneCall } = api.phoneCall.byId.useQuery(
+    currentCallId
+      ? {
+          id: currentCallId,
+        }
+      : skipToken,
+    {
+      enabled: currentCallId !== undefined,
+    },
+  );
+
+  const phoneCallActive =
+    phoneCall && !["Terminated", "Terminating"].includes(phoneCall.state);
   const { startCall, endCall } = usePhoneCall();
 
   return (
@@ -42,7 +54,7 @@ export function MakePhoneCall({
       <div>
         {phoneNumber.base}-{phoneNumber.extension}
       </div>
-      {currentCallId ? (
+      {currentCallId && phoneCallActive ? (
         <Button onClick={endCall}>Hangup</Button>
       ) : (
         <Button onClick={startCall}>Make Call</Button>

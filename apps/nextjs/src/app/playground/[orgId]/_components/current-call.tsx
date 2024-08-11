@@ -45,11 +45,7 @@ export function PhoneCallProvider({
     },
   );
 
-  useSyncCallState(callId ?? undefined, phoneCall?.sessionId, {
-    onEnd: () => {
-      setCallId(null);
-    },
-  });
+  useSyncCallState(callId ?? undefined, phoneCall?.sessionId);
 
   const { startCall } = useStartCall({ guessId, phoneNumber });
   const handleStartCall = async () => {
@@ -67,7 +63,6 @@ export function PhoneCallProvider({
       return;
     }
     await endCall();
-    // end state is handle with useSyncCallState
   };
 
   return (

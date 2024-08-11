@@ -16,6 +16,13 @@ export function useSyncCallState(
     onEnd?: () => void;
   } = {},
 ) {
+  const { data: dbPhoneCall } = api.phoneCall.byId.useQuery(
+    callId ? { id: callId } : skipToken,
+    {
+      enabled: callId !== undefined,
+    },
+  );
+
   const { updatePhoneCall } = useOptimisticPhoneCallMutation();
 
   const { sessions } = useSIPProvider();
@@ -28,20 +35,22 @@ export function useSyncCallState(
 
     if (!session) {
       toast.error("Call Sync: No session found");
-      updatePhoneCall(
-        {
-          id: callId,
-          sessionId: sessionId,
-          data: {
-            state: "Terminated",
+      if (dbPhoneCall && dbPhoneCall.state !== "Terminated") {
+        updatePhoneCall(
+          {
+            id: callId,
+            sessionId: sessionId,
+            data: {
+              state: "Terminated",
+            },
           },
-        },
-        {
-          onError: (err) => {
-            toast.error(err.message);
+          {
+            onError: (err) => {
+              toast.error(err.message);
+            },
           },
-        },
-      );
+        );
+      }
       return;
     }
 

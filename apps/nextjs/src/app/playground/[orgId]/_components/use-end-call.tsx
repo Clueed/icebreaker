@@ -2,8 +2,6 @@ import { useSIPProvider } from "react-sipjs";
 
 import { toast } from "@acme/ui/toast";
 
-import { api } from "~/trpc/react";
-
 export function useEndCall({ sessionId }: { sessionId?: string }) {
   const { sessionManager, sessions } = useSIPProvider();
 
@@ -20,6 +18,7 @@ export function useEndCall({ sessionId }: { sessionId?: string }) {
       }
 
       const session = sessions[sessionId];
+      console.log("Ending Call: session", session);
       if (!session) {
         toast.error("Ending Call: No session");
         return;
