@@ -1,8 +1,6 @@
 "use client";
 
 import React from "react";
-import { SIPProvider } from "react-sipjs";
-import { set } from "zod";
 
 import { toast } from "@acme/ui/toast";
 
@@ -33,14 +31,31 @@ export function Dashboard({
       toast.error("error updating org: " + error.message);
     },
   });
-
-  console.log("selectedGuessId", selectedGuessId);
-
-  const [currentCallId, setCurrentCallId] = React.useState<string | null>(null);
-
   function setSelectedGuessId(guessId: string): void {
-    console.log("setSelectedGuessId", guessId);
     updateOrg({ id: orgId, data: { selectedGuessId: guessId } });
+  }
+
+  const [userSettings] = api.userSettings.get.useSuspenseQuery({
+    userId,
+  });
+
+  const currentCallId =
+    userSettings !== 0 ? userSettings.currentPhoneCallId : null;
+
+  const { mutate: updateUserSettings } = api.userSettings.set.useMutation({
+    onSettled: async () => {
+      await utils.userSettings.get.invalidate({ userId });
+    },
+    onError: (error) => {
+      toast.error("error updating user settings: " + error.message);
+    },
+  });
+
+  function setCurrentPhoneCallId(phoneCallId: string | null): void {
+    updateUserSettings({
+      userId,
+      currentPhoneCallId: phoneCallId,
+    });
   }
 
   return (
@@ -57,7 +72,7 @@ export function Dashboard({
       {selectedGuessId && (
         <PhoneCallProvider
           callId={currentCallId}
-          setCallId={setCurrentCallId}
+          setCallId={setCurrentPhoneCallId}
           guessId={selectedGuessId}
         >
           <div>
@@ -65,7 +80,7 @@ export function Dashboard({
             <MakePhoneCall
               currentGuessId={selectedGuessId}
               currentCallId={currentCallId}
-              setCurrentCallId={setCurrentCallId}
+              setCurrentCallId={setCurrentPhoneCallId}
             />
           </div>
         </PhoneCallProvider>

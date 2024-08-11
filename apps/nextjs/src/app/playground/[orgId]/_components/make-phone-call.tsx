@@ -30,7 +30,7 @@ export function MakePhoneCall({
 }: {
   currentGuessId: string;
   currentCallId: string | null;
-  setCurrentCallId: React.Dispatch<React.SetStateAction<string | null>>;
+  setCurrentCallId: (callId: string | null) => void;
 }) {
   const [{ phoneNumber }] = api.guess.byId.useSuspenseQuery({
     id: currentGuessId,

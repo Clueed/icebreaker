@@ -147,14 +147,16 @@ export const CreatePostSchema = createInsertSchema(Post, {
 // UserSettings
 
 export const UserSettings = pgTable("user_settings", {
-  userId: uuid("userId").notNull().primaryKey(),
-  lastViewedOrgId: uuid("lastViewedOrgId"),
+  userId: uuid("user_id").notNull().primaryKey(),
+  lastViewedOrgId: uuid("last_viewed_org_id"),
+  currentPhoneCallId: uuid("current_phone_call_id"),
   ...timeStampColumns,
 });
 
 export const CreateUserSettingsSchema = createInsertSchema(UserSettings, {
   userId: z.string().uuid(),
   lastViewedOrgId: z.string().uuid(),
+  currentPhoneCallId: z.string().uuid(),
 }).omit({
   createdAt: true,
   updatedAt: true,
@@ -165,6 +167,10 @@ export const UserSettingsRelations = relations(UserSettings, ({ one }) => ({
   lastViewedOrg: one(Org, {
     fields: [UserSettings.lastViewedOrgId],
     references: [Org.id],
+  }),
+  currentPhoneCall: one(PhoneCall, {
+    fields: [UserSettings.currentPhoneCallId],
+    references: [PhoneCall.id],
   }),
 }));
 
