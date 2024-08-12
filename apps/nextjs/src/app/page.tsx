@@ -1,44 +1,32 @@
-import { Suspense } from "react";
+import React from "react";
+import { redirect } from "next/navigation";
 
-import { api, HydrateClient } from "~/trpc/server";
-import { AuthShowcase } from "./_components/auth-showcase";
-import {
-  CreatePostForm,
-  PostCardSkeleton,
-  PostList,
-} from "./_components/posts";
+import { auth } from "@acme/auth";
 
-export const runtime = "edge";
+import { CreateOrgForm } from "~/app/org/[orgId]/_components/create-org-form";
+import { Dashboard } from "~/app/org/[orgId]/_components/dashboard";
+import { OrgList } from "~/app/org/[orgId]/_components/org-list";
+import RegisterSip from "~/app/org/[orgId]/_components/register-sip";
+import { api } from "~/trpc/server";
 
-export default function HomePage() {
-  // You can await this here if you don't want to show Suspense fallback below
-  void api.post.all.prefetch();
+export default async function PlaygroundPage() {
+  const session = await auth();
+  if (!session) {
+    throw new Error("not authenticated");
+  }
+
+  const userSettings = await api.userSettings.get({ userId: session.user.id });
+
+  const lastViewedOrgId = userSettings !== 0 && userSettings.lastViewedOrgId;
+
+  if (lastViewedOrgId) {
+    return redirect(`/org/${lastViewedOrgId}`);
+  }
 
   return (
-    <HydrateClient>
-      <main className="container h-screen py-16">
-        <div className="flex flex-col items-center justify-center gap-4">
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-            Create <span className="text-primary">T3</span> Turbo
-          </h1>
-          <AuthShowcase />
-
-          <CreatePostForm />
-          <div className="w-full max-w-2xl overflow-y-scroll">
-            <Suspense
-              fallback={
-                <div className="flex w-full flex-col gap-4">
-                  <PostCardSkeleton />
-                  <PostCardSkeleton />
-                  <PostCardSkeleton />
-                </div>
-              }
-            >
-              <PostList />
-            </Suspense>
-          </div>
-        </div>
-      </main>
-    </HydrateClient>
+    <>
+      <OrgList currentOrgId={null} />
+      <CreateOrgForm />
+    </>
   );
 }

@@ -1,6 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { GeistMono } from "geist/font/mono";
-import { GeistSans } from "geist/font/sans";
 
 import { cn } from "@acme/ui";
 import { ThemeProvider, ThemeToggle } from "@acme/ui/theme";
@@ -10,7 +8,21 @@ import { TRPCReactProvider } from "~/trpc/react";
 
 import "~/app/globals.css";
 
+import { Urbanist, Victor_Mono } from "next/font/google";
+
+import NavBar from "~/app/_components/nav";
+import SipProviderConfigured from "~/app/org/[orgId]/_components/sip-provider";
 import { env } from "~/env";
+
+const fontMono = Victor_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+});
+
+const fontSans = Urbanist({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -46,12 +58,17 @@ export default function RootLayout(props: { children: React.ReactNode }) {
       <body
         className={cn(
           "min-h-screen bg-background font-sans text-foreground antialiased",
-          GeistSans.variable,
-          GeistMono.variable,
+          fontSans.variable,
+          fontMono.variable,
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <TRPCReactProvider>{props.children}</TRPCReactProvider>
+          <TRPCReactProvider>
+            <SipProviderConfigured>
+              <NavBar />
+              <main className="container">{props.children}</main>
+            </SipProviderConfigured>
+          </TRPCReactProvider>
           <div className="absolute bottom-4 right-4">
             <ThemeToggle />
           </div>

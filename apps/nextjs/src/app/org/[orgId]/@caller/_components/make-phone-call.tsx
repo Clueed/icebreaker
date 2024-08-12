@@ -20,30 +20,14 @@ import {
 import { Input } from "@acme/ui/input";
 import { toast } from "@acme/ui/toast";
 
-import { CallInfo } from "~/app/playground/[orgId]/_components/call-info";
-import { usePhoneCall } from "~/app/playground/[orgId]/_components/current-call";
+import { CallInfo } from "~/app/org/[orgId]/@caller/_components/call-info";
+import { usePhoneCall } from "~/app/org/[orgId]/@caller/_components/current-call";
 import { api } from "~/trpc/react";
 
-export function MakePhoneCall({
-  currentGuessId,
-  currentCallId,
-}: {
-  currentGuessId: string;
-  currentCallId: string | null;
-}) {
-  const [{ phoneNumber }] = api.guess.byId.useSuspenseQuery({
-    id: currentGuessId,
+export function MakePhoneCall({ currentCallId }: { currentCallId: string }) {
+  const [phoneCall] = api.phoneCall.byId.useSuspenseQuery({
+    id: currentCallId,
   });
-  const { data: phoneCall } = api.phoneCall.byId.useQuery(
-    currentCallId
-      ? {
-          id: currentCallId,
-        }
-      : skipToken,
-    {
-      enabled: currentCallId !== undefined,
-    },
-  );
 
   const phoneCallActive =
     phoneCall && !["Terminated", "Terminating"].includes(phoneCall.state);
@@ -52,7 +36,8 @@ export function MakePhoneCall({
   return (
     <div>
       <div>
-        {phoneNumber.base}-{phoneNumber.extension}
+        {phoneCall.guess.phoneNumber.base}-
+        {phoneCall.guess.phoneNumber.extension}
       </div>
       {currentCallId && phoneCallActive ? (
         <Button onClick={endCall}>Hangup</Button>

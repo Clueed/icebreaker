@@ -1,11 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { CONNECT_STATUS, useSIPProvider } from "react-sipjs";
 import { z } from "zod";
 
+import type { RouterOutputs } from "@acme/api";
 import { Button } from "@acme/ui/button";
 import {
   Form,
@@ -19,6 +20,7 @@ import {
 import { Input } from "@acme/ui/input";
 import { toast } from "@acme/ui/toast";
 
+import { SipStatus } from "~/app/org/[orgId]/@caller/_components/sip-status";
 import { api } from "~/trpc/react";
 
 const FormSchema = z.object({
@@ -26,30 +28,46 @@ const FormSchema = z.object({
   password: z.string().min(2),
 });
 
-function RegisterSip({ userId }: { userId: string }) {
-  const [remoteCredentials] = api.sipCredentials.get.useSuspenseQuery({
-    userId,
-  });
+function RegisterSip({
+  userId,
+  remoteCredentials,
+}: {
+  userId: string;
+  remoteCredentials: RouterOutputs["sipCredentials"]["get"];
+}) {
   const { connectAndRegister, connectStatus } = useSIPProvider();
-  const [remoteCredentialsAttempted, setRemoteCredentialsAttempted] =
-    React.useState(false);
 
-  if (
-    remoteCredentialsAttempted === false &&
-    remoteCredentials &&
-    connectStatus === CONNECT_STATUS.WAIT_REQUEST_CONNECT
-  ) {
-    toast("Connecting to SIP with remote saved credentials");
-    connectAndRegister(remoteCredentials);
-    setRemoteCredentialsAttempted(true);
-  }
+  const [connectingToastId, setConnectingToastId] = useState<string | number>();
+  const connected = connectStatus === CONNECT_STATUS.CONNECTED;
+  const disconnected = connectStatus === CONNECT_STATUS.DISCONNECTED;
+  const notConnected = connectStatus === CONNECT_STATUS.WAIT_REQUEST_CONNECT;
+
+  useEffect(() => {
+    if (connectingToastId) {
+      toast.dismiss(connectingToastId);
+    }
+    if (connected) {
+      toast.success("SIP connected");
+    }
+    if (disconnected) {
+      toast.error("SIP disconnected");
+    }
+  }, [connected, disconnected]);
+
+  useEffect(() => {
+    if (
+      remoteCredentials &&
+      connectStatus === CONNECT_STATUS.WAIT_REQUEST_CONNECT
+    ) {
+      const toastid = toast.loading("Connecting with remote credentials...");
+      setConnectingToastId(toastid);
+      connectAndRegister(remoteCredentials);
+    }
+  }, []);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-    },
+    defaultValues: remoteCredentials,
   });
 
   const { mutate: setRemoteCredentials } = api.sipCredentials.set.useMutation(
@@ -62,7 +80,7 @@ function RegisterSip({ userId }: { userId: string }) {
   };
 
   if (connectStatus === CONNECT_STATUS.CONNECTED) {
-    return null;
+    return <SipStatus />;
   }
   return (
     <Form {...form}>
@@ -90,7 +108,7 @@ function RegisterSip({ userId }: { userId: string }) {
             <FormItem>
               <FormLabel>password</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input type="password" placeholder="shadcn" {...field} />
               </FormControl>
               <FormDescription>
                 This is your public display name.

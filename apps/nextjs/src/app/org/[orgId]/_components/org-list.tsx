@@ -28,7 +28,7 @@ export function OrgList({ currentOrgId }: { currentOrgId: string | null }) {
   // TODO: move to server action
   const { push } = useRouter();
   const handleOnCheckedChange = (orgId: string) => {
-    push(`/playground/${orgId}`);
+    push(`/org/${orgId}`);
   };
 
   return (

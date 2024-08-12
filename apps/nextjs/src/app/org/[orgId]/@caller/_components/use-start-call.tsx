@@ -2,22 +2,22 @@ import { useSIPProvider } from "react-sipjs";
 
 import { toast } from "@acme/ui/toast";
 
-import { useOptimisticPhoneCallMutation } from "~/app/playground/[orgId]/_components/optimistic-phone-call-update";
+import { useOptimisticPhoneCallMutation } from "~/app/org/[orgId]/@caller/_components/optimistic-phone-call-update";
 import { api } from "~/trpc/react";
 
-function useStartCall({
-  guessId,
-  phoneNumber,
-}: {
-  guessId: string;
-  phoneNumber: { base: string; extension: string };
-}) {
+function useStartCall() {
   const { createPhoneCall } = useOptimisticPhoneCallMutation();
 
   const { sessionManager } = useSIPProvider();
 
   return {
-    startCall: async () => {
+    startCall: async ({
+      guessId,
+      phoneNumber,
+    }: {
+      guessId: string;
+      phoneNumber: { base: string; extension: string };
+    }) => {
       if (!sessionManager) {
         toast.error("Starting Call: no session manager");
         return;

@@ -7,12 +7,22 @@ import { CreatePhoneCallSchema, PhoneCall } from "@acme/db/schema";
 import { findFirstOrThrow, takeUniqueOrThrow } from "../helpers";
 import { protectedProcedure } from "../trpc";
 
+// TODO:
+// - filter by user
+// - infinity
 export const phoneCallRouter = {
   all: protectedProcedure.query(({ ctx }) => {
     // return ctx.db.select().from(schema.PhoneCall).orderBy(desc(schema.PhoneCall.id));
     return ctx.db.query.PhoneCall.findMany({
       orderBy: desc(PhoneCall.updatedAt),
-      //   limit: 10,
+      limit: 10,
+      with: {
+        guess: {
+          columns: {
+            phoneNumber: true,
+          },
+        },
+      },
     });
   }),
 
@@ -26,6 +36,9 @@ export const phoneCallRouter = {
 
       return ctx.db.query.PhoneCall.findFirst({
         where: eq(PhoneCall.id, input.id),
+        with: {
+          guess: { columns: { phoneNumber: true, id: true } },
+        },
       }).then(findFirstOrThrow("find phone call"));
     }),
 

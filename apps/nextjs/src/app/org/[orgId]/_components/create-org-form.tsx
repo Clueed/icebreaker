@@ -47,11 +47,11 @@ export function CreateOrgForm({}: {}) {
     },
   });
 
-  // TODO: move to server action 
+  // TODO: move to server action
   const { push } = useRouter();
   const onSubmit = async (args: AppRouterInputs["org"]["create"]) => {
     const newOrg = await createOrg(args);
-    push(`/playground/${newOrg.id}`);
+    push(`/org/${newOrg.id}`);
   };
 
   return (

@@ -13,14 +13,9 @@ export const SipStatus = () => {
   const disconnected = connectStatus === CONNECT_STATUS.DISCONNECTED;
   const notConnected = connectStatus === CONNECT_STATUS.WAIT_REQUEST_CONNECT;
 
-  useEffect(() => {
-    if (connected) {
-      toast.success("SIP connected");
-    }
-    if (disconnected) {
-      toast.error("SIP disconnected");
-    }
-  }, [connected, disconnected, notConnected]);
+  if (!connectStatus) {
+    return null;
+  }
 
   return (
     <Badge variant={connected ? "secondary" : "destructive"}>

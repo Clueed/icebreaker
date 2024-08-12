@@ -6,9 +6,9 @@ import { SessionState } from "sip.js";
 
 import { toast } from "@acme/ui/toast";
 
-import { useEndCall } from "~/app/playground/[orgId]/_components/use-end-call";
-import useStartCall from "~/app/playground/[orgId]/_components/use-start-call";
-import { useSyncCallState } from "~/app/playground/[orgId]/_components/use-sync-call-state";
+import { useEndCall } from "~/app/org/[orgId]/@caller/_components/use-end-call";
+import useStartCall from "~/app/org/[orgId]/@caller/_components/use-start-call";
+import { useSyncCallState } from "~/app/org/[orgId]/@caller/_components/use-sync-call-state";
 import { api } from "~/trpc/react";
 
 const PhoneCallContext = createContext<
@@ -21,19 +21,13 @@ const PhoneCallContext = createContext<
 
 export function PhoneCallProvider({
   children,
-  guessId,
   callId,
   setCallId,
 }: {
   children: ReactNode;
-  guessId: string;
   callId: string | null;
   setCallId: (id: string | null) => void;
 }) {
-  const [{ phoneNumber }] = api.guess.byId.useSuspenseQuery({
-    id: guessId,
-  });
-
   const { data: phoneCall } = api.phoneCall.byId.useQuery(
     callId
       ? {
@@ -42,27 +36,35 @@ export function PhoneCallProvider({
       : skipToken,
     {
       enabled: !!callId,
+      throwOnError: true,
     },
   );
 
   useSyncCallState(callId ?? undefined, phoneCall?.sessionId);
 
-  const { startCall } = useStartCall({ guessId, phoneNumber });
+  const { startCall } = useStartCall();
   const handleStartCall = async () => {
-    const newCall = await startCall();
+    if (!phoneCall) {
+      toast.error("Starting Call: no call found in db");
+      return;
+    }
+    const newCall = await startCall({
+      guessId: phoneCall.guess.id,
+      phoneNumber: phoneCall?.guess.phoneNumber,
+    });
     if (!newCall) {
       return;
     }
     setCallId(newCall.id);
   };
 
-  const { endCall } = useEndCall({ sessionId: phoneCall?.sessionId });
+  const { endCall } = useEndCall();
   const handleEndCall = async () => {
     if (!phoneCall) {
       toast.warning("Ending Call: No call found");
       return;
     }
-    await endCall();
+    await endCall({ sessionId: phoneCall.sessionId });
   };
 
   return (

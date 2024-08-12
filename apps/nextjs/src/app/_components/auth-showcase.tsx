@@ -1,4 +1,5 @@
 import { auth, signIn, signOut } from "@acme/auth";
+import { Avatar, AvatarFallback, AvatarImage } from "@acme/ui/avatar";
 import { Button } from "@acme/ui/button";
 import { LogOutIcon } from "@acme/ui/icons";
 
@@ -24,9 +25,19 @@ export async function AuthShowcase() {
 
   return (
     <div className="flex items-center justify-center gap-4">
-      <p>
-        <span>{session.user.name}</span>
-      </p>
+      <div className="flex items-center gap-2">
+        <Avatar className="size-5">
+          <AvatarImage src={session.user.image ?? undefined} />
+          <AvatarFallback>
+            {session.user.name
+              ?.split("")
+              .map((word) => word[0])
+              .join("")}
+          </AvatarFallback>
+        </Avatar>
+
+        <p className="text-sm">{session.user.name}</p>
+      </div>
 
       <form>
         <Button

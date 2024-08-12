@@ -2,8 +2,9 @@ import React from "react";
 
 import { auth } from "@acme/auth";
 
-import { Dashboard } from "~/app/playground/[orgId]/_components/dashboard";
-import RegisterSip from "~/app/playground/[orgId]/_components/register-sip";
+import { Dashboard } from "~/app/org/[orgId]/_components/dashboard";
+import { Guesser } from "~/app/org/[orgId]/_components/guesser";
+import RegisterSip from "~/app/org/[orgId]/_components/register-sip";
 import { api, HydrateClient } from "~/trpc/server";
 
 export default async function PlaygroundPage({
@@ -28,7 +29,8 @@ export default async function PlaygroundPage({
   return (
     <>
       <HydrateClient>
-        <Dashboard userId={session.user.id} orgId={orgId} />
+        {/* <Dashboard userId={session.user.id} orgId={orgId} /> */}
+        <Guesser orgId={params.orgId} />
       </HydrateClient>
     </>
   );

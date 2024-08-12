@@ -4,12 +4,12 @@ import React from "react";
 
 import { toast } from "@acme/ui/toast";
 
-import { AddNewGuessForm } from "~/app/playground/[orgId]/_components/add-new-guess-form";
-import { CreateOrgForm } from "~/app/playground/[orgId]/_components/create-org-form";
-import { PhoneCallProvider } from "~/app/playground/[orgId]/_components/current-call";
-import { MakePhoneCall } from "~/app/playground/[orgId]/_components/make-phone-call";
-import { OrgList } from "~/app/playground/[orgId]/_components/org-list";
-import RegisterSip from "~/app/playground/[orgId]/_components/register-sip";
+import { AddNewGuessForm } from "~/app/org/[orgId]/_components/add-new-guess-form";
+import { CreateOrgForm } from "~/app/org/[orgId]/_components/create-org-form";
+import { OrgList } from "~/app/org/[orgId]/_components/org-list";
+import RegisterSip from "~/app/org/[orgId]/_components/register-sip";
+import { PhoneCallProvider } from "~/app/org/[orgId]/@caller/_components/current-call";
+import { MakePhoneCall } from "~/app/org/[orgId]/@caller/_components/make-phone-call";
 import { api } from "~/trpc/react";
 
 export function Dashboard({
