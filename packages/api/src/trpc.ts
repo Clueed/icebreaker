@@ -14,6 +14,8 @@ import type { Session } from "@acme/auth";
 import { auth, validateToken } from "@acme/auth";
 import { db } from "@acme/db/client";
 
+import { env } from "../env";
+
 /**
  * Isomorphic Session getter for API requests
  * - Expo requests will have a session token in the Authorization header
@@ -99,7 +101,7 @@ export const createTRPCRouter = t.router;
 const timingMiddleware = t.middleware(async ({ next, path }) => {
   const start = Date.now();
 
-  if (t._config.isDev) {
+  if (t._config.isDev && env.DEV_ARTIFICIAL_API_DELAY) {
     // artificial delay in dev 100-500ms
     const waitMs = Math.floor(Math.random() * 400) + 100;
     await new Promise((resolve) => setTimeout(resolve, waitMs));
