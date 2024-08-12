@@ -12,9 +12,9 @@ const CallerPage = async () => {
     throw new Error("not authenticated");
   }
 
-  const sipCredentials = await api.sipCredentials.get({
-    userId: session.user.id,
-  });
+  //   const sipCredentials = await api.sipCredentials.get({
+  //     userId: session.user.id,
+  //   });
 
   await api.phoneCall.all.prefetch();
 
@@ -22,10 +22,7 @@ const CallerPage = async () => {
     <>
       {" "}
       <HydrateClient>
-        <RegisterSip
-          userId={session.user.id}
-          remoteCredentials={sipCredentials}
-        />
+        <RegisterSip userId={session.user.id} />
         <Caller userId={session.user.id} />
         <CallHistory />
       </HydrateClient>

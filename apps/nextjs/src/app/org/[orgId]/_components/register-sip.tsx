@@ -28,13 +28,10 @@ const FormSchema = z.object({
   password: z.string().min(2),
 });
 
-function RegisterSip({
-  userId,
-  remoteCredentials,
-}: {
-  userId: string;
-  remoteCredentials: RouterOutputs["sipCredentials"]["get"];
-}) {
+function RegisterSip({ userId }: { userId: string }) {
+  const [remoteCredentials] = api.sipCredentials.get.useSuspenseQuery({
+    userId,
+  });
   const { connectAndRegister, connectStatus } = useSIPProvider();
 
   const [connectingToastId, setConnectingToastId] = useState<string | number>();

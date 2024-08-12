@@ -117,7 +117,6 @@ export const sipCredentialsRelation = relations(SipCredentials, ({ one }) => ({
 export const CreateSipCredentialsSchema = createInsertSchema(SipCredentials, {
   username: z.string().min(1).max(256),
   password: z.string().min(1).max(256),
-  userId: z.string().uuid(),
 }).omit({
   createdAt: true,
   updatedAt: true,
