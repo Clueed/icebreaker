@@ -29,7 +29,6 @@ export default async function PlaygroundPage({
   return (
     <>
       <HydrateClient>
-        {/* <Dashboard userId={session.user.id} orgId={orgId} /> */}
         <Guesser orgId={params.orgId} />
       </HydrateClient>
     </>

@@ -1,7 +1,6 @@
 import { auth } from "@acme/auth";
 
 import RegisterSip from "~/app/org/[orgId]/_components/register-sip";
-import SipProviderConfigured from "~/app/org/[orgId]/_components/sip-provider";
 import { CallHistory } from "~/app/org/[orgId]/@caller/_components/call-history";
 import { Caller } from "~/app/org/[orgId]/@caller/_components/caller";
 import { api, HydrateClient } from "~/trpc/server";

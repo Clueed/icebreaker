@@ -9,13 +9,15 @@ import { findFirstOrThrow, takeUniqueOrThrow } from "../helpers";
 import { protectedProcedure, publicProcedure } from "../trpc";
 
 export const guessRouter = {
-  all: protectedProcedure.query(({ ctx }) => {
-    // return ctx.db.select().from(schema.Guess).orderBy(desc(schema.Guess.id));
-    return ctx.db.query.Guess.findMany({
-      orderBy: desc(Guess.updatedAt),
-      //   limit: 10,
-    });
-  }),
+  all: protectedProcedure
+    .input(z.object({ orgId: z.string().optional() }).optional())
+    .query(({ ctx, input }) => {
+      return ctx.db.query.Guess.findMany({
+        orderBy: desc(Guess.updatedAt),
+        where: input && input.orgId ? eq(Guess.orgId, input.orgId) : undefined,
+        limit: 10,
+      });
+    }),
 
   byId: protectedProcedure
     .input(z.object({ id: z.string() }))

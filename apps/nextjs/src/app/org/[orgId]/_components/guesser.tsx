@@ -6,6 +6,7 @@ import { Button } from "@acme/ui/button";
 import { toast } from "@acme/ui/toast";
 
 import { AddNewGuessForm } from "~/app/org/[orgId]/_components/add-new-guess-form";
+import { GuessHistory } from "~/app/org/[orgId]/_components/guess-histroy";
 import { api } from "~/trpc/react";
 
 export const Guesser = ({ orgId }: { orgId: string }) => {
@@ -43,6 +44,7 @@ export const Guesser = ({ orgId }: { orgId: string }) => {
           </div>
         </div>
       )}
+      <GuessHistory orgId={orgId} setSelectedGuessId={setSelectedGuessId} />
       <AddNewGuessForm
         setCurrentGuessId={setSelectedGuessId}
         currentOrgId={orgId}

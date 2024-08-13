@@ -29,9 +29,7 @@ const FormSchema = z.object({
 });
 
 function RegisterSip({ userId }: { userId: string }) {
-  const [remoteCredentials] = api.sipCredentials.get.useSuspenseQuery({
-    userId,
-  });
+  const [remoteCredentials] = api.sipCredentials.get.useSuspenseQuery();
   const { connectAndRegister, connectStatus } = useSIPProvider();
 
   const [connectingToastId, setConnectingToastId] = useState<string | number>();
@@ -53,7 +51,8 @@ function RegisterSip({ userId }: { userId: string }) {
 
   useEffect(() => {
     if (
-      remoteCredentials &&
+      remoteCredentials?.username &&
+      remoteCredentials?.password &&
       connectStatus === CONNECT_STATUS.WAIT_REQUEST_CONNECT
     ) {
       const toastid = toast.loading("Connecting with remote credentials...");

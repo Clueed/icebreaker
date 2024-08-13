@@ -2,7 +2,7 @@ import { useSIPProvider } from "react-sipjs";
 
 import { toast } from "@acme/ui/toast";
 
-import { useOptimisticPhoneCallMutation } from "~/app/org/[orgId]/@caller/_components/optimistic-phone-call-update";
+import { useOptimisticPhoneCallMutation } from "~/app/_api-hooks/optimistic-phone-call-update";
 import { api } from "~/trpc/react";
 
 function useStartCall() {
