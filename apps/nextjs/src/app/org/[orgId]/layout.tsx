@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@acme/ui/card";
 
 const OrgLayout = ({
@@ -14,9 +16,13 @@ const OrgLayout = ({
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>Caller</CardTitle>
+          <CardTitle>
+            <Suspense fallback={<div>loading...</div>}>Caller</Suspense>
+          </CardTitle>
         </CardHeader>
-        <CardContent>{caller}</CardContent>
+        <CardContent>
+          <Suspense fallback={<div>loading...</div>}>{caller}</Suspense>
+        </CardContent>
       </Card>
     </div>
   );

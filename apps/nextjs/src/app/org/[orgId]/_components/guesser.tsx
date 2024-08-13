@@ -1,25 +1,19 @@
 "use client";
 
+import { Suspense } from "react";
 import { skipToken } from "@tanstack/react-query";
 
 import { Button } from "@acme/ui/button";
 import { toast } from "@acme/ui/toast";
 
+import { useOptimisticOrgMutation } from "~/app/_api-hooks/optimistic-org-update";
 import { AddNewGuessForm } from "~/app/org/[orgId]/_components/add-new-guess-form";
 import { GuessHistory } from "~/app/org/[orgId]/_components/guess-histroy";
+import { NextPhoneNumberSelector } from "~/app/org/[orgId]/_components/next-phone-number-selector";
 import { api } from "~/trpc/react";
 
 export const Guesser = ({ orgId }: { orgId: string }) => {
-  const utils = api.useUtils();
-  const { mutate: updateOrg } = api.org.update.useMutation({
-    onSettled: async () => {
-      await utils.org.all.invalidate();
-      await utils.org.byId.invalidate({ id: orgId });
-    },
-    onError: (error) => {
-      toast.error("error updating org: " + error.message);
-    },
-  });
+  const { updateOrg } = useOptimisticOrgMutation();
   function setSelectedGuessId(guessId: string): void {
     updateOrg({ id: orgId, data: { selectedGuessId: guessId } });
   }
@@ -34,6 +28,14 @@ export const Guesser = ({ orgId }: { orgId: string }) => {
   return (
     <>
       {currentGuess && (
+        <Suspense fallback={<div>loading...</div>}>
+          <NextPhoneNumberSelector
+            orgId={orgId}
+            phoneNumber={currentGuess.phoneNumber}
+          />
+        </Suspense>
+      )}
+      {currentGuess && (
         <div className="flex border-2 p-4">
           <div>
             <h2>current guess</h2>
@@ -44,7 +46,9 @@ export const Guesser = ({ orgId }: { orgId: string }) => {
           </div>
         </div>
       )}
-      <GuessHistory orgId={orgId} setSelectedGuessId={setSelectedGuessId} />
+      <Suspense fallback={<div>loading...</div>}>
+        <GuessHistory orgId={orgId} setSelectedGuessId={setSelectedGuessId} />
+      </Suspense>
       <AddNewGuessForm
         setCurrentGuessId={setSelectedGuessId}
         currentOrgId={orgId}

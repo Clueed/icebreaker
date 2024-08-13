@@ -2,6 +2,7 @@ import { relations, sql } from "drizzle-orm";
 import {
   integer,
   json,
+  jsonb,
   pgEnum,
   pgTable,
   primaryKey,
@@ -46,7 +47,7 @@ export const CreateOrgSchema = createInsertSchema(Org, {
 export const Guess = pgTable("guess", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   orgId: uuid("org").notNull(),
-  phoneNumber: json("phoneNumber")
+  phoneNumber: jsonb("phoneNumber")
     .$type<{ base: string; extension: string }>()
     .notNull(),
   ...timeStampColumns,
