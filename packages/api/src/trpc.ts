@@ -14,7 +14,7 @@ import type { Session } from "@acme/auth";
 import { auth, validateToken } from "@acme/auth";
 import { db } from "@acme/db/client";
 
-import { env } from "../env";
+import { env } from "./env";
 
 /**
  * Isomorphic Session getter for API requests
