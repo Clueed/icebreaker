@@ -8,6 +8,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 
 import "~/app/globals.css";
 
+import { Suspense } from "react";
 import { Urbanist, Victor_Mono } from "next/font/google";
 
 import { CurrentPhoneCallProvider } from "~/app/_components/call-handler/current-call-provider";
@@ -53,7 +54,10 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout(props: { children: React.ReactNode }) {
+export default function RootLayout(props: {
+  children: React.ReactNode;
+  caller: React.ReactNode;
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -68,7 +72,16 @@ export default function RootLayout(props: { children: React.ReactNode }) {
             <SipProviderConfigured>
               <CurrentPhoneCallProvider>
                 <NavBar />
-                <main className="container">{props.children}</main>
+                <main className="container flex gap-16">
+                  <div className="flex-grow">
+                    <Suspense fallback={<div>loading...</div>}>
+                      {props.children}
+                    </Suspense>
+                  </div>
+                  <Suspense fallback={<div>loading...</div>}>
+                    {props.caller}
+                  </Suspense>
+                </main>
               </CurrentPhoneCallProvider>
             </SipProviderConfigured>
           </TRPCReactProvider>

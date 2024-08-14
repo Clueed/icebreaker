@@ -1,8 +1,9 @@
 import { auth } from "@acme/auth";
 
+import { CallHistory } from "~/app/@caller/_components/call-history";
+import { Caller } from "~/app/@caller/_components/caller";
 import RegisterSip from "~/app/org/[orgId]/_components/register-sip";
-import { CallHistory } from "~/app/org/[orgId]/@caller/_components/call-history";
-import { Caller } from "~/app/org/[orgId]/@caller/_components/caller";
+import SipProviderConfigured from "~/app/org/[orgId]/_components/sip-provider";
 import { api, HydrateClient } from "~/trpc/server";
 
 const CallerPage = async () => {
@@ -11,7 +12,6 @@ const CallerPage = async () => {
     throw new Error("not authenticated");
   }
 
-  //   results in auth error (???)
   //   const sipCredentials = await api.sipCredentials.get({
   //     userId: session.user.id,
   //   });
@@ -19,14 +19,14 @@ const CallerPage = async () => {
   await api.phoneCall.all.prefetch();
 
   return (
-    <>
-      {" "}
-      <HydrateClient>
+    <HydrateClient>
+      <div>
+        {" "}
         <RegisterSip userId={session.user.id} />
-        <Caller userId={session.user.id} />
+        <Caller />
         <CallHistory />
-      </HydrateClient>
-    </>
+      </div>
+    </HydrateClient>
   );
 };
 

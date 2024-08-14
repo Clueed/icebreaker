@@ -20,7 +20,7 @@ import {
 import { Input } from "@acme/ui/input";
 import { toast } from "@acme/ui/toast";
 
-import { SipStatus } from "~/app/org/[orgId]/@caller/_components/sip-status";
+import { SipStatus } from "~/app/@caller/_components/sip-status";
 import { api } from "~/trpc/react";
 
 const FormSchema = z.object({
