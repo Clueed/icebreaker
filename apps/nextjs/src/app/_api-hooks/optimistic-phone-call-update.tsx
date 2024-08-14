@@ -25,33 +25,31 @@ export function useOptimisticPhoneCallMutation() {
 
   const { mutateAsync: update } = api.phoneCall.update.useMutation({
     async onMutate(phoneCall) {
-      //   // Cancel outgoing fetches (so they don't overwrite our optimistic update)
-      //   await utils.phoneCall.byId.cancel({ id: phoneCall.id });
-      //   // Get the data from the queryCache
-      //   const prevData = utils.phoneCall.byId.getData({ id: phoneCall.id });
-      //   // Optimistically update the data with our new phoneCall
-      //   utils.phoneCall.byId.setData({ id: phoneCall.id }, (old) =>
-      //     old
-      //       ? {
-      //           ...old,
-      //           ...phoneCall.data,
-      //           updatedAt: new Date(),
-      //         }
-      //       : undefined,
-      //   );
-      //   // Return the previous data so we can revert if something goes wrong
-      //   return { prevData };
+      // Cancel outgoing fetches (so they don't overwrite our optimistic update)
+      await utils.phoneCall.byId.cancel({ id: phoneCall.id });
+      // Get the data from the queryCache
+      const prevData = utils.phoneCall.byId.getData({ id: phoneCall.id });
+      // Optimistically update the data with our new phoneCall
+      utils.phoneCall.byId.setData({ id: phoneCall.id }, (old) =>
+        old
+          ? {
+              ...old,
+              ...phoneCall.data,
+              updatedAt: new Date().toISOString(),
+            }
+          : undefined,
+      );
+      // Return the previous data so we can revert if something goes wrong
+      return { prevData };
     },
     onError(err, phoneCall, ctx) {
-      //   // If the mutation fails, use the context-value from onMutate
-      //   utils.phoneCall.byId.setData(
-      //     { id: phoneCall.id },
-      //     ctx ? ctx.prevData : undefined,
-      //   );
+      // If the mutation fails, use the context-value from onMutate
+      utils.phoneCall.byId.setData({ id: phoneCall.id }, ctx?.prevData);
     },
     onSettled(phoneCall, variables, ctx) {
       //   // Sync with server once mutation has settled
-      //   utils.phoneCall.byId.invalidate({ id: ctx.id });
+      utils.phoneCall.byId.invalidate({ id: ctx.id });
+      utils.phoneCall.all.invalidate();
     },
   });
   return {

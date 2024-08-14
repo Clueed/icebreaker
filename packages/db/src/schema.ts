@@ -1,7 +1,6 @@
 import { relations, sql } from "drizzle-orm";
 import {
   integer,
-  json,
   jsonb,
   pgEnum,
   pgTable,
@@ -154,10 +153,10 @@ export const UserSettings = pgTable("user_settings", {
 });
 
 export const CreateUserSettingsSchema = createInsertSchema(UserSettings, {
-  userId: z.string().uuid(),
   lastViewedOrgId: z.string().uuid(),
   currentPhoneCallId: z.string().uuid(),
 }).omit({
+  userId: true,
   createdAt: true,
   updatedAt: true,
 });

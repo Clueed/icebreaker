@@ -15,9 +15,9 @@ export default async function PlaygroundPage() {
     throw new Error("not authenticated");
   }
 
-  const userSettings = await api.userSettings.get({ userId: session.user.id });
+  const userSettings = await api.userSettings.get();
 
-  const lastViewedOrgId = userSettings !== 0 && userSettings.lastViewedOrgId;
+  const lastViewedOrgId = userSettings?.lastViewedOrgId;
 
   if (lastViewedOrgId) {
     return redirect(`/org/${lastViewedOrgId}`);

@@ -12,7 +12,9 @@ const OrgLayout = ({
   return (
     <div className="flex gap-16">
       <Card className="flex-grow">
-        <CardContent>{children}</CardContent>
+        <CardContent>
+          <Suspense fallback={<div>loading...</div>}>{children}</Suspense>
+        </CardContent>
       </Card>
       <Card>
         <CardHeader>

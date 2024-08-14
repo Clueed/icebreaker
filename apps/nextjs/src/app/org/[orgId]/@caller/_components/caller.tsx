@@ -2,51 +2,27 @@
 
 import { toast } from "@acme/ui/toast";
 
+import { useOptimisticUserSettingsMutation } from "~/app/_api-hooks/optimistic-user-settings-update";
+import { useCurrentPhoneCall } from "~/app/_components/call-handler/current-call-provider";
 import RegisterSip from "~/app/org/[orgId]/_components/register-sip";
-import { PhoneCallProvider } from "~/app/org/[orgId]/@caller/_components/current-call";
 import { MakePhoneCall } from "~/app/org/[orgId]/@caller/_components/make-phone-call";
 import { api } from "~/trpc/react";
 
-export const Caller = ({ userId }: { userId: string }) => {
-  const utils = api.useUtils();
-
-  const [userSettings] = api.userSettings.get.useSuspenseQuery({
-    userId,
-  });
-
-  const currentCallId =
-    userSettings !== 0 ? userSettings.currentPhoneCallId : null;
-
-  const { mutate: updateUserSettings } = api.userSettings.set.useMutation({
-    onSettled: async () => {
-      await utils.userSettings.get.invalidate({ userId });
-    },
-    onError: (error) => {
-      toast.error("error updating user settings: " + error.message);
-    },
-  });
-
-  function setCurrentPhoneCallId(phoneCallId: string | null): void {
-    updateUserSettings({
-      userId,
-      currentPhoneCallId: phoneCallId,
-    });
-  }
-
+export const Caller = () => {
+  const { phoneCall, startCall, endCall } = useCurrentPhoneCall();
   return (
     <>
-      <PhoneCallProvider
-        callId={currentCallId}
-        setCallId={setCurrentPhoneCallId}
-      >
-        <div>
-          {currentCallId ? (
-            <MakePhoneCall currentCallId={currentCallId} />
-          ) : (
-            <div>No call in progress</div>
-          )}
-        </div>
-      </PhoneCallProvider>
+      <div>
+        {phoneCall ? (
+          <MakePhoneCall
+            phoneCall={phoneCall}
+            startCall={startCall}
+            endCall={endCall}
+          />
+        ) : (
+          <div>No call in progress</div>
+        )}
+      </div>
     </>
   );
 };

@@ -7,6 +7,7 @@ import { Button } from "@acme/ui/button";
 import { toast } from "@acme/ui/toast";
 
 import { useOptimisticOrgMutation } from "~/app/_api-hooks/optimistic-org-update";
+import { useCurrentPhoneCall } from "~/app/_components/call-handler/current-call-provider";
 import { AddNewGuessForm } from "~/app/org/[orgId]/_components/add-new-guess-form";
 import { GuessHistory } from "~/app/org/[orgId]/_components/guess-histroy";
 import { NextPhoneNumberSelector } from "~/app/org/[orgId]/_components/next-phone-number-selector";
@@ -24,6 +25,8 @@ export const Guesser = ({ orgId }: { orgId: string }) => {
   const { data: currentGuess } = api.guess.byId.useQuery(
     selectedGuessId ? { id: selectedGuessId } : skipToken,
   );
+
+  const { startCall } = useCurrentPhoneCall();
 
   return (
     <>
@@ -44,6 +47,16 @@ export const Guesser = ({ orgId }: { orgId: string }) => {
               <div>{currentGuess?.phoneNumber.extension}</div>
             </div>
           </div>
+          <Button
+            onClick={() =>
+              startCall({
+                guessId: currentGuess.id,
+                phoneNumber: currentGuess.phoneNumber,
+              })
+            }
+          >
+            start call
+          </Button>
         </div>
       )}
       <Suspense fallback={<div>loading...</div>}>

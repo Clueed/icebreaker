@@ -10,21 +10,21 @@ export const userSettingsRouter = {
   set: protectedProcedure
     .input(CreateUserSettingsSchema)
     .mutation(async ({ ctx, input }) => {
-      const { userId, ...inputWithoutUserId } = input;
+      const inputWithUserId = { ...input, userId: ctx.session.user.id };
 
-      return ctx.db.insert(UserSettings).values(input).onConflictDoUpdate({
-        target: UserSettings.userId,
-        set: inputWithoutUserId,
-      });
+      return ctx.db
+        .insert(UserSettings)
+        .values(inputWithUserId)
+        .onConflictDoUpdate({
+          target: UserSettings.userId,
+          set: input,
+        });
     }),
 
-  get: protectedProcedure
-    .input(CreateUserSettingsSchema.pick({ userId: true }))
-    .query(async ({ ctx, input }) => {
-      return (
-        (await ctx.db.query.UserSettings.findFirst({
-          where: eq(UserSettings.userId, input.userId),
-        })) ?? 0
-      );
-    }),
+  get: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.query.UserSettings.findFirst({
+      where: eq(UserSettings.userId, ctx.session.user.id),
+      columns: { currentPhoneCallId: true, lastViewedOrgId: true },
+    });
+  }),
 } satisfies TRPCRouterRecord;

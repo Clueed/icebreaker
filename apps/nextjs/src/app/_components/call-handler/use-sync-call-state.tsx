@@ -1,3 +1,4 @@
+import type { AppRouterOutputs } from "node_modules/@acme/api/dist/root";
 import type { Dispatch, ReactNode, SetStateAction } from "react";
 import { createContext, useEffect, useMemo, useState } from "react";
 import { skipToken } from "@tanstack/react-query";
@@ -10,23 +11,14 @@ import { useOptimisticPhoneCallMutation } from "~/app/_api-hooks/optimistic-phon
 import { api } from "~/trpc/react";
 
 export function useSyncCallState(
-  callId?: string,
-  sessionId?: string,
-  options: {
-    onEnd?: () => void;
-  } = {},
+  phoneCall?: AppRouterOutputs["phoneCall"]["byId"],
 ) {
-  const { data: dbPhoneCall } = api.phoneCall.byId.useQuery(
-    callId ? { id: callId } : skipToken,
-    {
-      enabled: callId !== undefined,
-    },
-  );
+  const { sessionId, id: callId, state } = phoneCall ?? {};
 
   const { updatePhoneCall } = useOptimisticPhoneCallMutation();
 
   const { sessions } = useSIPProvider();
-  const session = sessionId && sessions[sessionId];
+  const session = sessionId ? sessions[sessionId] : undefined;
 
   useEffect(() => {
     if (!sessionId || !callId) {
@@ -35,7 +27,7 @@ export function useSyncCallState(
 
     if (!session) {
       toast.error("Call Sync: No session found");
-      if (dbPhoneCall && dbPhoneCall.state !== "Terminated") {
+      if (state && state !== "Terminated") {
         updatePhoneCall(
           {
             id: callId,
@@ -69,11 +61,6 @@ export function useSyncCallState(
           },
         },
       );
-      const newCallState = mapSipStateToCallState(newSessionState);
-      if (newCallState === "Terminated") {
-        options.onEnd?.();
-        return;
-      }
     };
 
     session.stateChange.addListener(listener);
@@ -81,20 +68,5 @@ export function useSyncCallState(
     return () => {
       session.stateChange.removeListener(listener);
     };
-  }, [session, options.onEnd]);
+  }, [session]);
 }
-
-const mapSipStateToCallState = (state: SessionState) => {
-  switch (state) {
-    case SessionState.Initial:
-      return "Initial";
-    case SessionState.Establishing:
-      return "Establishing";
-    case SessionState.Established:
-      return "Established";
-    case SessionState.Terminating:
-      return "Terminating";
-    case SessionState.Terminated:
-      return "Terminated";
-  }
-};

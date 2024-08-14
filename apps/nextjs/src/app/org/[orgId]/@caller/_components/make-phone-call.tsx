@@ -1,12 +1,16 @@
 "use client";
 
-import type { AppRouterInputs } from "node_modules/@acme/api/dist/root";
+import type {
+  AppRouterInputs,
+  AppRouterOutputs,
+} from "node_modules/@acme/api/dist/root";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { skipToken } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useSIPProvider } from "react-sipjs";
 import { z } from "zod";
 
+import type { NotEmptyPhoneNumber } from "@acme/validators/phone-number";
 import { Button } from "@acme/ui/button";
 import {
   Form,
@@ -24,14 +28,25 @@ import { CallInfo } from "~/app/org/[orgId]/@caller/_components/call-info";
 import { usePhoneCall } from "~/app/org/[orgId]/@caller/_components/current-call";
 import { api } from "~/trpc/react";
 
-export function MakePhoneCall({ currentCallId }: { currentCallId: string }) {
-  const [phoneCall] = api.phoneCall.byId.useSuspenseQuery({
-    id: currentCallId,
-  });
-
+export function MakePhoneCall({
+  phoneCall,
+  startCall,
+  endCall,
+}: {
+  phoneCall: AppRouterOutputs["phoneCall"]["byId"];
+  startCall: ({
+    guessId,
+    phoneNumber,
+  }: {
+    guessId: string;
+    phoneNumber: NotEmptyPhoneNumber;
+  }) => Promise<void>;
+  endCall: () => Promise<void>;
+}) {
   const phoneCallActive =
     phoneCall && !["Terminated", "Terminating"].includes(phoneCall.state);
-  const { startCall, endCall } = usePhoneCall();
+
+  console.log("phoneCall.state", phoneCall.state);
 
   return (
     <div>
@@ -39,12 +54,21 @@ export function MakePhoneCall({ currentCallId }: { currentCallId: string }) {
         {phoneCall.guess.phoneNumber.base}-
         {phoneCall.guess.phoneNumber.extension}
       </div>
-      {currentCallId && phoneCallActive ? (
+      {phoneCallActive ? (
         <Button onClick={endCall}>Hangup</Button>
       ) : (
-        <Button onClick={startCall}>Make Call</Button>
+        <Button
+          onClick={() =>
+            startCall({
+              guessId: phoneCall.guess.id,
+              phoneNumber: phoneCall.guess.phoneNumber,
+            })
+          }
+        >
+          Make Call
+        </Button>
       )}
-      {currentCallId && <CallInfo callId={currentCallId} />}
+      {<CallInfo callId={phoneCall.id} />}
     </div>
   );
 }
