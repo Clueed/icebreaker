@@ -18,7 +18,6 @@ export function useEndCall() {
       }
 
       const session = sessions[sessionId];
-      console.log("Ending Call: session", session);
       if (!session) {
         toast.error("Ending Call: No session");
         return;

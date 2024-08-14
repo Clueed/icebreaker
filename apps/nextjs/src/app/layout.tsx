@@ -13,7 +13,7 @@ import { Urbanist, Victor_Mono } from "next/font/google";
 
 import { CurrentPhoneCallProvider } from "~/app/_components/call-handler/current-call-provider";
 import NavBar from "~/app/_components/nav";
-import SipProviderConfigured from "~/app/org/[orgId]/_components/sip-provider";
+import SipProviderConfigured from "~/app/_components/sip-provider";
 import { env } from "~/env";
 
 const fontMono = Victor_Mono({

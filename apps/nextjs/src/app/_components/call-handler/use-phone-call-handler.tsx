@@ -14,6 +14,7 @@ export const usePhoneCallHandler = ({
   phoneCall?: AppRouterOutputs["phoneCall"]["byId"];
 }) => {
   useSyncCallState(phoneCall);
+  console.log("test1");
 
   const { updateUserSettings } = useOptimisticUserSettingsMutation();
 

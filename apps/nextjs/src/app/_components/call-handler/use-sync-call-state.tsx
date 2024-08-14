@@ -68,5 +68,5 @@ export function useSyncCallState(
     return () => {
       session.stateChange.removeListener(listener);
     };
-  }, [session]);
+  }, [session, phoneCall]);
 }

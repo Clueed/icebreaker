@@ -2,8 +2,7 @@ import { auth } from "@acme/auth";
 
 import { CallHistory } from "~/app/@caller/_components/call-history";
 import { Caller } from "~/app/@caller/_components/caller";
-import RegisterSip from "~/app/org/[orgId]/_components/register-sip";
-import SipProviderConfigured from "~/app/org/[orgId]/_components/sip-provider";
+import RegisterSip from "~/app/@caller/_components/register-sip";
 import { api, HydrateClient } from "~/trpc/server";
 
 const CallerPage = async () => {
