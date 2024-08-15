@@ -1,19 +1,50 @@
-import type { Strategy } from '../index'
-import { isBase10Strategy } from '../index'
-import { isRandomStrategy } from '../strategy-random'
-import applyStrategyBase10 from './apply-strategy-base10'
-import applyStrategyRandom from './apply-strategy-random'
+import type { NotEmptyPhoneNumber } from "../../phone-number";
+import type { Strategy } from "../index";
+import { isBase10Strategy } from "../index";
+import { isRandomStrategy } from "../strategy-random";
+import applyStrategyBase10 from "./apply-strategy-base10";
+import applyStrategyRandom from "./apply-strategy-random";
 
 function applyStrategy(extension: string, strategy: Strategy) {
-    if (isBase10Strategy(strategy)) {
-        return applyStrategyBase10(extension, strategy)
-    }
+  if (isBase10Strategy(strategy)) {
+    return applyStrategyBase10(extension, strategy);
+  }
 
-    if (isRandomStrategy(strategy)) {
-        return applyStrategyRandom(extension)
-    }
+  if (isRandomStrategy(strategy)) {
+    return applyStrategyRandom(extension);
+  }
 
-    throw new Error('Invalid extension strategy')
+  const _exhaustiveCheck: never = strategy;
+  throw new Error("Invalid extension strategy");
 }
 
-export { applyStrategy }
+function generateNextPhoneNumbers({
+  phoneNumber,
+  strategy,
+  count,
+}: {
+  phoneNumber: NotEmptyPhoneNumber;
+  strategy: Strategy;
+  count: number;
+}) {
+  const newPhoneNumbers = Array.from({ length: count }).reduce(
+    (acc: NotEmptyPhoneNumber[], _, index) => {
+      const newExtension = applyStrategy(
+        acc[index - 1]?.extension ?? phoneNumber.extension,
+        strategy,
+      );
+
+      const newPhoneNumber: NotEmptyPhoneNumber = {
+        base: phoneNumber.base,
+        extension: newExtension,
+      };
+
+      return [...acc, newPhoneNumber];
+    },
+    [] as NotEmptyPhoneNumber[],
+  );
+
+  return newPhoneNumbers;
+}
+
+export { generateNextPhoneNumbers };

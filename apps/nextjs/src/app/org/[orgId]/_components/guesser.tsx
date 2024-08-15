@@ -31,38 +31,16 @@ export const Guesser = ({ orgId }: { orgId: string }) => {
 
   return (
     <>
-      {currentGuess && (
-        <Suspense fallback={<div>loading...</div>}>
-          <NextPhoneNumberSelector
-            orgId={orgId}
-            phoneNumber={currentGuess.phoneNumber}
-          />
-        </Suspense>
+      {selectedGuessId && (
+        <NextPhoneNumberSelector
+          orgId={orgId}
+          selectedGuessId={selectedGuessId}
+        />
       )}
-      {currentGuess && (
-        <div className="flex border-2 p-4">
-          <div>
-            <h2>current guess</h2>
-            <div className="flex gap-1">
-              <div>{currentGuess?.phoneNumber.base}</div>-
-              <div>{currentGuess?.phoneNumber.extension}</div>
-            </div>
-          </div>
-          <Button
-            onClick={() =>
-              startCall({
-                guessId: currentGuess.id,
-                phoneNumber: currentGuess.phoneNumber,
-              })
-            }
-          >
-            start call
-          </Button>
-        </div>
-      )}
-      <Suspense fallback={<div>loading...</div>}>
+
+      {/* <Suspense fallback={<div>loading...</div>}>
         <GuessHistory orgId={orgId} setSelectedGuessId={setSelectedGuessId} />
-      </Suspense>
+      </Suspense> */}
       <AddNewGuessForm
         setCurrentGuessId={setSelectedGuessId}
         currentOrgId={orgId}

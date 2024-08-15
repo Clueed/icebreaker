@@ -1,5 +1,6 @@
-import { relations, sql } from "drizzle-orm";
+import { relations, sql, Table } from "drizzle-orm";
 import {
+  index,
   integer,
   jsonb,
   pgEnum,
@@ -7,6 +8,7 @@ import {
   primaryKey,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -43,14 +45,22 @@ export const CreateOrgSchema = createInsertSchema(Org, {
 });
 
 // Guess
-export const Guess = pgTable("guess", {
-  id: uuid("id").notNull().primaryKey().defaultRandom(),
-  orgId: uuid("org").notNull(),
-  phoneNumber: jsonb("phoneNumber")
-    .$type<{ base: string; extension: string }>()
-    .notNull(),
-  ...timeStampColumns,
-});
+export const Guess = pgTable(
+  "guess",
+  {
+    id: uuid("id").notNull().primaryKey().defaultRandom(),
+    orgId: uuid("org").notNull(),
+    phoneNumber: jsonb("phoneNumber")
+      .$type<{ base: string; extension: string }>()
+      .notNull()
+      .unique(),
+    ...timeStampColumns,
+  },
+  (table) => ({
+    phoneNumberIndex: uniqueIndex("phone_number_index").on(table.phoneNumber),
+    orgIdIndex: index("org_id_index").on(table.orgId),
+  }),
+);
 
 export const guessRelation = relations(Guess, ({ many, one }) => ({
   org: one(Org, { fields: [Guess.orgId], references: [Org.id] }),

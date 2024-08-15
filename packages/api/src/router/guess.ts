@@ -4,14 +4,13 @@ import { z } from "zod";
 
 import type { DB } from "@acme/db/client";
 import type { NotEmptyPhoneNumber } from "@acme/validators/phone-number";
-import { desc, eq } from "@acme/db";
+import { desc, eq, sql } from "@acme/db";
 import { CreateGuessSchema, Guess } from "@acme/db/schema";
 import { strategySchema } from "@acme/validators/guessing-strategies";
-import { applyStrategy } from "@acme/validators/guessing-strategies/apply-strategy";
-import { notEmptyphoneNumberSchema } from "@acme/validators/phone-number";
+import { generateNextPhoneNumbers } from "@acme/validators/guessing-strategies/apply-strategy";
 
 import { findFirstOrThrow, takeUniqueOrThrow } from "../helpers";
-import { protectedProcedure, publicProcedure } from "../trpc";
+import { protectedProcedure } from "../trpc";
 
 export const guessRouter = {
   all: protectedProcedure
@@ -40,38 +39,42 @@ export const guessRouter = {
   next: protectedProcedure
     .input(
       z.object({
-        orgId: z.string(),
-        phoneNumber: notEmptyphoneNumberSchema,
+        guessId: z.string(),
         strategy: strategySchema,
-        count: z.number().min(1).optional().default(10),
+        // Cursor: The cursor from where to start fetching the posts.
+        // This will progressively increase as we fetch more posts.
+        cursor: z.string().uuid().nullish(),
+        // Limit: The number of posts to fetch. The default value is 5.
+        limit: z.number().min(1).max(50).default(5),
       }),
     )
     .query(async ({ ctx, input }) => {
-      const { phoneNumber, strategy, count } = input;
+      const { cursor, limit, strategy } = input;
+      const guessId = cursor ?? input.guessId;
 
-      const newPhoneNumbers = Array.from({ length: count }).reduce(
-        (acc: NotEmptyPhoneNumber[], _, index) => {
-          const newExtension = applyStrategy(
-            acc[index - 1]?.extension ?? phoneNumber.extension,
-            strategy,
-          );
+      const guess = await ctx.db.query.Guess.findFirst({
+        where: eq(Guess.id, guessId),
+      }).then(findFirstOrThrow("guess"));
 
-          const newPhoneNumber: NotEmptyPhoneNumber = {
-            base: phoneNumber.base,
-            extension: newExtension,
-          };
+      const count = limit + 2; // generate one more then neccessary to get next cursor
 
-          return [...acc, newPhoneNumber];
-        },
-        [] as NotEmptyPhoneNumber[],
-      );
-
-      const createGuessInputs = newPhoneNumbers.map((phoneNumber) => ({
+      const newPhoneNumbers = generateNextPhoneNumbers({
+        phoneNumber: guess.phoneNumber,
+        strategy,
+        count: count,
+      }).map((phoneNumber) => ({
         phoneNumber,
-        orgId: input.orgId,
+        orgId: guess.orgId,
       }));
 
-      return await createGuesses(ctx.db, createGuessInputs);
+      const newGuesses = await createGuesses(ctx.db, newPhoneNumbers);
+
+      const data = [guess, ...newGuesses.slice(0, count - 2)];
+
+      return {
+        data,
+        nextCursor: newGuesses[count - 1]?.id,
+      };
     }),
 
   create: protectedProcedure
@@ -95,8 +98,13 @@ const createGuesses = async (
     db
       .insert(Guess)
       .values(guessesInputs)
-      // .onConflictDoUpdate({ target: Guess.id, set: {} }) // for updatedAt
-      .onConflictDoNothing()
+      .onConflictDoUpdate({
+        target: Guess.phoneNumber,
+        set: {
+          updatedAt: sql`now()`,
+        },
+      }) // for updatedAt
+      //   .onConflictDoNothing({ target: Guess.id })
       .returning()
   );
 };
