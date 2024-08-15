@@ -9,11 +9,14 @@ export const GuessHistory = ({
   orgId: string;
   setSelectedGuessId: (id: string) => void;
 }) => {
-  const [guesses] = api.guess.all.useSuspenseQuery({ orgId });
+  const { data: guesses = [], isLoading } = api.guess.all.useQuery({
+    orgId,
+  });
 
-  function handleOnClick(guessId: string): void {
-    console.log("guessId", guessId);
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
+
   return (
     <div className="flex flex-col gap-2">
       {guesses.map((guess) => (

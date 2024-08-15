@@ -6,7 +6,7 @@ import { api } from "~/trpc/react";
 
 export const CallHistory = () => {
   // TODO: make infinite
-  const [calls] = api.phoneCall.all.useSuspenseQuery();
+  const { data: calls = [] } = api.phoneCall.all.useQuery();
   return (
     <div className="space-y-2">
       {calls.map((call) => (

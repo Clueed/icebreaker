@@ -1,5 +1,6 @@
 "use client";
 
+import type { AppRouterOutputs } from "node_modules/@acme/api/dist/root";
 import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -28,8 +29,11 @@ const FormSchema = z.object({
   password: z.string().min(2),
 });
 
-function RegisterSip({ userId }: { userId: string }) {
-  const [remoteCredentials] = api.sipCredentials.get.useSuspenseQuery();
+function RegisterSip({
+  remoteCredentials,
+}: {
+  remoteCredentials: AppRouterOutputs["sipCredentials"]["get"];
+}) {
   const { connectAndRegister, connectStatus } = useSIPProvider();
 
   const [connectingToastId, setConnectingToastId] = useState<string | number>();
@@ -66,13 +70,11 @@ function RegisterSip({ userId }: { userId: string }) {
     defaultValues: remoteCredentials,
   });
 
-  const { mutate: setRemoteCredentials } = api.sipCredentials.set.useMutation(
-    {},
-  );
+  const { mutate: setRemoteCredentials } = api.sipCredentials.set.useMutation();
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
     connectAndRegister(data);
-    setRemoteCredentials({ userId, ...data });
+    setRemoteCredentials(data);
   };
 
   if (connectStatus === CONNECT_STATUS.CONNECTED) {

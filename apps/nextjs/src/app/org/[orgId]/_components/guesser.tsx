@@ -18,9 +18,10 @@ export const Guesser = ({ orgId }: { orgId: string }) => {
   function setSelectedGuessId(guessId: string): void {
     updateOrg({ id: orgId, data: { selectedGuessId: guessId } });
   }
-  const [{ selectedGuessId }] = api.org.byId.useSuspenseQuery({
+  const { data: org } = api.org.byId.useQuery({
     id: orgId,
   });
+  const { selectedGuessId } = org ?? {};
 
   const { data: currentGuess } = api.guess.byId.useQuery(
     selectedGuessId ? { id: selectedGuessId } : skipToken,

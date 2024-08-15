@@ -45,7 +45,7 @@ export function MakePhoneCall({
           Make Call
         </Button>
       )}
-      {<CallInfo callId={phoneCall.id} />}
+      {<CallInfo phoneCall={phoneCall} />}
     </div>
   );
 }

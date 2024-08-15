@@ -9,12 +9,14 @@ export const NextPhoneNumberSelector = ({
   orgId: string;
   phoneNumber: NotEmptyPhoneNumber;
 }) => {
-  const [nextPhoneNumbers] = api.guess.next.useSuspenseQuery({
+  const { data: nextPhoneNumbersData } = api.guess.next.useQuery({
     orgId,
     phoneNumber,
     strategy: { type: "random" },
     count: 10,
   });
+
+  const nextPhoneNumbers = nextPhoneNumbersData ?? [];
 
   return (
     <div>

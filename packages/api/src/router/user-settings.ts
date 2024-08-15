@@ -24,7 +24,6 @@ export const userSettingsRouter = {
   get: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.query.UserSettings.findFirst({
       where: eq(UserSettings.userId, ctx.session.user.id),
-      columns: { currentPhoneCallId: true, lastViewedOrgId: true },
     });
   }),
 } satisfies TRPCRouterRecord;
