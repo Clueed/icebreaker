@@ -1,7 +1,7 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
-import { and, desc, eq } from "@acme/db";
+import { and, desc, eq, not } from "@acme/db";
 import { CreatePhoneCallSchema, PhoneCall } from "@acme/db/schema";
 
 import { findFirstOrThrow, takeUniqueOrThrow } from "../helpers";
@@ -11,20 +11,25 @@ import { protectedProcedure } from "../trpc";
 // - filter by user
 // - infinity
 export const phoneCallRouter = {
-  all: protectedProcedure.query(({ ctx }) => {
-    // return ctx.db.select().from(schema.PhoneCall).orderBy(desc(schema.PhoneCall.id));
-    return ctx.db.query.PhoneCall.findMany({
-      orderBy: desc(PhoneCall.updatedAt),
-      limit: 10,
-      with: {
-        guess: {
-          columns: {
-            phoneNumber: true,
+  all: protectedProcedure
+    .input(z.object({ active: z.boolean().optional() }))
+    .query(({ ctx, input }) => {
+      // return ctx.db.select().from(schema.PhoneCall).orderBy(desc(schema.PhoneCall.id));
+      return ctx.db.query.PhoneCall.findMany({
+        orderBy: desc(PhoneCall.updatedAt),
+        where: input.active
+          ? not(eq(PhoneCall.state, "Terminated"))
+          : undefined,
+        limit: 10,
+        with: {
+          guess: {
+            columns: {
+              phoneNumber: true,
+            },
           },
         },
-      },
-    });
-  }),
+      });
+    }),
 
   byId: protectedProcedure
     .input(z.object({ id: z.string() }))
@@ -67,6 +72,8 @@ export const phoneCallRouter = {
           .set(data)
           // .where(eq(PhoneCall.id, id));
           .where(and(eq(PhoneCall.id, id), eq(PhoneCall.sessionId, sessionId)))
+          .returning()
+          .then(takeUniqueOrThrow("update phone call"))
       );
     }),
 

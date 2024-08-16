@@ -1,7 +1,8 @@
 import type { AppRouterOutputs } from "node_modules/@acme/api/dist/root";
 import type { Dispatch, ReactNode, SetStateAction } from "react";
 import { createContext, useEffect, useMemo, useState } from "react";
-import { skipToken } from "@tanstack/react-query";
+import { skipToken, useIsMutating } from "@tanstack/react-query";
+import { getMutationKey, getQueryKey } from "@trpc/react-query";
 import { useSIPProvider } from "react-sipjs";
 import { SessionState } from "sip.js";
 
@@ -10,9 +11,16 @@ import { toast } from "@acme/ui/toast";
 import { useOptimisticPhoneCallMutation } from "~/app/_api-hooks/optimistic-phone-call-update";
 import { api } from "~/trpc/react";
 
-export function useSyncCallState(
-  phoneCall?: AppRouterOutputs["phoneCall"]["byId"],
-) {
+export function useSyncCallState(phoneCall?: {
+  id: string;
+  sessionId: string;
+  state:
+    | "Initial"
+    | "Establishing"
+    | "Established"
+    | "Terminating"
+    | "Terminated";
+}) {
   const { sessionId, id: callId, state } = phoneCall ?? {};
 
   const { updatePhoneCall } = useOptimisticPhoneCallMutation();

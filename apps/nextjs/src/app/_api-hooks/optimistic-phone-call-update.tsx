@@ -6,6 +6,8 @@ export function useOptimisticPhoneCallMutation() {
   const utils = api.useUtils();
   const { mutateAsync: create } = api.phoneCall.create.useMutation({
     async onSuccess(newPhoneCall, variables) {
+      utils.phoneCall.all.invalidate();
+      utils.phoneCall.byId.invalidate({ id: newPhoneCall.id });
       //   await utils.phoneCall.byId.cancel({ id: newPhoneCall.id });
       //   utils.phoneCall.byId.setData(
       //     { id: newPhoneCall.id },
@@ -47,9 +49,11 @@ export function useOptimisticPhoneCallMutation() {
       utils.phoneCall.byId.setData({ id: phoneCall.id }, ctx?.prevData);
     },
     onSettled(phoneCall, variables, ctx) {
-      //   // Sync with server once mutation has settled
+      // Sync with server once mutation has settled
       utils.phoneCall.byId.invalidate({ id: ctx.id });
       utils.phoneCall.all.invalidate();
+      utils.guess.byId.invalidate({ id: phoneCall?.guessId });
+      utils.guess.all.invalidate();
     },
   });
   return {

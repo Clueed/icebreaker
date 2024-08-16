@@ -1,18 +1,27 @@
 "use client";
 
 import type { RouterOutputs } from "@acme/api";
+import { Card, CardContent, CardHeader, CardTitle } from "@acme/ui/card";
 
 import { api } from "~/trpc/react";
 
 export const CallHistory = () => {
   // TODO: make infinite
-  const { data: calls = [] } = api.phoneCall.all.useQuery();
+  const { data: calls = [], isFetching } = api.phoneCall.all.useQuery({
+    active: false,
+  });
+
   return (
-    <div className="space-y-2">
-      {calls.map((call) => (
-        <HistoryCall key={call.id} call={call} />
-      ))}
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Call History</CardTitle>
+      </CardHeader>
+      <CardContent className="h-96 space-y-2 overflow-y-auto">
+        {calls.map((call) => (
+          <HistoryCall key={call.id} call={call} />
+        ))}
+      </CardContent>
+    </Card>
   );
 };
 
@@ -21,9 +30,17 @@ const HistoryCall = ({
 }: {
   call: RouterOutputs["phoneCall"]["all"][number];
 }) => {
+  const { base, extension } = call.guess.phoneNumber;
+  const lastModified = new Date(
+    call.updatedAt ?? call.createdAt,
+  ).toLocaleTimeString();
+
   return (
-    <div className="border-2 p-4">
-      {call.guess.phoneNumber.base}-{call.guess.phoneNumber.extension}
+    <div className="flex w-full justify-between gap-2 rounded bg-muted p-2">
+      <div>
+        <span className="text-muted-foreground">{base}</span>-{extension}
+      </div>
+      <div className="text-sm">{lastModified}</div>
     </div>
   );
 };
