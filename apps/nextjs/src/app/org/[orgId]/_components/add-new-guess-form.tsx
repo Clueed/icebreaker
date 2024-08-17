@@ -17,7 +17,6 @@ import { Input } from "@acme/ui/input";
 import { toast } from "@acme/ui/toast";
 
 import { useCreateGuess } from "~/app/_api-hooks/use-create-guess";
-import { api } from "~/trpc/react";
 
 const FormSchema = z.object({
   base: z.string().min(2, {
