@@ -33,6 +33,9 @@ export const guessRouter = {
 
       return ctx.db.query.Guess.findFirst({
         where: eq(Guess.id, input.id),
+        with: {
+          phoneCalls: true,
+        },
       }).then(findFirstOrThrow("guess"));
     }),
 

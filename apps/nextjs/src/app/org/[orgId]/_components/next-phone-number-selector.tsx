@@ -8,6 +8,7 @@ import { toast } from "@acme/ui/toast";
 
 import { useOptimisticOrgMutation } from "~/app/_api-hooks/optimistic-org-update";
 import { useCurrentPhoneCall } from "~/app/_components/call-handler/current-call-provider";
+import { AutoSkipper } from "~/app/org/[orgId]/_components/auto-skipper";
 import { api } from "~/trpc/react";
 
 export const NextPhoneNumberSelector = ({
@@ -52,20 +53,33 @@ export const NextPhoneNumberSelector = ({
     }
   }
 
+  const indexOfSelectedGuess = nextGuesses.findIndex(
+    (g) => g.id === selectedGuessId,
+  );
+  const nextGuessId = nextGuesses[indexOfSelectedGuess + 1]?.id;
+
   if (!nextGuesses) {
     return null;
   }
 
   return (
-    <div className="h-96 overflow-y-scroll">
-      {[...nextGuesses].reverse().map((guess) => (
-        <GuessDisplay
-          key={guess.id}
-          guess={guess}
-          onClick={() => setSelectedGuessId(guess.id)}
-          selected={selectedGuessId === guess.id}
+    <div>
+      <div className="h-96 overflow-y-scroll">
+        {[...nextGuesses].reverse().map((guess) => (
+          <GuessDisplay
+            key={guess.id}
+            guess={guess}
+            onClick={() => setSelectedGuessId(guess.id)}
+            selected={selectedGuessId === guess.id}
+          />
+        ))}
+      </div>
+      <div>
+        <AutoSkipper
+          selectedGuessId={selectedGuessId}
+          nextGuessId={nextGuessId}
         />
-      ))}
+      </div>
     </div>
   );
 };
