@@ -10,9 +10,7 @@ import { api } from "~/trpc/react";
 export const useCurrentStrategyQuery = (
   input: AppRouterInputs["org"]["extensionStrategyById"],
 ) => {
-  return api.org.extensionStrategyById.useQuery(input, {
-    select: (data) => (data === 0 ? undefined : data),
-  });
+  return api.org.extensionStrategyById.useQuery(input);
 };
 
 export const useCurrentStrategySetMutation = () => {

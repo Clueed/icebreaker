@@ -2,6 +2,7 @@ import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import type { Strategy } from "@acme/validators/guessing-strategies";
 import { desc, eq } from "@acme/db";
 import { CreateOrgSchema, Org } from "@acme/db/schema";
 
@@ -47,7 +48,9 @@ export const orgRouter = {
         });
       }
 
-      return org.currentStrategy === null ? 0 : org.currentStrategy;
+      return org.currentStrategy === null
+        ? ({ numberToAdd: 1, type: "add" } satisfies Strategy)
+        : org.currentStrategy;
     }),
 
   setExtensionStrategy: protectedProcedure

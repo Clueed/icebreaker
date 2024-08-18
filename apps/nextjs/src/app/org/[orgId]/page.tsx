@@ -6,7 +6,7 @@ import { auth } from "@acme/auth";
 
 import { Guesser } from "~/app/org/[orgId]/_components/guesser";
 
-export default async function PlaygroundPage({
+export default async function GuesserPage({
   params,
 }: {
   params: { orgId: string };

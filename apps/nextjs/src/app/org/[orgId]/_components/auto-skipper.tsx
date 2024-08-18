@@ -3,20 +3,22 @@ import { useCallback, useEffect, useState } from "react";
 import { Button } from "@acme/ui/button";
 
 import { useOptimisticOrgMutation } from "~/app/_api-hooks/optimistic-org-update";
+import {
+  useSelectedGuessIdSetQuery,
+  useSelectedGuessQuery,
+} from "~/app/_api-hooks/use-selected-guess";
 import { api } from "~/trpc/react";
 
 export const AutoSkipper = ({
-  selectedGuessId,
+  orgId,
   nextGuessId,
 }: {
-  selectedGuessId: string;
+  orgId: string;
   nextGuessId: string | undefined;
 }) => {
-  const { data: selectedGuess } = api.guess.byId.useQuery({
-    id: selectedGuessId,
-  });
+  const { data: selectedGuess } = useSelectedGuessQuery({ id: orgId });
 
-  const { updateOrg } = useOptimisticOrgMutation();
+  const setSelectedGuessIdMutation = useSelectedGuessIdSetQuery();
 
   const setSelectedGuessId = useCallback(() => {
     console.debug("[AS] setSelectedGuessId called");
@@ -30,11 +32,11 @@ export const AutoSkipper = ({
     }
 
     console.debug("[AS] Updating org with selectedGuessId:", nextGuessId);
-    updateOrg({
-      id: selectedGuess.orgId,
+    setSelectedGuessIdMutation.mutate({
+      orgId: selectedGuess.orgId,
       data: { selectedGuessId: nextGuessId },
     });
-  }, [selectedGuess?.id, nextGuessId, updateOrg]);
+  }, [selectedGuess?.id, nextGuessId, setSelectedGuessIdMutation.mutate]);
 
   const [enabled, setEnabled] = useState(false);
 

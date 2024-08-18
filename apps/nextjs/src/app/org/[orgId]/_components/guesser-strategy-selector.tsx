@@ -3,7 +3,6 @@
 import { useState } from "react";
 
 import type { Strategy } from "@acme/validators/guessing-strategies";
-import type { NotEmptyPhoneNumber } from "@acme/validators/phone-number";
 import { cn } from "@acme/ui";
 import { Dices } from "@acme/ui/icons";
 import { Label } from "@acme/ui/label";
@@ -17,19 +16,27 @@ import {
 } from "@acme/validators/guessing-strategies";
 import { getAvailableExtensionStrategies } from "@acme/validators/guessing-strategies/get-available-strategies";
 
-import { api } from "~/trpc/react";
+import {
+  useCurrentStrategyQuery,
+  useCurrentStrategySetMutation,
+} from "~/app/_api-hooks/use-current-strategy";
+import { useSelectedGuessQuery } from "~/app/_api-hooks/use-selected-guess";
 
 const GuesserStrategySelector = (props: {
-  currentPhoneNumber: NotEmptyPhoneNumber;
-  currentExtensionStrategy: Strategy;
-  onExtensionStrategyChange: (strategy: Strategy) => void;
+  orgId: string;
+
   onApplyExtensionStrategyOnce: (strategy: Strategy) => void;
 }) => {
-  const currentExtensionStrategy = props.currentExtensionStrategy;
+  const { data: currentStrategy } = useCurrentStrategyQuery({
+    id: props.orgId,
+  });
 
-  const availbaleExtensionStrategies = getAvailableExtensionStrategies(
-    props.currentPhoneNumber,
-  );
+  const { data: selectedGuess } = useSelectedGuessQuery({ id: props.orgId });
+  const currentPhoneNumber = selectedGuess?.phoneNumber;
+
+  const availbaleExtensionStrategies = currentPhoneNumber
+    ? getAvailableExtensionStrategies(currentPhoneNumber)
+    : [];
 
   const sortedStrategies = availbaleExtensionStrategies.sort(startStrategiesUi);
 
@@ -37,14 +44,23 @@ const GuesserStrategySelector = (props: {
     availbaleExtensionStrategies.length - 1,
   ]);
 
+  const { mutate: setCurrentStrategy } = useCurrentStrategySetMutation();
   const handleLongPress = (strategy: Strategy) => {
     if (isRandomStrategy(strategy)) {
-      props.onExtensionStrategyChange(strategy);
+      setCurrentStrategy({
+        id: props.orgId,
+        data: { currentStrategy: strategy },
+      });
     }
     if (isAdditionStrategy(strategy)) {
-      props.onExtensionStrategyChange({
-        ...strategy,
-        loopAtPower: loopAtPower[0],
+      setCurrentStrategy({
+        id: props.orgId,
+        data: {
+          currentStrategy: {
+            ...strategy,
+            loopAtPower: undefined,
+          },
+        },
       });
     }
   };
@@ -54,13 +70,25 @@ const GuesserStrategySelector = (props: {
       throw new Error("Slider Error: value should not be falsy");
     }
 
+    if (!currentStrategy) {
+      throw new Error("Slider Error: currentStrategy should not be falsy");
+    }
     setLoopAtPower([value[0]]);
-    if (isAdditionStrategy(currentExtensionStrategy)) {
-      props.onExtensionStrategyChange({
-        ...currentExtensionStrategy,
-        loopAtPower: value[0],
+    if (isAdditionStrategy(currentStrategy)) {
+      setCurrentStrategy({
+        id: props.orgId,
+        data: {
+          currentStrategy: {
+            ...currentStrategy,
+            loopAtPower: undefined, //value[0],
+          },
+        },
       });
     }
+  }
+
+  if (!currentStrategy) {
+    return null;
   }
 
   return (
@@ -74,10 +102,7 @@ const GuesserStrategySelector = (props: {
             }}
             key={index}
             variant={
-              extionsionStrategiesAreEqual(
-                currentExtensionStrategy,
-                extensionStrategy,
-              )
+              extionsionStrategiesAreEqual(currentStrategy, extensionStrategy)
                 ? "secondary"
                 : "outline"
             }
@@ -105,7 +130,7 @@ const GuesserStrategySelector = (props: {
             dir={"rtl"}
             value={loopAtPower}
             onValueChange={handleSliderOnValueChange}
-            disabled={isRandomStrategy(currentExtensionStrategy)}
+            disabled={isRandomStrategy(currentStrategy)}
           />
         </div>
       </div>

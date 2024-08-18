@@ -61,7 +61,7 @@ export const guessRouter = {
 
       const count = limit + 2; // generate one more then neccessary to get next cursor
 
-      const newPhoneNumbers = generateNextPhoneNumbers({
+      const guessUpsertInputs = generateNextPhoneNumbers({
         phoneNumber: guess.phoneNumber,
         strategy,
         count: count,
@@ -70,7 +70,12 @@ export const guessRouter = {
         orgId: guess.orgId,
       }));
 
-      const newGuesses = await createGuesses(ctx.db, newPhoneNumbers);
+      const newGuesses = await Promise.all(
+        guessUpsertInputs.map(
+          async (guessUpsertInput) =>
+            await createGuess(ctx.db, guessUpsertInput),
+        ),
+      );
 
       const data = [guess, ...newGuesses.slice(0, count - 2)];
 
@@ -83,9 +88,7 @@ export const guessRouter = {
   create: protectedProcedure
     .input(CreateGuessSchema)
     .mutation(({ ctx, input }) => {
-      return createGuesses(ctx.db, [input]).then(
-        takeUniqueOrThrow("guess create"),
-      );
+      return createGuess(ctx.db, input);
     }),
 
   delete: protectedProcedure.input(z.string()).mutation(({ ctx, input }) => {
@@ -93,14 +96,14 @@ export const guessRouter = {
   }),
 } satisfies TRPCRouterRecord;
 
-const createGuesses = async (
+const createGuess = async (
   db: DB,
-  guessesInputs: z.infer<typeof CreateGuessSchema>[],
+  guess: z.infer<typeof CreateGuessSchema>,
 ) => {
   return (
     db
       .insert(Guess)
-      .values(guessesInputs)
+      .values(guess)
       .onConflictDoUpdate({
         target: Guess.phoneNumber,
         set: {
@@ -109,5 +112,6 @@ const createGuesses = async (
       }) // for updatedAt
       //   .onConflictDoNothing({ target: Guess.id })
       .returning()
+      .then(takeUniqueOrThrow("guess create"))
   );
 };

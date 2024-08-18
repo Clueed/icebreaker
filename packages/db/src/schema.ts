@@ -31,10 +31,7 @@ export const Org = pgTable("org", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   name: varchar("name", { length: 256 }).notNull().unique(),
   selectedGuessId: uuid("selected_guess_id"),
-  currentStrategy: jsonb("current_strategy")
-    .$type<Strategy>()
-    .notNull()
-    .default({ type: "add", numberToAdd: 1 }),
+  currentStrategy: jsonb("current_strategy").$type<Strategy>(),
   ...timeStampColumns,
 });
 

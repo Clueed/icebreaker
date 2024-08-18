@@ -1,4 +1,5 @@
 import type { AppRouterInputs } from "node_modules/@acme/api/dist/root";
+import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -17,6 +18,10 @@ import { Input } from "@acme/ui/input";
 import { toast } from "@acme/ui/toast";
 
 import { useCreateGuess } from "~/app/_api-hooks/use-create-guess";
+import {
+  useSelectedGuessIdSetQuery,
+  useSelectedGuessQuery,
+} from "~/app/_api-hooks/use-selected-guess";
 
 const FormSchema = z.object({
   base: z.string().min(2, {
@@ -27,32 +32,35 @@ const FormSchema = z.object({
   }),
 });
 
-export function AddNewGuessForm({
-  currentOrgId,
-  setCurrentGuessId,
-}: {
-  currentOrgId: string;
-  setCurrentGuessId: (guessId: string) => void;
-}) {
+export function AddNewGuessForm({ orgId }: { orgId: string }) {
+  const { data: selectedGuess } = useSelectedGuessQuery({ id: orgId });
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      base: "",
-      extension: "",
-    },
+    defaultValues: selectedGuess?.phoneNumber,
   });
 
-  const { createGuess } = useCreateGuess();
+  useEffect(() => {
+    if (selectedGuess) {
+      form.setValue("base", selectedGuess.phoneNumber.base);
+      form.setValue("extension", selectedGuess.phoneNumber.extension);
+    }
+  }, [selectedGuess]);
 
+  const { createGuess } = useCreateGuess();
+  const setSelectedGuessIdMutation = useSelectedGuessIdSetQuery();
   const onSubmit = async ({ base, extension }: z.infer<typeof FormSchema>) => {
     const newGuess = await createGuess({
-      orgId: currentOrgId,
+      orgId: orgId,
       phoneNumber: {
         base,
         extension,
       },
     });
-    setCurrentGuessId(newGuess.id);
+    setSelectedGuessIdMutation.mutate({
+      orgId: orgId,
+      data: { selectedGuessId: newGuess.id },
+    });
   };
 
   return (

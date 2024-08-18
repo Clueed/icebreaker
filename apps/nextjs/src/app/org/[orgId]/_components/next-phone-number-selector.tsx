@@ -1,5 +1,6 @@
 import type { AppRouterOutputs } from "node_modules/@acme/api/dist/root";
 import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import { skipToken } from "@tanstack/react-query";
 
 import type { Strategy } from "@acme/validators/guessing-strategies";
 import type { NotEmptyPhoneNumber } from "@acme/validators/phone-number";
@@ -8,31 +9,35 @@ import { Button } from "@acme/ui/button";
 import { toast } from "@acme/ui/toast";
 
 import { useOptimisticOrgMutation } from "~/app/_api-hooks/optimistic-org-update";
+import { useCurrentStrategyQuery } from "~/app/_api-hooks/use-current-strategy";
+import {
+  useSelectedGuessIdSetQuery,
+  useSelectedGuessQuery,
+} from "~/app/_api-hooks/use-selected-guess";
 import { useCurrentPhoneCall } from "~/app/_components/call-handler/current-call-provider";
 import { AutoCaller } from "~/app/org/[orgId]/_components/auto-caller";
 import { AutoSkipper } from "~/app/org/[orgId]/_components/auto-skipper";
 import { api } from "~/trpc/react";
 
-export const NextPhoneNumberSelector = ({
-  orgId,
-  selectedGuessId,
-  strategy,
-}: {
-  orgId: string;
-  selectedGuessId: string;
-  strategy: Strategy;
-}) => {
-  const stableGuessId = useMemo(() => selectedGuessId, []);
+export const NextPhoneNumberSelector = ({ orgId }: { orgId: string }) => {
+  const { data: selectedGuess } = useSelectedGuessQuery({ id: orgId });
+  const { data: currentStrategy } = useCurrentStrategyQuery({
+    id: orgId,
+  });
+
+  const stableGuessId = useMemo(() => selectedGuess?.id, [!!selectedGuess]);
 
   const {
     data: nextGuessesData,
     fetchNextPage,
     isFetching,
   } = api.guess.next.useInfiniteQuery(
-    {
-      guessId: stableGuessId,
-      strategy: strategy,
-    },
+    stableGuessId && currentStrategy
+      ? {
+          guessId: stableGuessId,
+          strategy: currentStrategy,
+        }
+      : skipToken,
     {
       getNextPageParam: (lastPage) => lastPage?.nextCursor,
     },
@@ -46,9 +51,12 @@ export const NextPhoneNumberSelector = ({
     return nextGuessesData.pages.flatMap((page) => page.data);
   }, [nextGuessesData]);
 
-  const { updateOrg } = useOptimisticOrgMutation();
+  const setSelectedGuessIdMutation = useSelectedGuessIdSetQuery();
   function setSelectedGuessId(guessId: string): void {
-    updateOrg({ id: orgId, data: { selectedGuessId: guessId } });
+    setSelectedGuessIdMutation.mutate({
+      orgId: orgId,
+      data: { selectedGuessId: guessId },
+    });
 
     const indexOfSelectedGuess = nextGuesses.findIndex((g) => g.id === guessId);
     if (!isFetching && nextGuesses.length - indexOfSelectedGuess < 5) {
@@ -58,11 +66,11 @@ export const NextPhoneNumberSelector = ({
   }
 
   const indexOfSelectedGuess = nextGuesses.findIndex(
-    (g) => g.id === selectedGuessId,
+    (g) => g.id === selectedGuess?.id,
   );
   const nextGuessId = nextGuesses[indexOfSelectedGuess + 1]?.id;
 
-  if (!nextGuesses) {
+  if (!nextGuesses || !selectedGuess) {
     return null;
   }
 
@@ -74,16 +82,13 @@ export const NextPhoneNumberSelector = ({
             key={guess.id}
             guess={guess}
             onClick={() => setSelectedGuessId(guess.id)}
-            selected={selectedGuessId === guess.id}
+            selected={selectedGuess.id === guess.id}
           />
         ))}
       </div>
       <div>
-        <AutoSkipper
-          selectedGuessId={selectedGuessId}
-          nextGuessId={nextGuessId}
-        />
-        <AutoCaller selectedGuessId={selectedGuessId} />
+        <AutoSkipper orgId={orgId} nextGuessId={nextGuessId} />
+        <AutoCaller orgId={orgId} />
       </div>
     </div>
   );
