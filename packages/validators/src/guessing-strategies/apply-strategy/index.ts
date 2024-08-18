@@ -1,13 +1,13 @@
 import type { NotEmptyPhoneNumber } from "../../phone-number";
 import type { Strategy } from "../index";
-import { isBase10Strategy } from "../index";
+import { isAdditionStrategy } from "../index";
 import { isRandomStrategy } from "../strategy-random";
-import applyStrategyBase10 from "./apply-strategy-base10";
+import applyStrategyAddition from "./apply-strategy-addition";
 import applyStrategyRandom from "./apply-strategy-random";
 
 function applyStrategy(extension: string, strategy: Strategy) {
-  if (isBase10Strategy(strategy)) {
-    return applyStrategyBase10(extension, strategy);
+  if (isAdditionStrategy(strategy)) {
+    return applyStrategyAddition(extension, strategy);
   }
 
   if (isRandomStrategy(strategy)) {

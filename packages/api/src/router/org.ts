@@ -1,4 +1,5 @@
 import type { TRPCRouterRecord } from "@trpc/server";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { desc, eq } from "@acme/db";
@@ -27,6 +28,37 @@ export const orgRouter = {
       return ctx.db.query.Org.findFirst({
         where: eq(Org.id, input.id),
       }).then(findFirstOrThrow("org byId"));
+    }),
+
+  extensionStrategyById: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const org = await ctx.db.query.Org.findFirst({
+        where: eq(Org.id, input.id),
+        columns: {
+          currentStrategy: true,
+        },
+      });
+
+      if (!org) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Org not found",
+        });
+      }
+
+      return org.currentStrategy === null ? 0 : org.currentStrategy;
+    }),
+
+  setExtensionStrategy: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        data: CreateOrgSchema.pick({ currentStrategy: true }),
+      }),
+    )
+    .mutation(async ({ ctx, input: { id, data } }) => {
+      return ctx.db.update(Org).set(data).where(eq(Org.id, id));
     }),
 
   update: protectedProcedure

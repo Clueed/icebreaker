@@ -1,15 +1,15 @@
-import type { Strategy } from '..'
-import type { NotEmptyPhoneNumber } from '../../phone-number'
-import getAvailableStrategiesBase10 from './get-available-strategies-base10'
-import getAvailableStrategiesRandom from './get-available-strategies-random'
+import type { Strategy } from "..";
+import type { NotEmptyPhoneNumber } from "../../phone-number";
+import getAvailableStrategiesAddition from "./get-available-strategies-addition";
+import getAvailableStrategiesRandom from "./get-available-strategies-random";
 
 function getAvailableExtensionStrategies(
-    phoneNumber: NotEmptyPhoneNumber
+  phoneNumber: NotEmptyPhoneNumber,
 ): Strategy[] {
-    return [
-        ...getAvailableStrategiesRandom(phoneNumber),
-        ...getAvailableStrategiesBase10(phoneNumber),
-    ]
+  return [
+    ...getAvailableStrategiesRandom(phoneNumber),
+    ...getAvailableStrategiesAddition(phoneNumber),
+  ];
 }
 
-export { getAvailableExtensionStrategies }
+export { getAvailableExtensionStrategies };

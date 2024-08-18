@@ -14,14 +14,18 @@
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
     "typecheck": "tsc --noEmit"
+    "test": "jest --detectOpenHandles --passWithNoTests"
   },
   "devDependencies": {
     "@acme/eslint-config": "workspace:*",
     "@acme/prettier-config": "workspace:*",
     "@acme/tsconfig": "workspace:*",
+    "@acme/jest": "workspace:*",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "ts-jest": "catalog:",
+    "@types/jest": "catalog:"
   },
   "prettier": "@acme/prettier-config"
 }

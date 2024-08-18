@@ -1,6 +1,7 @@
 import type { AppRouterOutputs } from "node_modules/@acme/api/dist/root";
 import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 
+import type { Strategy } from "@acme/validators/guessing-strategies";
 import type { NotEmptyPhoneNumber } from "@acme/validators/phone-number";
 import { cn } from "@acme/ui";
 import { Button } from "@acme/ui/button";
@@ -15,9 +16,11 @@ import { api } from "~/trpc/react";
 export const NextPhoneNumberSelector = ({
   orgId,
   selectedGuessId,
+  strategy,
 }: {
   orgId: string;
   selectedGuessId: string;
+  strategy: Strategy;
 }) => {
   const stableGuessId = useMemo(() => selectedGuessId, []);
 
@@ -28,7 +31,7 @@ export const NextPhoneNumberSelector = ({
   } = api.guess.next.useInfiniteQuery(
     {
       guessId: stableGuessId,
-      strategy: { type: "add", power: 0, loopAtPower: 3 },
+      strategy: strategy,
     },
     {
       getNextPageParam: (lastPage) => lastPage?.nextCursor,

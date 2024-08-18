@@ -15,6 +15,8 @@ import {
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+import { Strategy, strategySchema } from "@acme/validators/guessing-strategies";
+
 import { encryptedText } from "./helpers/encrypted-text";
 
 const timeStampColumns = {
@@ -29,15 +31,25 @@ export const Org = pgTable("org", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   name: varchar("name", { length: 256 }).notNull().unique(),
   selectedGuessId: uuid("selected_guess_id"),
+  currentStrategy: jsonb("current_strategy")
+    .$type<Strategy>()
+    .notNull()
+    .default({ type: "add", numberToAdd: 1 }),
   ...timeStampColumns,
 });
 
-export const orgRelation = relations(Org, ({ many }) => ({
-  guesse: many(Guess),
+export const orgRelation = relations(Org, ({ many, one }) => ({
+  guesses: many(Guess),
+  selectedGuess: one(Guess, {
+    fields: [Org.selectedGuessId],
+    references: [Guess.id],
+  }),
 }));
 
 export const CreateOrgSchema = createInsertSchema(Org, {
   name: z.string().max(256),
+  currentStrategy: strategySchema,
+  selectedGuessId: z.string().uuid(),
 }).omit({
   id: true,
   createdAt: true,

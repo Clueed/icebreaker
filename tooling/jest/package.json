@@ -1,0 +1,21 @@
+{
+  "name": "@acme/jest",
+  "private": true,
+  "version": "0.1.0",
+  "files": [
+    "browser/jest-preset.js",
+    "node/jest-preset.js"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint"
+  },
+  "devDependencies": {
+    "prettier": "catalog:",
+    "ts-jest": "catalog:",
+    "jest-environment-jsdom": "catalog:"
+  },
+  "prettier": "@acme/prettier-config"
+}
