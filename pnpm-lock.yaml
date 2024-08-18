@@ -26,7 +26,7 @@ catalogs:
       version: 3.3.3
     typescript:
       specifier: ^5.5.4
-      version: 5.5.3
+      version: 5.5.4
     zod:
       specifier: ^3.23.8
       version: 3.23.8
@@ -52,13 +52,13 @@ importers:
         specifier: workspace:*
         version: link:tooling/prettier
       '@turbo/gen':
-        specifier: ^2.0.14
+        specifier: ^2.0.8
         version: 2.0.14(@types/node@22.4.0)(typescript@5.5.4)
       prettier:
         specifier: 'catalog:'
         version: 3.3.3
       turbo:
-        specifier: ^2.0.14
+        specifier: ^2.0.8
         version: 2.0.14
       typescript:
         specifier: 'catalog:'
@@ -4777,7 +4777,7 @@ snapshots:
   '@types/glob@7.2.0':
     dependencies:
       '@types/minimatch': 5.1.2
-      '@types/node': 22.4.0
+      '@types/node': 20.14.9
 
   '@types/inquirer@6.5.0':
     dependencies:
@@ -4815,7 +4815,7 @@ snapshots:
 
   '@types/through@0.0.33':
     dependencies:
-      '@types/node': 22.4.0
+      '@types/node': 20.14.9
 
   '@types/tinycolor2@1.4.6': {}
 
