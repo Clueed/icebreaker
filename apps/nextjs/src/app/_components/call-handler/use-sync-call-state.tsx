@@ -9,21 +9,15 @@ import { SessionState } from "sip.js";
 import { toast } from "@acme/ui/toast";
 
 import { useOptimisticPhoneCallMutation } from "~/app/_api-hooks/optimistic-phone-call-update";
+import { useCurrentCallUpdateMutation } from "~/app/_api-hooks/use-current-call";
 import { api } from "~/trpc/react";
 
-export function useSyncCallState(phoneCall?: {
-  id: string;
-  sessionId: string;
-  state:
-    | "Initial"
-    | "Establishing"
-    | "Established"
-    | "Terminating"
-    | "Terminated";
-}) {
-  const { sessionId, id: callId, state } = phoneCall ?? {};
+export function useSyncCallState(
+  phoneCall?: AppRouterOutputs["phoneCall"]["current"],
+) {
+  const { sessionId, id: callId, state } = phoneCall || {};
 
-  const { updatePhoneCall } = useOptimisticPhoneCallMutation();
+  const { mutate: updatePhoneCall } = useCurrentCallUpdateMutation();
 
   const { sessions } = useSIPProvider();
   const session = sessionId ? sessions[sessionId] : undefined;
@@ -38,8 +32,6 @@ export function useSyncCallState(phoneCall?: {
       if (state && state !== "Terminated") {
         updatePhoneCall(
           {
-            id: callId,
-            sessionId: sessionId,
             data: {
               state: "Terminated",
             },
@@ -57,8 +49,6 @@ export function useSyncCallState(phoneCall?: {
     const listener = (newSessionState: SessionState) => {
       updatePhoneCall(
         {
-          id: callId,
-          sessionId: sessionId,
           data: {
             state: newSessionState,
           },

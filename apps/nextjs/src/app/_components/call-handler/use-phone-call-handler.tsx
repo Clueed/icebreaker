@@ -11,12 +11,9 @@ import { useSyncCallState } from "~/app/_components/call-handler/use-sync-call-s
 export const usePhoneCallHandler = ({
   phoneCall,
 }: {
-  phoneCall?: AppRouterOutputs["phoneCall"]["byId"];
+  phoneCall?: AppRouterOutputs["phoneCall"]["current"];
 }) => {
   useSyncCallState(phoneCall);
-  console.log("test1");
-
-  const { updateUserSettings } = useOptimisticUserSettingsMutation();
 
   const { startCall } = useStartCall();
   const { endCall } = useEndCall();
@@ -32,15 +29,15 @@ export const usePhoneCallHandler = ({
       toast.warning("Starting Call: call in progress");
       return;
     }
-    const newCall = await startCall({
+    return await startCall({
       guessId: guessId,
       phoneNumber: phoneNumber,
     });
-    if (!newCall) {
-      toast.error("Starting Call: failed to create call");
-      return;
-    }
-    updateUserSettings({ currentPhoneCallId: newCall.id });
+    // if (!newCall) {
+    //   toast.error("Starting Call: failed to create call");
+    //   return;
+    // }
+    // updateUserSettings({ currentPhoneCallId: newCall.id });
   };
 
   const handleEndCall = async () => {

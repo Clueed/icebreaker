@@ -3,10 +3,11 @@ import { useSIPProvider } from "react-sipjs";
 import { toast } from "@acme/ui/toast";
 
 import { useOptimisticPhoneCallMutation } from "~/app/_api-hooks/optimistic-phone-call-update";
+import { useCurrentCallCreateMutation } from "~/app/_api-hooks/use-current-call";
 import { api } from "~/trpc/react";
 
 function useStartCall() {
-  const { createPhoneCall } = useOptimisticPhoneCallMutation();
+  const { mutate: createPhoneCall } = useCurrentCallCreateMutation();
 
   const { sessionManager } = useSIPProvider();
 
@@ -23,6 +24,13 @@ function useStartCall() {
         return;
       }
 
+      const managedSessionsCount = sessionManager.managedSessions.length;
+
+      if (managedSessionsCount > 1) {
+        toast.error("Starting Call: failed, different call in progress");
+        return;
+      }
+
       const inviter = await sessionManager.call(
         `sip:${phoneNumber.base + phoneNumber.extension}@sipgate.de`,
         {},
@@ -34,7 +42,7 @@ function useStartCall() {
 
       const sessionId = inviter.id;
       const state = inviter.state;
-      return await createPhoneCall(
+      return createPhoneCall(
         {
           sessionId,
           guessId,

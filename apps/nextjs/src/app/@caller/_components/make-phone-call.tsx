@@ -28,8 +28,7 @@ export function MakePhoneCall({
   return (
     <div>
       <div>
-        {phoneCall.guess.phoneNumber.base}-
-        {phoneCall.guess.phoneNumber.extension}
+        {phoneCall.phoneNumber.base}-{phoneCall.phoneNumber.extension}
       </div>
       {phoneCallActive ? (
         <Button onClick={endCall}>Hangup</Button>

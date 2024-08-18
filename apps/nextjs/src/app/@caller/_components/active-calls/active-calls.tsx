@@ -57,15 +57,10 @@ const ActiveCall = ({
 }: {
   call: RouterOutputs["phoneCall"]["all"][number];
 }) => {
-  useSyncCallState({
-    id: call.id,
-    sessionId: call.sessionId,
-    state: call.state,
-  });
   return (
     <div key={call.id} className="flex p-2">
       <div>
-        {call.guess.phoneNumber.base}-{call.guess.phoneNumber.extension}
+        {call.phoneNumber.base}-{call.phoneNumber.extension}
       </div>
       <div>{call.state}</div>
     </div>

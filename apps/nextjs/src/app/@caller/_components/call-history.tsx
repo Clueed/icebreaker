@@ -30,7 +30,7 @@ const HistoryCall = ({
 }: {
   call: RouterOutputs["phoneCall"]["all"][number];
 }) => {
-  const { base, extension } = call.guess.phoneNumber;
+  const { base, extension } = call.phoneNumber;
   const lastModified = new Date(
     call.updatedAt ?? call.createdAt,
   ).toLocaleTimeString();

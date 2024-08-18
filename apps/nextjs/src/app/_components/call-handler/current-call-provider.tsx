@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { createContext, useContext } from "react";
 import { skipToken } from "@tanstack/react-query";
 
+import { useCurrentCallQuery } from "~/app/_api-hooks/use-current-call";
 import { usePhoneCallHandler } from "~/app/_components/call-handler/use-phone-call-handler";
 import { api } from "~/trpc/react";
 
@@ -16,14 +17,7 @@ export function CurrentPhoneCallProvider({
 }: {
   children: ReactNode;
 }) {
-  const { data: userSettings } = api.userSettings.get.useQuery();
-  const { data: phoneCall } = api.phoneCall.byId.useQuery(
-    userSettings?.currentPhoneCallId
-      ? {
-          id: userSettings?.currentPhoneCallId,
-        }
-      : skipToken,
-  );
+  const { data: phoneCall } = useCurrentCallQuery();
 
   const phoneCallHandler = usePhoneCallHandler({ phoneCall });
   return (
