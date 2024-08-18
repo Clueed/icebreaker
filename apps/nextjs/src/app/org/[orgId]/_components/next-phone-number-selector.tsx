@@ -8,6 +8,7 @@ import { toast } from "@acme/ui/toast";
 
 import { useOptimisticOrgMutation } from "~/app/_api-hooks/optimistic-org-update";
 import { useCurrentPhoneCall } from "~/app/_components/call-handler/current-call-provider";
+import { AutoCaller } from "~/app/org/[orgId]/_components/auto-caller";
 import { AutoSkipper } from "~/app/org/[orgId]/_components/auto-skipper";
 import { api } from "~/trpc/react";
 
@@ -79,6 +80,7 @@ export const NextPhoneNumberSelector = ({
           selectedGuessId={selectedGuessId}
           nextGuessId={nextGuessId}
         />
+        <AutoCaller selectedGuessId={selectedGuessId} />
       </div>
     </div>
   );

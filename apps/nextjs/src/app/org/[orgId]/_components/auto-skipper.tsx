@@ -59,13 +59,13 @@ export const AutoSkipper = ({
   ]);
 
   return (
-    <>
-      <div>{enabled ? "enabled" : "disabled"}</div>
+    <div>
+      <div>Auto Skipper {enabled ? "enabled" : "disabled"}</div>
       {!enabled ? (
         <Button onClick={() => setEnabled(true)}>enbale</Button>
       ) : (
         <Button onClick={() => setEnabled(false)}>disable</Button>
       )}
-    </>
+    </div>
   );
 };
