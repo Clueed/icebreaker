@@ -4,7 +4,10 @@ import { getMutationKey } from "@trpc/react-query";
 import { api } from "~/trpc/react";
 
 export const useCurrentCallQuery = () => {
-  return api.phoneCall.current.useQuery(undefined, {});
+  return api.phoneCall.current.useQuery(undefined, {
+    staleTime: 0,
+    select: (data) => (data === 0 ? undefined : data),
+  });
 };
 
 export const useCurrentCallUpdateMutation = () => {

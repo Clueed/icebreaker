@@ -13,7 +13,7 @@ export const usePhoneCallHandler = ({
 }: {
   phoneCall?: AppRouterOutputs["phoneCall"]["current"];
 }) => {
-  useSyncCallState(phoneCall);
+  useSyncCallState();
 
   const { startCall } = useStartCall();
   const { endCall } = useEndCall();

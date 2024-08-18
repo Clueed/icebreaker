@@ -12,16 +12,21 @@ export function useEndCall() {
         return;
       }
 
+      console.log("sessionId", sessionId);
+
       if (!sessionManager) {
         toast.error("Ending Call: No session manager");
         return;
       }
+
+      console.log("sessionManager", sessionManager);
 
       const session = sessions[sessionId];
       if (!session) {
         toast.error("Ending Call: No session");
         return;
       }
+      console.log("session", session);
 
       sessionManager.hangup(session);
     },

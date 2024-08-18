@@ -1,52 +1,61 @@
-import type { AppRouterOutputs } from "node_modules/@acme/api/dist/root";
-import type { Dispatch, ReactNode, SetStateAction } from "react";
-import { createContext, useEffect, useMemo, useState } from "react";
-import { skipToken, useIsMutating } from "@tanstack/react-query";
-import { getMutationKey, getQueryKey } from "@trpc/react-query";
+import type { SessionState } from "sip.js";
+import { useEffect } from "react";
 import { useSIPProvider } from "react-sipjs";
-import { SessionState } from "sip.js";
 
 import { toast } from "@acme/ui/toast";
 
-import { useOptimisticPhoneCallMutation } from "~/app/_api-hooks/optimistic-phone-call-update";
-import { useCurrentCallUpdateMutation } from "~/app/_api-hooks/use-current-call";
-import { api } from "~/trpc/react";
+import {
+  useCurrentCallQuery,
+  useCurrentCallUpdateMutation,
+} from "~/app/_api-hooks/use-current-call";
 
-export function useSyncCallState(
-  phoneCall?: AppRouterOutputs["phoneCall"]["current"],
-) {
-  const { sessionId, id: callId, state } = phoneCall || {};
+export function useSyncCallState() {
+  const { data: phoneCall } = useCurrentCallQuery();
 
   const { mutate: updatePhoneCall } = useCurrentCallUpdateMutation();
-
   const { sessions } = useSIPProvider();
-  const session = sessionId ? sessions[sessionId] : undefined;
+
+  const { sessionId, id } = phoneCall || {};
 
   useEffect(() => {
-    if (!sessionId || !callId) {
+    if (!sessionId) {
+      console.log(`[sync - ${id}] \n No sessionId available, skipping update.`);
       return;
     }
 
+    const session = sessionId ? sessions[sessionId] : undefined;
+
+    console.log(`[sync - ${id}] \n Retrieved session:`, session);
+
     if (!session) {
-      toast.error("Call Sync: No session found");
-      if (state && state !== "Terminated") {
-        updatePhoneCall(
-          {
-            data: {
-              state: "Terminated",
-            },
+      console.log(
+        `[sync - ${id}] \n (no session) changing current call state to:`,
+        `Terminated`,
+      );
+      updatePhoneCall(
+        {
+          data: {
+            state: `Terminated`,
           },
-          {
-            onError: (err) => {
-              toast.error(err.message);
-            },
+        },
+        {
+          onError: (err) => {
+            console.error(
+              `[sync - ${id}] \n Error updating call state:`,
+              err.message,
+            );
+            toast.error(err.message);
           },
-        );
-      }
+        },
+      );
       return;
     }
 
     const listener = (newSessionState: SessionState) => {
+      console.log(
+        `[sync - ${id}] \n changing current call state to:`,
+        newSessionState,
+      );
       updatePhoneCall(
         {
           data: {
@@ -55,16 +64,28 @@ export function useSyncCallState(
         },
         {
           onError: (err) => {
+            console.error(
+              `[sync - ${id}] \n Error updating call state:`,
+              err.message,
+            );
             toast.error(err.message);
           },
         },
       );
     };
 
+    // .addListener runs only on change
+    console.log(`[sync - ${id}] \n Updating to current state`);
+    listener(session.state);
+
+    console.log(`[sync - ${id}] \n Adding listener to session.stateChange`);
     session.stateChange.addListener(listener);
 
     return () => {
+      console.log(
+        `[sync - ${id}] \n Removing listener from session.stateChange`,
+      );
       session.stateChange.removeListener(listener);
     };
-  }, [session, phoneCall]);
+  }, [sessionId, id, updatePhoneCall]);
 }

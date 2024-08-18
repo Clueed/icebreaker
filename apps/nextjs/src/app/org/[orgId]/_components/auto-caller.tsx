@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@acme/ui/button";
 
-import { useOptimisticOrgMutation } from "~/app/_api-hooks/optimistic-org-update";
+import { useCurrentCallQuery } from "~/app/_api-hooks/use-current-call";
 import { useCurrentPhoneCall } from "~/app/_components/call-handler/current-call-provider";
 import { api } from "~/trpc/react";
 
@@ -11,49 +11,68 @@ export const AutoCaller = ({
 }: {
   selectedGuessId: string;
 }) => {
-  const { phoneCall, startCall } = useCurrentPhoneCall();
+  const { startCall } = useCurrentPhoneCall();
+  const { data: phoneCall } = useCurrentCallQuery();
   const { data: selectedGuess } = api.guess.byId.useQuery({
     id: selectedGuessId,
   });
 
   const [enabled, setEnabled] = useState(false);
-  const [locked, setLocked] = useState(false);
 
   const selectedGuessHasCalls = selectedGuess?.phoneCalls.length || false;
   const currentPhoneCallActive = phoneCall?.state !== "Terminated";
 
   useEffect(() => {
+    console.log("[AC] triggered");
+
     if (!enabled || selectedGuess === undefined) {
+      console.log(
+        "[AC] AutoCaller is not enabled or selectedGuess is undefined, returning early",
+      );
       return;
     }
 
     if (currentPhoneCallActive) {
-      setLocked(false);
+      console.log("[AC] Current phone call is active, unlocking and returning");
       return;
     }
 
     if (!selectedGuessHasCalls) {
+      console.log("[AC] No calls found for selectedGuess, starting a new call");
       startCall({
         guessId: selectedGuessId,
         phoneNumber: selectedGuess.phoneNumber,
       });
-      setLocked(true);
+      console.log("[AC] Call started and locked set to true");
     }
   }, [
     enabled,
     selectedGuessHasCalls,
-    locked,
-    setLocked,
     currentPhoneCallActive,
+    selectedGuess?.id,
   ]);
 
   return (
     <div>
-      <div>Auto Caller{enabled ? "enabled" : "disabled"}</div>
+      <div>Auto Caller {enabled ? "enabled" : "disabled"}</div>
       {!enabled ? (
-        <Button onClick={() => setEnabled(true)}>enbale</Button>
+        <Button
+          onClick={() => {
+            setEnabled(true);
+            console.log("[AC] AutoCaller enabled");
+          }}
+        >
+          enable
+        </Button>
       ) : (
-        <Button onClick={() => setEnabled(false)}>disable</Button>
+        <Button
+          onClick={() => {
+            setEnabled(false);
+            console.log("[AC] AutoCaller disabled");
+          }}
+        >
+          disable
+        </Button>
       )}
     </div>
   );

@@ -17,21 +17,26 @@ export const AutoSkipper = ({
   });
 
   const { updateOrg } = useOptimisticOrgMutation();
+
   const setSelectedGuessId = useCallback(() => {
+    console.debug("[AS] setSelectedGuessId called");
+
     if (!selectedGuess?.id) {
-      throw new Error("selectedGuess not found while setting selected");
+      throw new Error("[AS]selectedGuess not found while setting selected");
     }
+
     if (!nextGuessId) {
-      throw new Error("nextGuessId not found while setting selected");
+      throw new Error("[AS]nextGuessId not found while setting selected");
     }
+
+    console.debug("[AS] Updating org with selectedGuessId:", nextGuessId);
     updateOrg({
-      id: selectedGuess?.orgId,
+      id: selectedGuess.orgId,
       data: { selectedGuessId: nextGuessId },
     });
-  }, [selectedGuess?.id, nextGuessId]);
+  }, [selectedGuess?.id, nextGuessId, updateOrg]);
 
   const [enabled, setEnabled] = useState(false);
-  const [locked, setLocked] = useState(false);
 
   const selectedGuessHasActiveCalls =
     selectedGuess?.phoneCalls.some((call) => call.state !== "Terminated") ??
@@ -39,17 +44,27 @@ export const AutoSkipper = ({
   const selectedGuessHasCalls = selectedGuess?.phoneCalls.length || false;
 
   useEffect(() => {
+    console.debug("[AS] useEffect triggered", {
+      enabled,
+      selectedGuessHasActiveCalls,
+      selectedGuessHasCalls,
+    });
+
     if (!enabled) {
+      console.debug("[AS] Auto Skipper is disabled, returning");
       return;
     }
+
     if (selectedGuessHasActiveCalls) {
-      setLocked(false);
+      console.debug("[AS] Active calls found, returning");
       return;
     }
 
     if (selectedGuessHasCalls) {
+      console.debug(
+        "[AS] No active calls, but calls present. Setting selected guess ID.",
+      );
       setSelectedGuessId();
-      setLocked(true);
     }
   }, [
     enabled,
@@ -62,9 +77,23 @@ export const AutoSkipper = ({
     <div>
       <div>Auto Skipper {enabled ? "enabled" : "disabled"}</div>
       {!enabled ? (
-        <Button onClick={() => setEnabled(true)}>enbale</Button>
+        <Button
+          onClick={() => {
+            console.debug("[AS] Enabling Auto Skipper");
+            setEnabled(true);
+          }}
+        >
+          enable
+        </Button>
       ) : (
-        <Button onClick={() => setEnabled(false)}>disable</Button>
+        <Button
+          onClick={() => {
+            console.debug("[AS] Disabling Auto Skipper");
+            setEnabled(false);
+          }}
+        >
+          disable
+        </Button>
       )}
     </div>
   );

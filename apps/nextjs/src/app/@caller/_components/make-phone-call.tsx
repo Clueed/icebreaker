@@ -1,5 +1,3 @@
-"use client";
-
 import type { AppRouterOutputs } from "node_modules/@acme/api/dist/root";
 
 import type { NotEmptyPhoneNumber } from "@acme/validators/phone-number";
@@ -36,8 +34,8 @@ export function MakePhoneCall({
         <Button
           onClick={() =>
             startCall({
-              guessId: phoneCall.guess.id,
-              phoneNumber: phoneCall.guess.phoneNumber,
+              guessId: phoneCall.guessId,
+              phoneNumber: phoneCall.phoneNumber,
             })
           }
         >
