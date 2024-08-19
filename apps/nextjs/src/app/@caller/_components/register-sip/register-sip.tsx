@@ -56,7 +56,7 @@ function RegisterSip({
   useEffect(() => {
     if (
       remoteCredentials?.username &&
-      remoteCredentials?.password &&
+      remoteCredentials.password &&
       connectStatus === CONNECT_STATUS.WAIT_REQUEST_CONNECT
     ) {
       const toastid = toast.loading("Connecting with remote credentials...");

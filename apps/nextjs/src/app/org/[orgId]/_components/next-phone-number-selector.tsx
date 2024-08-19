@@ -42,7 +42,7 @@ export const NextPhoneNumberSelector = ({ orgId }: { orgId: string }) => {
         }
       : skipToken,
     {
-      getNextPageParam: (lastPage) => lastPage?.nextCursor,
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
     },
   );
 
@@ -118,7 +118,7 @@ const GuessDisplay = ({
     }
   }, [selected]);
 
-  const calls = guess ? guess?.phoneCalls.length > 0 : false;
+  const calls = guess ? guess.phoneCalls.length > 0 : false;
   return (
     <div
       ref={ref}

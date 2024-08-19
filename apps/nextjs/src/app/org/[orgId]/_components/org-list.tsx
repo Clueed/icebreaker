@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { redirect, useRouter } from "next/navigation";
-import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
+import type { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 
 import { Button } from "@acme/ui/button";
 import {

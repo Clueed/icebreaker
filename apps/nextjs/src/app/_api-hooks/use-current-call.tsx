@@ -45,7 +45,7 @@ export const useCurrentCallUpdateMutation = () => {
     onSuccess(data, variables, ctx) {
       // Sync with server once mutation has settled
       if (data) {
-        utils.guess.byId.invalidate({ id: data?.guessId });
+        utils.guess.byId.invalidate({ id: data.guessId });
       }
     },
   });
@@ -69,7 +69,7 @@ export const useCurrentCallCreateMutation = () => {
       // Sync with server once mutation has settled
       utils.phoneCall.current.invalidate();
       if (data) {
-        utils.guess.byId.invalidate({ id: variables?.guessId });
+        utils.guess.byId.invalidate({ id: variables.guessId });
       }
     },
   });

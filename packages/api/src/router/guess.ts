@@ -18,7 +18,7 @@ export const guessRouter = {
     .query(({ ctx, input }) => {
       return ctx.db.query.Guess.findMany({
         orderBy: desc(Guess.updatedAt),
-        where: input && input.orgId ? eq(Guess.orgId, input.orgId) : undefined,
+        where: input?.orgId ? eq(Guess.orgId, input.orgId) : undefined,
         limit: 10,
       });
     }),

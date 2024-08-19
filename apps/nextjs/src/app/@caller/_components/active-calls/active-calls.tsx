@@ -17,7 +17,7 @@ export const ActiveCalls = () => {
   const { data: userSettings } = api.userSettings.get.useQuery();
 
   const activeCallsWithoutCurrent =
-    aciveCalls?.filter(
+    aciveCalls.filter(
       (call) => call.id !== userSettings?.currentPhoneCallId,
     ) ?? [];
 
