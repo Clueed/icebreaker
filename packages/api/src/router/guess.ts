@@ -113,23 +113,3 @@ export const guessRouter = {
     return ctx.db.delete(Guess).where(eq(Guess.id, input));
   }),
 } satisfies TRPCRouterRecord;
-
-const createGuess = async (
-  db: DB,
-  guess: z.infer<typeof CreateGuessSchema>,
-) => {
-  return (
-    db
-      .insert(Guess)
-      .values(guess)
-      .onConflictDoUpdate({
-        target: Guess.phoneNumber,
-        set: {
-          updatedAt: sql`now()`,
-        },
-      }) // for updatedAt
-      //   .onConflictDoNothing({ target: Guess.id })
-      .returning({ id: Guess.id })
-      .then(takeUniqueOrThrow("guess create"))
-  );
-};

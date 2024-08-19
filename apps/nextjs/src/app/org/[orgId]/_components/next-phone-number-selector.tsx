@@ -49,11 +49,16 @@ export const NextPhoneNumberSelector = ({ orgId }: { orgId: string }) => {
     return nextGuessesData.pages.flatMap((page) => page.data);
   }, [nextGuessesData]);
 
+  const indexOfSelectedGuess = nextGuessIds.findIndex(
+    (g) => g === selectedGuess?.id,
+  );
+  const nextGuessesLeft = nextGuessIds.length - indexOfSelectedGuess;
+
   useEffect(() => {
-    if (nextGuessIds.length < 10 && !error && !isFetching) {
+    if (nextGuessesLeft < 10 && !error && !isFetching) {
       fetchNextPage();
     }
-  }, [nextGuessIds.length, error, isFetching]);
+  }, [nextGuessesLeft, error, isFetching]);
 
   const setSelectedGuessIdMutation = useSelectedGuessIdSetQuery();
   function setSelectedGuessId(guessId: string): void {
@@ -63,9 +68,6 @@ export const NextPhoneNumberSelector = ({ orgId }: { orgId: string }) => {
     });
   }
 
-  const indexOfSelectedGuess = nextGuessIds.findIndex(
-    (g) => g === selectedGuess?.id,
-  );
   const nextGuessId = nextGuessIds[indexOfSelectedGuess + 1];
 
   if (!nextGuessIds || !selectedGuess) {
@@ -75,9 +77,9 @@ export const NextPhoneNumberSelector = ({ orgId }: { orgId: string }) => {
   return (
     <div>
       <div className="h-96 overflow-y-scroll">
-        {[...nextGuessIds].reverse().map((guessId) => (
+        {[...nextGuessIds].reverse().map((guessId, index) => (
           <GuessDisplay
-            key={guessId}
+            key={index + guessId}
             guessId={guessId}
             onClick={() => setSelectedGuessId(guessId)}
             selected={selectedGuess.id === guessId}
