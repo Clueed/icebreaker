@@ -5,6 +5,7 @@ import { includeIgnoreFile } from "@eslint/compat";
 import eslint from "@eslint/js";
 import importPlugin from "eslint-plugin-import";
 import turboPlugin from "eslint-plugin-turbo";
+import unusedImports from "eslint-plugin-unused-imports";
 import tseslint from "typescript-eslint";
 
 /**
@@ -42,6 +43,7 @@ export default tseslint.config(
     files: ["**/*.js", "**/*.ts", "**/*.tsx"],
     plugins: {
       import: importPlugin,
+      "unused-imports": unusedImports,
       turbo: turboPlugin,
     },
     extends: [
@@ -72,6 +74,7 @@ export default tseslint.config(
       ],
       "@typescript-eslint/no-non-null-assertion": "error",
       "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
+      "unused-imports/no-unused-imports": "error",
     },
   },
   {
