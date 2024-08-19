@@ -1,13 +1,11 @@
 "use client";
 
-import type { AppRouterOutputs } from "node_modules/@acme/api/dist/root";
 import type { Session } from "sip.js";
 import { useSIPProvider } from "react-sipjs";
 
 import type { RouterOutputs } from "@acme/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@acme/ui/card";
 
-import { useSyncCallState } from "~/app/_components/call-handler/use-sync-call-state";
 import { api } from "~/trpc/react";
 
 export const ActiveCalls = () => {

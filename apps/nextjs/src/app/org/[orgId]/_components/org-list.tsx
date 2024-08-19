@@ -2,14 +2,13 @@
 
 import type { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 import * as React from "react";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@acme/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@acme/ui/dropdown-menu";

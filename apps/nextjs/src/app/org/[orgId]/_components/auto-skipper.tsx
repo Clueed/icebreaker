@@ -2,12 +2,10 @@ import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@acme/ui/button";
 
-import { useOptimisticOrgMutation } from "~/app/_api-hooks/optimistic-org-update";
 import {
   useSelectedGuessIdSetQuery,
   useSelectedGuessQuery,
 } from "~/app/_api-hooks/use-selected-guess";
-import { api } from "~/trpc/react";
 
 export const AutoSkipper = ({
   orgId,

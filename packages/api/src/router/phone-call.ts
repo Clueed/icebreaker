@@ -5,7 +5,7 @@ import { z } from "zod";
 import type { InferSelectModel } from "@acme/db";
 import type { DB } from "@acme/db/client";
 import type { Guess } from "@acme/db/schema";
-import { and, desc, eq, not } from "@acme/db";
+import { desc, eq, not } from "@acme/db";
 import {
   CreatePhoneCallSchema,
   PhoneCall,

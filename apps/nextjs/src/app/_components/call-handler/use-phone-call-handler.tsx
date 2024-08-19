@@ -3,7 +3,6 @@ import type { AppRouterOutputs } from "node_modules/@acme/api/dist/root";
 import type { NotEmptyPhoneNumber } from "@acme/validators/phone-number";
 import { toast } from "@acme/ui/toast";
 
-import { useOptimisticUserSettingsMutation } from "~/app/_api-hooks/optimistic-user-settings-update";
 import { useEndCall } from "~/app/_components/call-handler/use-end-call";
 import useStartCall from "~/app/_components/call-handler/use-start-call";
 import { useSyncCallState } from "~/app/_components/call-handler/use-sync-call-state";

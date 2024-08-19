@@ -1,5 +1,3 @@
-import { auth } from "@acme/auth";
-
 import { ActiveCalls } from "~/app/@caller/_components/active-calls/active-calls";
 import { CallHistory } from "~/app/@caller/_components/call-history";
 import { Caller } from "~/app/@caller/_components/caller";

@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { z } from "zod";
 
 import RegisterSip from "~/app/@caller/_components/register-sip/register-sip";
 import { api } from "~/trpc/react";

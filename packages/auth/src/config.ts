@@ -4,7 +4,6 @@ import type {
   Session as NextAuthSession,
 } from "next-auth";
 import { skipCSRFCheck } from "@auth/core";
-import Google from "@auth/core/providers/google";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import google from "next-auth/providers/google";
 

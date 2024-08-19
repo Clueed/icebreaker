@@ -1,10 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
 import { CONNECT_STATUS, useSIPProvider } from "react-sipjs";
 
 import { Badge } from "@acme/ui/badge";
-import { toast } from "@acme/ui/toast";
 
 export const SipStatus = () => {
   const { connectStatus } = useSIPProvider();

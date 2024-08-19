@@ -2,11 +2,9 @@
 
 import type { ReactNode } from "react";
 import { createContext, useContext } from "react";
-import { skipToken } from "@tanstack/react-query";
 
 import { useCurrentCallQuery } from "~/app/_api-hooks/use-current-call";
 import { usePhoneCallHandler } from "~/app/_components/call-handler/use-phone-call-handler";
-import { api } from "~/trpc/react";
 
 const PhoneCallContext = createContext<ReturnType<
   typeof usePhoneCallHandler

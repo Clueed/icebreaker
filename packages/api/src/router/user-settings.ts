@@ -3,8 +3,7 @@ import type { TRPCRouterRecord } from "@trpc/server";
 import { eq } from "@acme/db";
 import { CreateUserSettingsSchema, UserSettings } from "@acme/db/schema";
 
-import { findFirstOrThrow } from "../helpers";
-import { protectedProcedure, publicProcedure } from "../trpc";
+import { protectedProcedure } from "../trpc";
 
 export const userSettingsRouter = {
   set: protectedProcedure

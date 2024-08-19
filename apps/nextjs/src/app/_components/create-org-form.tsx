@@ -1,7 +1,7 @@
 "use client";
 
 import type { AppRouterInputs } from "node_modules/@acme/api/dist/root";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";

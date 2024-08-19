@@ -2,8 +2,6 @@
 
 import React from "react";
 
-import { auth } from "@acme/auth";
-
 import { Guesser } from "~/app/org/[orgId]/_components/guesser";
 
 export default async function GuesserPage({

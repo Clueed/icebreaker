@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import { CONNECT_STATUS, useSIPProvider } from "react-sipjs";
 import { z } from "zod";
 
-import type { RouterOutputs } from "@acme/api";
 import { Button } from "@acme/ui/button";
 import {
   Form,
