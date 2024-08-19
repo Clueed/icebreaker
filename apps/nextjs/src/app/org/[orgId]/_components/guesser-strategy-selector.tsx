@@ -26,7 +26,7 @@ const GuesserStrategySelector = (props: {
   orgId: string;
   onApplyExtensionStrategyOnce: (strategy: Strategy) => void;
 }) => {
-  const { data: currentStrategy } = useCurrentStrategyQuery({
+  const { data: currentStrategy, isLoading } = useCurrentStrategyQuery({
     id: props.orgId,
   });
 
@@ -39,55 +39,16 @@ const GuesserStrategySelector = (props: {
 
   const sortedStrategies = availbaleExtensionStrategies.sort(startStrategiesUi);
 
-  const [loopAtPower, setLoopAtPower] = useState<[number]>([
-    availbaleExtensionStrategies.length - 1,
-  ]);
-
   const { mutate: setCurrentStrategy } = useCurrentStrategySetMutation();
   const handleLongPress = (strategy: Strategy) => {
-    if (isRandomStrategy(strategy)) {
-      setCurrentStrategy({
-        id: props.orgId,
-        data: { currentStrategy: strategy },
-      });
-    }
-    if (isAdditionStrategy(strategy)) {
-      setCurrentStrategy({
-        id: props.orgId,
-        data: {
-          currentStrategy: {
-            ...strategy,
-            loopAtPower: undefined,
-          },
-        },
-      });
-    }
+    setCurrentStrategy({
+      id: props.orgId,
+      data: strategy,
+    });
   };
 
-  function handleSliderOnValueChange(value: number[]): void {
-    if (!value[0]) {
-      throw new Error("Slider Error: value should not be falsy");
-    }
-
-    if (!currentStrategy) {
-      throw new Error("Slider Error: currentStrategy should not be falsy");
-    }
-    setLoopAtPower([value[0]]);
-    if (isAdditionStrategy(currentStrategy)) {
-      setCurrentStrategy({
-        id: props.orgId,
-        data: {
-          currentStrategy: {
-            ...currentStrategy,
-            loopAtPower: undefined, //value[0],
-          },
-        },
-      });
-    }
-  }
-
   if (!currentStrategy) {
-    return null;
+    return "Error";
   }
 
   return (
@@ -121,15 +82,10 @@ const GuesserStrategySelector = (props: {
             gridRowEnd: availbaleExtensionStrategies.length + 1,
           }}
         >
-          <Slider
-            orientation="vertical"
-            step={1}
-            min={1}
-            max={availbaleExtensionStrategies.length - 1}
-            dir={"rtl"}
-            value={loopAtPower}
-            onValueChange={handleSliderOnValueChange}
-            disabled={isRandomStrategy(currentStrategy)}
+          <LoopAtValueSlider
+            orgId={props.orgId}
+            strategyCount={availbaleExtensionStrategies.length - 1}
+            currentStrategy={currentStrategy}
           />
         </div>
       </div>
@@ -139,6 +95,64 @@ const GuesserStrategySelector = (props: {
 };
 
 export default GuesserStrategySelector;
+
+const LoopAtValueSlider = (props: {
+  strategyCount: number;
+  orgId: string;
+  currentStrategy: Strategy;
+}) => {
+  console.log("rendur slider");
+
+  const currentStrategy = props.currentStrategy;
+
+  const { mutate: setCurrentStrategy } = useCurrentStrategySetMutation();
+  if (!currentStrategy) {
+    return "loading...";
+  }
+
+  const handleSliderOnValueChange = (value: number[]): void => {
+    if (!value[0]) {
+      throw new Error("Slider Error: value should not be falsy");
+    }
+
+    if (!isAdditionStrategy(currentStrategy)) {
+      throw new Error(
+        "Slider Error: currentStrategy should be an addition strategy",
+      );
+    }
+
+    if (value[0] === currentStrategy.loopAtPower) {
+      return;
+    }
+
+    setCurrentStrategy({
+      id: props.orgId,
+      data: { ...currentStrategy, loopAtPower: value[0] },
+    });
+    setOldLoopAtPower(value[0]);
+  };
+
+  const isAddition = isAdditionStrategy(currentStrategy);
+
+  const loopAtPowerFromDB =
+    (isAddition && currentStrategy.loopAtPower) || props.strategyCount - 1;
+
+  const [oldLoopAtPower, setOldLoopAtPower] =
+    useState<number>(loopAtPowerFromDB);
+
+  return (
+    <Slider
+      orientation="vertical"
+      step={1}
+      min={1}
+      max={props.strategyCount}
+      dir={"rtl"}
+      value={[isAddition ? loopAtPowerFromDB : oldLoopAtPower]}
+      onValueChange={handleSliderOnValueChange}
+      disabled={!isAddition}
+    />
+  );
+};
 
 function startStrategiesUi(a: Strategy, b: Strategy): number {
   if (a.type === "add" && b.type === "random") {

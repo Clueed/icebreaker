@@ -9,6 +9,10 @@ import {
 import { isRandomStrategy, randomStrategySchema } from "./strategy-random";
 
 const strategySchema = z.union([additionStrategySchema, randomStrategySchema]);
+const strategySchemaPartial = z.union([
+  additionStrategySchema.partial(),
+  randomStrategySchema.partial(),
+]);
 
 type Strategy = z.infer<typeof strategySchema>;
 
@@ -17,10 +21,7 @@ const extionsionStrategiesAreEqual = (
   strategy2: Strategy,
 ) => {
   if (isAdditionStrategy(strategy1) && isAdditionStrategy(strategy2)) {
-    return (
-      strategy1.numberToAdd === strategy2.numberToAdd &&
-      strategy1.loopAtPower === strategy2.loopAtPower
-    );
+    return strategy1.numberToAdd === strategy2.numberToAdd;
   }
 
   if (isRandomStrategy(strategy1) && isRandomStrategy(strategy2)) {

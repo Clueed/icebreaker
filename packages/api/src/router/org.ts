@@ -57,11 +57,14 @@ export const orgRouter = {
     .input(
       z.object({
         id: z.string(),
-        data: CreateOrgSchema.pick({ currentStrategy: true }),
+        data: CreateOrgSchema.shape.currentStrategy,
       }),
     )
     .mutation(async ({ ctx, input: { id, data } }) => {
-      return ctx.db.update(Org).set(data).where(eq(Org.id, id));
+      return ctx.db
+        .update(Org)
+        .set({ currentStrategy: data })
+        .where(eq(Org.id, id));
     }),
 
   update: protectedProcedure

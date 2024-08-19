@@ -24,7 +24,7 @@ export const useCurrentStrategySetMutation = () => {
       // Optimistically update the data with our new userSettings
 
       utils.org.extensionStrategyById.setData({ id: payload.id }, (old) =>
-        payload.data.currentStrategy ? payload.data.currentStrategy : old,
+        payload.data ? payload.data : old,
       );
       // Return the previous data so we can revert if something goes wrong
       return { prevData };
