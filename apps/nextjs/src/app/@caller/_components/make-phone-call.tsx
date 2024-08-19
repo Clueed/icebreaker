@@ -1,6 +1,4 @@
-import type { AppRouterOutputs } from "node_modules/@acme/api/dist/root";
 
-import type { PhoneNumber } from "@acme/validators/phone-number";
 import { Button } from "@acme/ui/button";
 
 import { useCurrentCallQuery } from "~/app/_api-hooks/use-current-call";
