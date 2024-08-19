@@ -37,10 +37,10 @@ export function CreateOrgForm({}: {}) {
 
   const utils = api.useUtils();
   const { mutateAsync: createOrg } = api.org.create.useMutation({
-    onSuccess: async (org) => {
+    onSuccess: (org) => {
       toast("org created");
-      await utils.org.all.invalidate();
-      await utils.org.byId.invalidate({ id: org.id });
+      utils.org.all.invalidate();
+      utils.org.byId.invalidate({ id: org.id });
     },
     onError: (error) => {
       toast("error creating org: " + error.message);
