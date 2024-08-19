@@ -137,6 +137,7 @@ export const CreateSipCredentialsSchema = createInsertSchema(SipCredentials, {
   username: z.string().min(1).max(256),
   password: z.string().min(1).max(256),
 }).omit({
+  userId: true,
   createdAt: true,
   updatedAt: true,
 });

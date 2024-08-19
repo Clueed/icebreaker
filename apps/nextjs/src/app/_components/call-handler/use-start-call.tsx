@@ -2,9 +2,7 @@ import { useSIPProvider } from "react-sipjs";
 
 import { toast } from "@acme/ui/toast";
 
-import { useOptimisticPhoneCallMutation } from "~/app/_api-hooks/optimistic-phone-call-update";
 import { useCurrentCallCreateMutation } from "~/app/_api-hooks/use-current-call";
-import { api } from "~/trpc/react";
 
 function useStartCall() {
   const { mutate: createPhoneCall } = useCurrentCallCreateMutation();
