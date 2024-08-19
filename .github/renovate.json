@@ -5,6 +5,17 @@
     {
       "matchPackagePatterns": ["^@acme/"],
       "enabled": false
+    },
+    {
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch",
+      "matchPackageNames": ["*"],
+      "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
+      "groupName": "definitelyTyped",
+      "groupSlug": "types",
+      "matchPackageNames": ["@types/**"]
     }
   ],
   "updateInternalDeps": true,
