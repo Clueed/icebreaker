@@ -10,7 +10,7 @@ import {
   useSelectedGuessIdSetQuery,
   useSelectedGuessQuery,
 } from "~/app/_api-hooks/use-selected-guess";
-import { useCurrentPhoneCall } from "~/app/_components/call-handler/current-call-provider";
+import useStartCall from "~/app/_components/call-handler/use-start-call";
 import { AutoCaller } from "~/app/org/[orgId]/_components/auto-caller";
 import { AutoSkipper } from "~/app/org/[orgId]/_components/auto-skipper";
 import { api } from "~/trpc/react";
@@ -104,7 +104,7 @@ const GuessDisplay = ({
   selected: boolean;
 }) => {
   const { data: guess, isLoading } = api.guess.byId.useQuery({ id: guessId });
-  const { startCall } = useCurrentPhoneCall();
+  const [startCall] = useStartCall({ guessId });
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (selected) {
@@ -133,16 +133,7 @@ const GuessDisplay = ({
             <div>{guess.phoneNumber.base}</div>-
             <div>{guess.phoneNumber.extension}</div>
           </div>
-          <Button
-            onClick={() =>
-              startCall({
-                guessId: guess.id,
-                phoneNumber: guess.phoneNumber,
-              })
-            }
-          >
-            start call
-          </Button>
+          <Button onClick={() => startCall()}>start call</Button>
           <div>{calls && <PhoneCallIcon className="h-6 w-6" />}</div>
         </>
       )}

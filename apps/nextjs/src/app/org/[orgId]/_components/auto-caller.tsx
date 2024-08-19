@@ -4,23 +4,24 @@ import { Button } from "@acme/ui/button";
 
 import { useCurrentCallQuery } from "~/app/_api-hooks/use-current-call";
 import { useSelectedGuessQuery } from "~/app/_api-hooks/use-selected-guess";
-import { useCurrentPhoneCall } from "~/app/_components/call-handler/current-call-provider";
+import useStartCall from "~/app/_components/call-handler/use-start-call";
 
 export const AutoCaller = ({ orgId }: { orgId: string }) => {
   const { data: selectedGuess } = useSelectedGuessQuery({ id: orgId });
 
-  const { startCall } = useCurrentPhoneCall();
+  const [startCall] = useStartCall({ guessId: selectedGuess?.id });
   const { data: phoneCall } = useCurrentCallQuery();
 
   const [enabled, setEnabled] = useState(false);
 
+  const selectedGuessExists = !!selectedGuess;
   const selectedGuessHasCalls = selectedGuess?.phoneCalls.length || false;
   const currentPhoneCallActive = phoneCall?.state !== "Terminated";
 
   useEffect(() => {
     console.log("[AC] triggered");
 
-    if (!enabled || selectedGuess === undefined) {
+    if (!enabled || !selectedGuessExists) {
       console.log(
         "[AC] AutoCaller is not enabled or selectedGuess is undefined, returning early",
       );
@@ -34,17 +35,14 @@ export const AutoCaller = ({ orgId }: { orgId: string }) => {
 
     if (!selectedGuessHasCalls) {
       console.log("[AC] No calls found for selectedGuess, starting a new call");
-      startCall({
-        guessId: selectedGuess.id,
-        phoneNumber: selectedGuess.phoneNumber,
-      });
+      startCall();
       console.log("[AC] Call started and locked set to true");
     }
   }, [
     enabled,
     selectedGuessHasCalls,
     currentPhoneCallActive,
-    selectedGuess?.id,
+    selectedGuessExists,
   ]);
 
   return (

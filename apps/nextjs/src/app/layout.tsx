@@ -11,7 +11,6 @@ import "~/app/globals.css";
 import { Suspense } from "react";
 import { Urbanist, Victor_Mono } from "next/font/google";
 
-import { CurrentPhoneCallProvider } from "~/app/_components/call-handler/current-call-provider";
 import NavBar from "~/app/_components/nav";
 import SipProviderConfigured from "~/app/_components/sip-provider";
 import { env } from "~/env";
@@ -70,19 +69,17 @@ export default function RootLayout(props: {
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <TRPCReactProvider>
             <SipProviderConfigured>
-              <CurrentPhoneCallProvider>
-                <NavBar />
-                <main className="container flex gap-16">
-                  <div className="flex-grow">
-                    <Suspense fallback={<div>loading...</div>}>
-                      {props.children}
-                    </Suspense>
-                  </div>
+              <NavBar />
+              <main className="container flex gap-16">
+                <div className="flex-grow">
                   <Suspense fallback={<div>loading...</div>}>
-                    {props.caller}
+                    {props.children}
                   </Suspense>
-                </main>
-              </CurrentPhoneCallProvider>
+                </div>
+                <Suspense fallback={<div>loading...</div>}>
+                  {props.caller}
+                </Suspense>
+              </main>
             </SipProviderConfigured>
           </TRPCReactProvider>
           <div className="absolute bottom-4 right-4">

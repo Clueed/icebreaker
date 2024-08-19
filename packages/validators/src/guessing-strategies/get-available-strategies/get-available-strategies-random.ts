@@ -1,8 +1,8 @@
-import type { NotEmptyPhoneNumber } from "../../phone-number";
+import type { PhoneNumber } from "../../phone-number";
 import type { RandomStrategy } from "../strategy-random";
 
 export default function getAvailableStrategiesRandom(
-  _phoneNumber: NotEmptyPhoneNumber,
+  _phoneNumber: PhoneNumber,
 ): RandomStrategy[] {
   return [
     {

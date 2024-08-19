@@ -1,62 +1,106 @@
+import { skipToken } from "@tanstack/react-query";
 import { useSIPProvider } from "react-sipjs";
 
+import type { PhoneNumber } from "@acme/validators/phone-number";
 import { toast } from "@acme/ui/toast";
+import { phoneNumberSchema } from "@acme/validators/phone-number";
 
-import { useCurrentCallCreateMutation } from "~/app/_api-hooks/use-current-call";
+import {
+  useCurrentCallCreateMutation,
+  useCurrentCallQuery,
+} from "~/app/_api-hooks/use-current-call";
+import { api } from "~/trpc/react";
 
-function useStartCall() {
+function useStartCall({ guessId }: { guessId?: string }) {
+  const { data: guess } = api.guess.byId.useQuery(
+    guessId ? { id: guessId } : skipToken,
+    {
+      throwOnError: true,
+    },
+  );
   const { mutate: createPhoneCall } = useCurrentCallCreateMutation();
+  const { data: phoneCall } = useCurrentCallQuery();
 
-  const { sessionManager } = useSIPProvider();
+  const startCall = useStartSipCall();
 
-  return {
-    startCall: async ({
-      guessId,
-      phoneNumber,
-    }: {
-      guessId: string;
-      phoneNumber: { base: string; extension: string };
-    }) => {
-      if (!sessionManager) {
-        toast.error("Starting Call: no session manager");
+  return [
+    async () => {
+      if (!guess) {
+        toast.error("Starting Call failed: guess not found");
         return;
       }
 
-      const managedSessionsCount = sessionManager.managedSessions.length;
-
-      if (managedSessionsCount > 1) {
-        toast.error("Starting Call: failed, different call in progress");
+      if (phoneCall === undefined) {
+        toast.warning("Starting Call failed: something went wrong");
         return;
       }
 
-      const inviter = await sessionManager.call(
-        `sip:${phoneNumber.base + phoneNumber.extension}@sipgate.de`,
-        {},
-      );
+      if (phoneCall && phoneCall.state !== "Terminated") {
+        toast.warning("Starting Call failed: call in progress");
+        return;
+      }
+
+      const inviter = await startCall({ phoneNumber: guess.phoneNumber });
       if (!inviter) {
-        toast.error("Starting Call: no inviter");
+        toast.error("Starting Call failed: no inviter");
         return;
       }
 
-      const sessionId = inviter.id;
-      const state = inviter.state;
+      const { id: sessionId, state } = inviter;
       return createPhoneCall(
         {
           sessionId,
-          guessId,
+          guessId: guess.id,
           state,
         },
         {
           onSuccess: () => {
-            toast.success("Call created");
+            toast.success("Call started: " + guess.phoneNumber);
           },
           onError: (error) => {
-            toast.error(error.message);
+            toast.error("Starting Call failed: " + error.message);
           },
         },
       );
     },
-  };
+  ] as const;
 }
 
 export default useStartCall;
+
+const useStartSipCall = () => {
+  const { sessionManager, sessions } = useSIPProvider();
+
+  const activeSession = Object.values(sessions).find(
+    (session) => session.state !== "Terminated",
+  );
+
+  return async (args: { phoneNumber: PhoneNumber }) => {
+    const { data: phoneNumber, success } = phoneNumberSchema.safeParse(
+      args.phoneNumber,
+    );
+
+    if (!success) {
+      toast.error(
+        "Starting Call failed: invalid phone number " +
+          args.phoneNumber.base +
+          args.phoneNumber.extension,
+      );
+      return;
+    }
+
+    if (activeSession) {
+      toast.error("Starting Call failed: failed, different call in progress");
+      return;
+    }
+
+    if (!sessionManager) {
+      toast.error("Starting Call failed: no session manager");
+      return;
+    }
+
+    return await sessionManager.call(
+      `sip:${phoneNumber.base + phoneNumber.extension}@sipgate.de`,
+    );
+  };
+};

@@ -2,33 +2,51 @@ import { useSIPProvider } from "react-sipjs";
 
 import { toast } from "@acme/ui/toast";
 
+import { useCurrentCallQuery } from "~/app/_api-hooks/use-current-call";
+
 export function useEndCall() {
   const { sessionManager, sessions } = useSIPProvider();
+  const { data: phoneCall } = useCurrentCallQuery();
 
-  return {
-    endCall: async ({ sessionId }: { sessionId?: string }) => {
-      if (!sessionId) {
-        toast.error("Ending Call: no sessionId");
+  const endCall = useEndSipCall();
+
+  return [
+    () => {
+      if (phoneCall === undefined) {
+        toast.warning("Ending Call: something went wrong");
         return;
       }
 
-      console.log("sessionId", sessionId);
-
-      if (!sessionManager) {
-        toast.error("Ending Call: No session manager");
+      if (phoneCall === null) {
+        toast.warning("Ending Call: no call found");
         return;
       }
 
-      console.log("sessionManager", sessionManager);
-
-      const session = sessions[sessionId];
-      if (!session) {
-        toast.error("Ending Call: No session");
-        return;
-      }
-      console.log("session", session);
-
-      sessionManager.hangup(session);
+      endCall({ sessionId: phoneCall.sessionId });
     },
-  };
+  ] as const;
 }
+
+const useEndSipCall = () => {
+  const { sessionManager, sessions } = useSIPProvider();
+
+  return ({ sessionId }: { sessionId: string }) => {
+    if (!sessionId) {
+      toast.error("Ending Call failed: no sessionId");
+      return;
+    }
+
+    if (!sessionManager) {
+      toast.error("Ending Call failed: No session manager");
+      return;
+    }
+
+    const session = sessions[sessionId];
+    if (!session) {
+      toast.error("Ending Call failed: No session");
+      return;
+    }
+
+    sessionManager.hangup(session);
+  };
+};

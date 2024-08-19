@@ -1,4 +1,4 @@
-import type { NotEmptyPhoneNumber } from "../../phone-number";
+import type { PhoneNumber } from "../../phone-number";
 import type { Strategy } from "../index";
 import { isAdditionStrategy } from "../index";
 import { isRandomStrategy } from "../strategy-random";
@@ -23,25 +23,25 @@ function generateNextPhoneNumbers({
   strategy,
   count,
 }: {
-  phoneNumber: NotEmptyPhoneNumber;
+  phoneNumber: PhoneNumber;
   strategy: Strategy;
   count: number;
 }) {
   const newPhoneNumbers = Array.from({ length: count }).reduce(
-    (acc: NotEmptyPhoneNumber[], _, index) => {
+    (acc: PhoneNumber[], _, index) => {
       const newExtension = applyStrategy(
         acc[index - 1]?.extension ?? phoneNumber.extension,
         strategy,
       );
 
-      const newPhoneNumber: NotEmptyPhoneNumber = {
+      const newPhoneNumber: PhoneNumber = {
         base: phoneNumber.base,
         extension: newExtension,
       };
 
       return [...acc, newPhoneNumber];
     },
-    [] as NotEmptyPhoneNumber[],
+    [] as PhoneNumber[],
   );
 
   return newPhoneNumbers;

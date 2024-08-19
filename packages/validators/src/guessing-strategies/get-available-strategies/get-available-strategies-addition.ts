@@ -1,8 +1,8 @@
-import type { NotEmptyPhoneNumber } from "../../phone-number";
+import type { PhoneNumber } from "../../phone-number";
 import type { AdditionStrategy } from "../strategy-addition";
 
 export default function getAvailableAdditionAdditionExtensionStrategy(
-  phoneNumber: NotEmptyPhoneNumber,
+  phoneNumber: PhoneNumber,
 ): Omit<AdditionStrategy, "loopAtPower">[] {
   const extensionLength = phoneNumber.extension.length;
   const extensionStrategies = Array.from({ length: extensionLength }).map(

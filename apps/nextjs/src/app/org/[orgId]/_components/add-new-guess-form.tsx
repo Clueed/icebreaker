@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from "@acme/ui/form";
 import { Input } from "@acme/ui/input";
+import { phoneNumberSchema } from "@acme/validators/phone-number";
 
 import { useCreateGuess } from "~/app/_api-hooks/use-create-guess";
 import {
@@ -21,14 +22,7 @@ import {
   useSelectedGuessQuery,
 } from "~/app/_api-hooks/use-selected-guess";
 
-const FormSchema = z.object({
-  base: z.string().min(2, {
-    message: "name must be at least 2 characters.",
-  }),
-  extension: z.string().min(2, {
-    message: "name must be at least 2 characters.",
-  }),
-});
+const FormSchema = phoneNumberSchema;
 
 export function AddNewGuessForm({ orgId }: { orgId: string }) {
   const { data: selectedGuess } = useSelectedGuessQuery({ id: orgId });
