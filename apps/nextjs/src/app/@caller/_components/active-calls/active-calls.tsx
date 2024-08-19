@@ -17,9 +17,8 @@ export const ActiveCalls = () => {
   const { data: userSettings } = api.userSettings.get.useQuery();
 
   const activeCallsWithoutCurrent =
-    aciveCalls.filter(
-      (call) => call.id !== userSettings?.currentPhoneCallId,
-    ) ?? [];
+    aciveCalls.filter((call) => call.id !== userSettings?.currentPhoneCallId) ??
+    [];
 
   const { sessions } = useSIPProvider();
   const sessionsArray = Object.entries(sessions);
