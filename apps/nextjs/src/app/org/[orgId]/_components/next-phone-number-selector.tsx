@@ -6,6 +6,7 @@ import type { Strategy } from "@acme/validators/guessing-strategies";
 import type { NotEmptyPhoneNumber } from "@acme/validators/phone-number";
 import { cn } from "@acme/ui";
 import { Button } from "@acme/ui/button";
+import { PhoneCallIcon } from "@acme/ui/icons";
 import { toast } from "@acme/ui/toast";
 
 import { useOptimisticOrgMutation } from "~/app/_api-hooks/optimistic-org-update";
@@ -29,6 +30,7 @@ export const NextPhoneNumberSelector = ({ orgId }: { orgId: string }) => {
 
   const {
     data: nextGuessesData,
+    error,
     fetchNextPage,
     isFetching,
   } = api.guess.next.useInfiniteQuery(
@@ -36,6 +38,7 @@ export const NextPhoneNumberSelector = ({ orgId }: { orgId: string }) => {
       ? {
           guessId: stableGuessId,
           strategy: currentStrategy,
+          limit: 3,
         }
       : skipToken,
     {
@@ -43,7 +46,7 @@ export const NextPhoneNumberSelector = ({ orgId }: { orgId: string }) => {
     },
   );
 
-  const nextGuesses = useMemo(() => {
+  const nextGuessIds = useMemo(() => {
     if (!nextGuessesData) {
       return [];
     }
@@ -51,38 +54,38 @@ export const NextPhoneNumberSelector = ({ orgId }: { orgId: string }) => {
     return nextGuessesData.pages.flatMap((page) => page.data);
   }, [nextGuessesData]);
 
+  useEffect(() => {
+    if (nextGuessIds.length < 10 && !error && !isFetching) {
+      fetchNextPage();
+    }
+  }, [nextGuessIds.length, error, isFetching]);
+
   const setSelectedGuessIdMutation = useSelectedGuessIdSetQuery();
   function setSelectedGuessId(guessId: string): void {
     setSelectedGuessIdMutation.mutate({
       orgId: orgId,
       data: { selectedGuessId: guessId },
     });
-
-    const indexOfSelectedGuess = nextGuesses.findIndex((g) => g.id === guessId);
-    if (!isFetching && nextGuesses.length - indexOfSelectedGuess < 5) {
-      fetchNextPage();
-      toast("next page");
-    }
   }
 
-  const indexOfSelectedGuess = nextGuesses.findIndex(
-    (g) => g.id === selectedGuess?.id,
+  const indexOfSelectedGuess = nextGuessIds.findIndex(
+    (g) => g === selectedGuess?.id,
   );
-  const nextGuessId = nextGuesses[indexOfSelectedGuess + 1]?.id;
+  const nextGuessId = nextGuessIds[indexOfSelectedGuess + 1];
 
-  if (!nextGuesses || !selectedGuess) {
+  if (!nextGuessIds || !selectedGuess) {
     return null;
   }
 
   return (
     <div>
       <div className="h-96 overflow-y-scroll">
-        {[...nextGuesses].reverse().map((guess) => (
+        {[...nextGuessIds].reverse().map((guessId) => (
           <GuessDisplay
-            key={guess.id}
-            guess={guess}
-            onClick={() => setSelectedGuessId(guess.id)}
-            selected={selectedGuess.id === guess.id}
+            key={guessId}
+            guessId={guessId}
+            onClick={() => setSelectedGuessId(guessId)}
+            selected={selectedGuess.id === guessId}
           />
         ))}
       </div>
@@ -95,14 +98,15 @@ export const NextPhoneNumberSelector = ({ orgId }: { orgId: string }) => {
 };
 
 const GuessDisplay = ({
-  guess,
+  guessId,
   onClick,
   selected,
 }: {
-  guess: AppRouterOutputs["guess"]["all"][0];
+  guessId: string;
   onClick: () => void;
   selected: boolean;
 }) => {
+  const { data: guess, isLoading } = api.guess.byId.useQuery({ id: guessId });
   const { startCall } = useCurrentPhoneCall();
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -113,29 +117,38 @@ const GuessDisplay = ({
       });
     }
   }, [selected]);
+
+  const calls = guess ? guess?.phoneCalls.length > 0 : false;
   return (
     <div
       ref={ref}
       className={cn(
         "flex gap-1 border-2 p-4",
+        calls && "opacity-10",
         selected && "bg-accent text-accent-foreground",
       )}
     >
-      <Button onClick={onClick}>select</Button>
-      <div className="flex gap-1">
-        <div>{guess.phoneNumber.base}</div>-
-        <div>{guess.phoneNumber.extension}</div>
-      </div>
-      <Button
-        onClick={() =>
-          startCall({
-            guessId: guess.id,
-            phoneNumber: guess.phoneNumber,
-          })
-        }
-      >
-        start call
-      </Button>
+      {isLoading ? "loading..." : null}
+      {guess && (
+        <>
+          <Button onClick={onClick}>select</Button>
+          <div className="flex gap-1">
+            <div>{guess.phoneNumber.base}</div>-
+            <div>{guess.phoneNumber.extension}</div>
+          </div>
+          <Button
+            onClick={() =>
+              startCall({
+                guessId: guess.id,
+                phoneNumber: guess.phoneNumber,
+              })
+            }
+          >
+            start call
+          </Button>
+          <div>{calls && <PhoneCallIcon className="h-6 w-6" />}</div>
+        </>
+      )}
     </div>
   );
 };

@@ -73,11 +73,21 @@ export const guessRouter = {
       const newGuesses = await Promise.all(
         guessUpsertInputs.map(
           async (guessUpsertInput) =>
-            await createGuess(ctx.db, guessUpsertInput),
+            await ctx.db
+              .insert(Guess)
+              .values(guessUpsertInput)
+              .onConflictDoUpdate({
+                target: Guess.phoneNumber,
+                set: {
+                  updatedAt: sql`now()`,
+                },
+              })
+              .returning({ id: Guess.id })
+              .then(takeUniqueOrThrow("guess create")),
         ),
       );
 
-      const data = [guess, ...newGuesses.slice(0, count - 2)];
+      const data = [guess, ...newGuesses.slice(0, count - 2)].map((g) => g.id);
 
       return {
         data,
@@ -88,7 +98,17 @@ export const guessRouter = {
   create: protectedProcedure
     .input(CreateGuessSchema)
     .mutation(({ ctx, input }) => {
-      return createGuess(ctx.db, input);
+      return ctx.db
+        .insert(Guess)
+        .values(input)
+        .onConflictDoUpdate({
+          target: Guess.phoneNumber,
+          set: {
+            updatedAt: sql`now()`,
+          },
+        })
+        .returning()
+        .then(takeUniqueOrThrow("guess create"));
     }),
 
   delete: protectedProcedure.input(z.string()).mutation(({ ctx, input }) => {
@@ -111,7 +131,7 @@ const createGuess = async (
         },
       }) // for updatedAt
       //   .onConflictDoNothing({ target: Guess.id })
-      .returning()
+      .returning({ id: Guess.id })
       .then(takeUniqueOrThrow("guess create"))
   );
 };

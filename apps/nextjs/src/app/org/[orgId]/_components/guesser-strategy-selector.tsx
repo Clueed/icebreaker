@@ -24,7 +24,6 @@ import { useSelectedGuessQuery } from "~/app/_api-hooks/use-selected-guess";
 
 const GuesserStrategySelector = (props: {
   orgId: string;
-
   onApplyExtensionStrategyOnce: (strategy: Strategy) => void;
 }) => {
   const { data: currentStrategy } = useCurrentStrategyQuery({
