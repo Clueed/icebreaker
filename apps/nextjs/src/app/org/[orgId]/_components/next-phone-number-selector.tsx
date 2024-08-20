@@ -21,7 +21,7 @@ export const NextPhoneNumberSelector = ({ orgId }: { orgId: string }) => {
     id: orgId,
   });
 
-  const stableGuessId = useMemo(() => selectedGuess?.id, [!!selectedGuess]);
+  const [stableGuessId, setStableGuessId] = useState(selectedGuess?.id);
 
   const {
     data: nextGuessesData,
