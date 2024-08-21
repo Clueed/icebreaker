@@ -1,100 +1,55 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { skipToken } from "@tanstack/react-query";
-
-import { cn } from "@acme/ui";
-import { Button } from "@acme/ui/button";
-import { PhoneCallIcon } from "@acme/ui/icons";
 
 import { useCurrentStrategyQuery } from "~/app/_api-hooks/use-current-strategy";
 import {
+  useSelectedGuessId,
   useSelectedGuessIdSetQuery,
   useSelectedGuessQuery,
 } from "~/app/_api-hooks/use-selected-guess";
-import useStartCall from "~/app/_components/call-handler/use-start-call";
 import { AutoCaller } from "~/app/org/[orgId]/_components/auto-caller";
 import { AutoSkipper } from "~/app/org/[orgId]/_components/auto-skipper";
+import { GuessDisplay } from "~/app/org/[orgId]/_components/guess-display";
 import { api } from "~/trpc/react";
 
 export const NextPhoneNumberSelector = ({ orgId }: { orgId: string }) => {
-  const { data: selectedGuess } = useSelectedGuessQuery({ id: orgId });
-  const { data: currentStrategy } = useCurrentStrategyQuery({
-    id: orgId,
-  });
-
-  const [stableGuessId, setStableGuessId] = useState(selectedGuess?.id);
-
   const {
-    data: nextGuessesData,
-    error,
+    data: nextGuessIds,
     fetchNextPage,
+    isLoading,
+    isSuccess,
+    isError,
+    error,
     isFetching,
-  } = api.guess.next.useInfiniteQuery(
-    stableGuessId && currentStrategy
-      ? {
-          guessId: stableGuessId,
-          strategy: currentStrategy,
-          limit: 3,
-        }
-      : skipToken,
-    {
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-    },
-  );
+  } = useStableNextGuessIdQuery({ orgId });
 
-  const nextGuessIds = useMemo(() => {
-    if (!nextGuessesData) {
-      return [];
-    }
-
-    return nextGuessesData.pages.flatMap((page) => page.data);
-  }, [nextGuessesData]);
-
-  const selectedGuessInNext = selectedGuess
-    ? nextGuessIds.includes(selectedGuess?.id)
-    : false;
-  useEffect(() => {
-    if (!selectedGuess?.id) return;
-    if (!selectedGuessInNext) {
-      setStableGuessId(selectedGuess.id);
-    }
-  }, [selectedGuess?.id, selectedGuessInNext]);
-
+  const { data: selectedGuess } = useSelectedGuessQuery({ id: orgId });
   const indexOfSelectedGuess = nextGuessIds.findIndex(
     (g) => g === selectedGuess?.id,
   );
   const nextGuessesLeft = nextGuessIds.length - indexOfSelectedGuess;
-
   useEffect(() => {
     if (nextGuessesLeft < 10 && !error && !isFetching) {
       fetchNextPage();
     }
   }, [nextGuessesLeft, error, isFetching]);
 
-  const setSelectedGuessIdMutation = useSelectedGuessIdSetQuery();
-  function setSelectedGuessId(guessId: string): void {
-    setSelectedGuessIdMutation.mutate({
-      orgId: orgId,
-      data: { selectedGuessId: guessId },
-    });
-  }
-
   const nextGuessId = nextGuessIds[indexOfSelectedGuess + 1];
-
-  if (!nextGuessIds || !selectedGuess) {
-    return null;
-  }
 
   return (
     <div>
-      <div className="h-96 overflow-y-scroll">
-        {[...nextGuessIds].reverse().map((guessId, index) => (
-          <GuessDisplay
-            key={index + guessId}
-            guessId={guessId}
-            onClick={() => setSelectedGuessId(guessId)}
-            selected={selectedGuess.id === guessId}
-          />
-        ))}
+      <div
+        className="h-96 overflow-y-scroll"
+        style={{ overflowAnchor: "none" }}
+      >
+        {isLoading && <div>Loading...</div>}
+        {isError && <div>Error! {error.message}</div>}
+        {isSuccess &&
+          [...nextGuessIds]
+            .reverse()
+            .map((guessId, index) => (
+              <GuessDisplay key={index + guessId} guessId={guessId} />
+            ))}
       </div>
       <div>
         <AutoSkipper orgId={orgId} nextGuessId={nextGuessId} />
@@ -104,49 +59,45 @@ export const NextPhoneNumberSelector = ({ orgId }: { orgId: string }) => {
   );
 };
 
-const GuessDisplay = ({
-  guessId,
-  onClick,
-  selected,
-}: {
-  guessId: string;
-  onClick: () => void;
-  selected: boolean;
-}) => {
-  const { data: guess, isLoading } = api.guess.byId.useQuery({ id: guessId });
-  const [startCall] = useStartCall({ guessId });
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (selected) {
-      ref.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "end",
-      });
-    }
-  }, [selected]);
+const useStableNextGuessIdQuery = ({ orgId }: { orgId: string }) => {
+  const { data: selectedGuess } = useSelectedGuessQuery({ id: orgId });
+  const selectedGuessId = selectedGuess?.id;
+  const { data: currentStrategy } = useCurrentStrategyQuery({
+    id: orgId,
+  });
+  const [stableGuessId, setStableGuessId] = useState(selectedGuessId);
 
-  const calls = guess ? guess.phoneCalls.length > 0 : false;
-  return (
-    <div
-      ref={ref}
-      className={cn(
-        "flex gap-1 border-2 p-4",
-        calls && "opacity-10",
-        selected && "bg-accent text-accent-foreground",
-      )}
-    >
-      {isLoading ? "loading..." : null}
-      {guess && (
-        <>
-          <Button onClick={onClick}>select</Button>
-          <div className="flex gap-1">
-            <div>{guess.phoneNumber.base}</div>-
-            <div>{guess.phoneNumber.extension}</div>
-          </div>
-          <Button onClick={() => startCall()}>start call</Button>
-          <div>{calls && <PhoneCallIcon className="h-6 w-6" />}</div>
-        </>
-      )}
-    </div>
+  const query = api.guess.next.useInfiniteQuery(
+    stableGuessId && currentStrategy
+      ? {
+          guessId: selectedGuess?.id ?? stableGuessId,
+          strategy: currentStrategy,
+          limit: 3,
+        }
+      : skipToken,
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+      enabled: Boolean(stableGuessId && currentStrategy),
+    },
   );
+  const nextGuessIds = useMemo(() => {
+    if (!query.data) {
+      return [];
+    }
+
+    return query.data.pages.flatMap((page) => page.data);
+  }, [query.data]);
+
+  const selectedGuessInNext = selectedGuessId
+    ? nextGuessIds.includes(selectedGuessId)
+    : false;
+
+  useEffect(() => {
+    if (!selectedGuessId) return;
+    if (!selectedGuessInNext) {
+      setStableGuessId(selectedGuessId);
+    }
+  }, [selectedGuessId, selectedGuessInNext]);
+
+  return { ...query, data: nextGuessIds };
 };

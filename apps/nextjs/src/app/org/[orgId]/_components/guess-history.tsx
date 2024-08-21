@@ -1,27 +1,83 @@
-import type { RouterOutputs } from "@acme/api";
+import { useEffect, useId, useRef, useState } from "react";
+import { inView, useInView } from "framer-motion";
 
+import type { RouterOutputs } from "@acme/api";
+import { Label } from "@acme/ui/label";
+import { Switch } from "@acme/ui/switch";
+
+import { useSelectedGuessId } from "~/app/_api-hooks/use-selected-guess";
 import { GuessDisplay } from "~/app/org/[orgId]/_components/guess-display";
 import { api } from "~/trpc/react";
 
 export const GuessHistory = ({ orgId }: { orgId: string }) => {
-  const { data, status, error, isError, isPending } = api.guess.all.useQuery({
-    orgId,
-  });
+  const [onlyWithCalls, setOnlyWithCalls] = useState(true);
+  const { data: selectedGuessId } = useSelectedGuessId({ id: orgId });
+  const {
+    data: guessesData,
+    status,
+    error,
+    isError,
+    isPending,
+    isSuccess,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = api.guess.all.useInfiniteQuery(
+    {
+      orgId,
+      onlyWithCalls,
+      limit: 10,
+    },
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    },
+  );
+
+  const guesses = guessesData
+    ? guessesData.pages
+        .flatMap((page) => page.data)
+        .filter((guess) => selectedGuessId && guess.id !== selectedGuessId)
+    : [];
+
+  const ref = useRef(null);
+  const isInView = useInView(ref);
+
+  useEffect(() => {
+    if (isInView && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [isInView, isFetchingNextPage]);
+
+  const onlyWithCallsId = useId();
 
   if (isPending) return "Loading...";
 
   if (isError) return `Error! ${error.message}`;
-  return (
-    <>
-      <Inner data={data} />
-    </>
-  );
-};
 
-const Inner = ({ data }: { data: RouterOutputs["guess"]["all"] }) => {
   return (
-    <>
-      {data?.map((guess) => <GuessDisplay key={guess.id} guessId={guess.id} />)}
-    </>
+    <div>
+      <div className="h-96 overflow-y-scroll">
+        {isPending && <div>Loading...</div>}
+        {isError && <div>Error! {error}</div>}
+        {isSuccess && (
+          <>
+            {guesses.map((guess) => (
+              <GuessDisplay key={guess.id} guessId={guess.id} />
+            ))}
+            <div ref={ref} className="h-1 w-full" />
+            {isFetchingNextPage && <div>Loading next page...</div>}
+          </>
+        )}
+      </div>
+      <div>
+        <div className="flex items-center space-x-2">
+          <Switch
+            id={onlyWithCallsId}
+            checked={onlyWithCalls}
+            onCheckedChange={setOnlyWithCalls}
+          />
+          <Label htmlFor={onlyWithCallsId}>only with calls</Label>
+        </div>
+      </div>
+    </div>
   );
 };

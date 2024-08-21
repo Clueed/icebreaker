@@ -2,6 +2,7 @@
 
 import type { RouterOutputs } from "@acme/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@acme/ui/card";
+import { PhoneNumberDisplay } from "@acme/ui/custom/phone-number-display";
 
 import { api } from "~/trpc/react";
 
@@ -38,7 +39,7 @@ const HistoryCall = ({
   return (
     <div className="flex w-full justify-between gap-2 rounded bg-muted p-2">
       <div>
-        <span className="text-muted-foreground">{base}</span>-{extension}
+        <PhoneNumberDisplay phoneNumber={call.phoneNumber} />
       </div>
       <div className="text-sm">{lastModified}</div>
     </div>

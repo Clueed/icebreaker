@@ -1,5 +1,5 @@
-
 import { Button } from "@acme/ui/button";
+import { PhoneNumberDisplay } from "@acme/ui/custom/phone-number-display";
 
 import { useCurrentCallQuery } from "~/app/_api-hooks/use-current-call";
 import { useEndCall } from "~/app/_components/call-handler/use-end-call";
@@ -20,7 +20,7 @@ export function MakePhoneCall() {
   return (
     <div>
       <div>
-        {phoneCall.phoneNumber.base}-{phoneCall.phoneNumber.extension}
+        <PhoneNumberDisplay phoneNumber={phoneCall.phoneNumber} />
       </div>
       {phoneCallActive ? (
         <Button onClick={endCall}>Hangup</Button>

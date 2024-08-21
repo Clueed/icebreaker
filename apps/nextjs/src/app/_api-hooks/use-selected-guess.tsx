@@ -8,15 +8,21 @@ import { api } from "~/trpc/react";
 export const useSelectedGuessQuery = (
   input: AppRouterInputs["org"]["byId"],
 ) => {
-  const { data: selectedGuessId } = api.org.byId.useQuery(input, {
-    select: (org) => org.selectedGuessId,
-  });
+  const { data: selectedGuessId } = useSelectedGuessId(input);
   return api.guess.byId.useQuery(
     selectedGuessId ? { id: selectedGuessId } : skipToken,
     {
       placeholderData: (prev) => prev,
     },
   );
+};
+
+export const useSelectedGuessId = (
+  input: AppRouterInputs["org"]["byId"] | typeof skipToken,
+) => {
+  return api.org.byId.useQuery(input, {
+    select: (org) => org.selectedGuessId,
+  });
 };
 
 export const useSelectedGuessIdSetQuery = () => {
