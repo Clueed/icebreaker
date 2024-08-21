@@ -7,10 +7,16 @@
       "enabled": false
     },
     {
-      "groupName": "all non-major dependencies",
-      "groupSlug": "all-minor-patch",
+      "groupName": "all minor dependencies",
+      "groupSlug": "all-minor",
       "matchPackageNames": ["*"],
-      "matchUpdateTypes": ["minor", "patch"]
+      "matchUpdateTypes": ["minor"]
+    },
+    {
+      "groupName": "all patch dependencies",
+      "groupSlug": "all-patch",
+      "matchPackageNames": ["*"],
+      "matchUpdateTypes": ["patch"]
     },
     {
       "groupName": "definitelyTyped",
@@ -22,6 +28,6 @@
   "rangeStrategy": "bump",
   "automerge": true,
   "npm": {
-    "fileMatch": ["(^|/)package\\.json$", "(^|/)package\\.json\\.hbs$"]
+    "fileMatch": ["(^|/)package\\.json$", "(^|/)pnpm-workspace\\.yaml$", "(^|/)package\\.json\\.hbs$"]
   }
 }
