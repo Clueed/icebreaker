@@ -1,9 +1,8 @@
 import type { TRPCRouterRecord } from "@trpc/server";
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { and, desc, eq, not, sql } from "@acme/db";
-import { CreateGuessSchema, Guess, Org, PhoneCall } from "@acme/db/schema";
+import { desc, eq, sql } from "@acme/db";
+import { CreateGuessSchema, Guess, PhoneCall } from "@acme/db/schema";
 import { strategySchema } from "@acme/validators/guessing-strategies";
 import { generateNextPhoneNumbers } from "@acme/validators/guessing-strategies/apply-strategy";
 

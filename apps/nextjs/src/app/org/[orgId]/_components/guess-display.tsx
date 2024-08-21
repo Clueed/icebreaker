@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { queryOptions, skipToken } from "@tanstack/react-query";
+import { skipToken } from "@tanstack/react-query";
 
 import type { AppRouterOutputs } from "@acme/api";
 import { cn } from "@acme/ui";
@@ -10,7 +10,6 @@ import { CrosshairIcon, PhoneCallIcon } from "@acme/ui/icons";
 import {
   useSelectedGuessId,
   useSelectedGuessIdSetQuery,
-  useSelectedGuessQuery,
 } from "~/app/_api-hooks/use-selected-guess";
 import useStartCall from "~/app/_components/call-handler/use-start-call";
 import { api } from "~/trpc/react";

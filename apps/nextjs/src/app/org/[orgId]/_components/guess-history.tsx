@@ -1,7 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
-import { inView, useInView } from "framer-motion";
+import { useInView } from "framer-motion";
 
-import type { RouterOutputs } from "@acme/api";
 import { Label } from "@acme/ui/label";
 import { Switch } from "@acme/ui/switch";
 

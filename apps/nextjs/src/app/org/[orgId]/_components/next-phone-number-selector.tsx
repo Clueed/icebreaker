@@ -2,11 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { skipToken } from "@tanstack/react-query";
 
 import { useCurrentStrategyQuery } from "~/app/_api-hooks/use-current-strategy";
-import {
-  useSelectedGuessId,
-  useSelectedGuessIdSetQuery,
-  useSelectedGuessQuery,
-} from "~/app/_api-hooks/use-selected-guess";
+import { useSelectedGuessQuery } from "~/app/_api-hooks/use-selected-guess";
 import { AutoCaller } from "~/app/org/[orgId]/_components/auto-caller";
 import { AutoSkipper } from "~/app/org/[orgId]/_components/auto-skipper";
 import { GuessDisplay } from "~/app/org/[orgId]/_components/guess-display";
