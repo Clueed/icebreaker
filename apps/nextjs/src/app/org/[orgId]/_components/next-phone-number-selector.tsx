@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { skipToken } from "@tanstack/react-query";
 
 import { cn } from "@acme/ui";
@@ -48,6 +48,16 @@ export const NextPhoneNumberSelector = ({ orgId }: { orgId: string }) => {
 
     return nextGuessesData.pages.flatMap((page) => page.data);
   }, [nextGuessesData]);
+
+  const selectedGuessInNext = selectedGuess
+    ? nextGuessIds.includes(selectedGuess?.id)
+    : false;
+  useEffect(() => {
+    if (!selectedGuess?.id) return;
+    if (!selectedGuessInNext) {
+      setStableGuessId(selectedGuess.id);
+    }
+  }, [selectedGuess?.id, selectedGuessInNext]);
 
   const indexOfSelectedGuess = nextGuessIds.findIndex(
     (g) => g === selectedGuess?.id,
