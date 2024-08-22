@@ -98,13 +98,16 @@ const phoneCallStateList = [
   "Terminating",
   "Terminated",
 ] as const;
-export const phoneCallStateEnum = pgEnum("state", phoneCallStateList);
+export const phoneCallStateEnum = pgEnum("state_enum", phoneCallStateList);
+export const phoneCallRatingList = ["voicemail", "person", "jackpot"] as const;
+export const phoneCallRatingEnum = pgEnum("rating_enum", phoneCallRatingList);
 
 export const PhoneCall = pgTable("phone_call", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   sessionId: varchar("sessionId", { length: 256 }).notNull(),
   guessId: uuid("guessId").notNull(),
   state: phoneCallStateEnum("state").notNull(),
+  rating: phoneCallRatingEnum("rating"),
   ...timeStampColumns,
 });
 
@@ -112,10 +115,14 @@ export const phoneCallRelation = relations(PhoneCall, ({ one }) => ({
   guess: one(Guess, { fields: [PhoneCall.guessId], references: [Guess.id] }),
 }));
 
+export const phoneCallRatingSchema = z.enum(phoneCallRatingList).nullable();
+export type PhoneCallRating = z.infer<typeof phoneCallRatingSchema>;
+
 export const CreatePhoneCallSchema = createInsertSchema(PhoneCall, {
   sessionId: z.string().max(256),
   guessId: z.string().uuid(),
   state: z.enum(phoneCallStateList),
+  rating: phoneCallRatingSchema,
 }).omit({
   id: true,
   createdAt: true,

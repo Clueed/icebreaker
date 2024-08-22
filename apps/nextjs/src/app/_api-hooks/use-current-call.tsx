@@ -1,6 +1,8 @@
 import { useIsMutating } from "@tanstack/react-query";
 import { getMutationKey } from "@trpc/react-query";
 
+import { toast } from "@acme/ui/toast";
+
 import { api } from "~/trpc/react";
 
 export const useCurrentCallQuery = () => {
@@ -37,6 +39,7 @@ export const useCurrentCallUpdateMutation = () => {
         undefined,
         ctx ? ctx.prevData : undefined,
       );
+      toast.error(`Failed to update current call: ${err.message}`);
     },
     onSettled(err, variables, ctx, res) {
       // Sync with server once mutation has settled
@@ -71,6 +74,9 @@ export const useCurrentCallCreateMutation = () => {
       if (data) {
         utils.guess.byId.invalidate({ id: variables.guessId });
       }
+    },
+    onError(error, variables, context) {
+      toast.error(`Failed to create current call: ${error.message}`);
     },
   });
 };

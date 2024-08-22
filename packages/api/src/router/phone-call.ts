@@ -15,9 +15,6 @@ import {
 import { findFirstOrThrow, takeUniqueOrThrow } from "../helpers";
 import { protectedProcedure } from "../trpc";
 
-// TODO:
-// - filter by user
-// - infinity
 export const phoneCallRouter = {
   all: protectedProcedure
     .input(z.object({ active: z.boolean().optional() }))
@@ -53,7 +50,7 @@ export const phoneCallRouter = {
       return transformPhoneCall(phoneCall);
     }),
 
-  current: protectedProcedure.query(async ({ ctx, input }) => {
+  current: protectedProcedure.query(async ({ ctx }) => {
     const userSettings = await ctx.db.query.UserSettings.findFirst({
       where: eq(UserSettings.userId, ctx.session.user.id),
     });
@@ -75,7 +72,10 @@ export const phoneCallRouter = {
   updateCurrent: protectedProcedure
     .input(
       z.object({
-        data: CreatePhoneCallSchema.pick({ state: true }),
+        data: CreatePhoneCallSchema.pick({
+          state: true,
+          rating: true,
+        }).partial(),
       }),
     )
     .mutation(async ({ ctx, input: { data } }) => {
@@ -86,10 +86,13 @@ export const phoneCallRouter = {
       if (!userSettings?.currentPhoneCallId) {
         return null;
       }
-      return updatePhoneCall(ctx.db, {
-        id: userSettings.currentPhoneCallId,
-        data,
-      });
+
+      return ctx.db
+        .update(PhoneCall)
+        .set(data)
+        .where(eq(PhoneCall.id, userSettings.currentPhoneCallId))
+        .returning()
+        .then(takeUniqueOrThrow("update phone call"));
     }),
 
   createCurrent: protectedProcedure
@@ -141,16 +144,21 @@ export const phoneCallRouter = {
       return newPhoneCall;
     }),
 
-  //   update: protectedProcedure
-  //     .input(
-  //       z.object({
-  //         id: z.string().uuid(),
-  //         data: CreatePhoneCallSchema.pick({ state: true }),
-  //       }),
-  //     )
-  //     .mutation(({ ctx, input: { id, data } }) => {
-  //       return updatePhoneCall(ctx.db, { id, data });
-  //     }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        data: CreatePhoneCallSchema.pick({ rating: true }),
+      }),
+    )
+    .mutation(({ ctx, input: { id, data } }) => {
+      return ctx.db
+        .update(PhoneCall)
+        .set(data)
+        .where(eq(PhoneCall.id, id))
+        .returning()
+        .then(takeUniqueOrThrow("update phone call"));
+    }),
 
   delete: protectedProcedure.input(z.string()).mutation(({ ctx, input }) => {
     return ctx.db.delete(PhoneCall).where(eq(PhoneCall.id, input));
@@ -166,23 +174,4 @@ export const transformPhoneCall = (
 ) => {
   const { guess, ...rest } = phoneCall;
   return { ...rest, phoneNumber: guess.phoneNumber };
-};
-
-export const updatePhoneCall = async (
-  db: DB,
-  input: {
-    id: string;
-    data: Omit<
-      InferSelectModel<typeof PhoneCall>,
-      "id" | "sessionId" | "updatedAt" | "createdAt" | "guessId"
-    >;
-  },
-) => {
-  const { id, data } = input;
-  return db
-    .update(PhoneCall)
-    .set(data)
-    .where(eq(PhoneCall.id, id))
-    .returning()
-    .then(takeUniqueOrThrow("update phone call"));
 };

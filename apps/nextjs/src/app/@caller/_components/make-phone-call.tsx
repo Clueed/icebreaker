@@ -5,6 +5,7 @@ import { useCurrentCallQuery } from "~/app/_api-hooks/use-current-call";
 import { useEndCall } from "~/app/_components/call-handler/use-end-call";
 import useStartCall from "~/app/_components/call-handler/use-start-call";
 import { CallInfo } from "~/app/@caller/_components/call-info";
+import { CurrentCallRatingCluster } from "~/app/@caller/_components/current-call-rating-cluster";
 
 export function MakePhoneCall() {
   const { data: phoneCall } = useCurrentCallQuery();
@@ -28,6 +29,7 @@ export function MakePhoneCall() {
         <Button onClick={() => startCall()}>Make Call</Button>
       )}
       {<CallInfo phoneCall={phoneCall} />}
+      <CurrentCallRatingCluster />
     </div>
   );
 }
