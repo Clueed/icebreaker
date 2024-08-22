@@ -31,7 +31,7 @@ const timeStampColumns = {
 export const Org = pgTable("org", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   name: varchar("name", { length: 256 }).notNull().unique(),
-  selectedGuessId: uuid("selected_guess_id"),
+  selectedGuessId: uuid("selected_guess_id").references(() => Guess.id),
   currentStrategy: jsonb("current_strategy").$type<Strategy>(),
   ...timeStampColumns,
 });
@@ -59,7 +59,9 @@ export const Guess = pgTable(
   "guess",
   {
     id: uuid("id").notNull().primaryKey().defaultRandom(),
-    orgId: uuid("org").notNull(),
+    orgId: uuid("org")
+      .notNull()
+      .references(() => Org.id, { onDelete: "cascade" }),
     phoneNumber: jsonb("phoneNumber")
       .$type<{ base: string; extension: string }>()
       .notNull()
@@ -105,7 +107,9 @@ export const phoneCallRatingEnum = pgEnum("rating_enum", phoneCallRatingList);
 export const PhoneCall = pgTable("phone_call", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   sessionId: varchar("sessionId", { length: 256 }).notNull(),
-  guessId: uuid("guessId").notNull(),
+  guessId: uuid("guessId")
+    .notNull()
+    .references(() => Guess.id, { onDelete: "cascade" }),
   state: phoneCallStateEnum("state").notNull(),
   rating: phoneCallRatingEnum("rating"),
   ...timeStampColumns,
@@ -131,7 +135,10 @@ export const CreatePhoneCallSchema = createInsertSchema(PhoneCall, {
 
 // SipCredential
 export const SipCredentials = pgTable("sip_credentials", {
-  userId: uuid("id").notNull().primaryKey(),
+  userId: uuid("id")
+    .notNull()
+    .primaryKey()
+    .references(() => User.id, { onDelete: "cascade" }),
   username: encryptedText("username").notNull(),
   password: encryptedText("password").notNull(),
   ...timeStampColumns,
@@ -150,32 +157,16 @@ export const CreateSipCredentialsSchema = createInsertSchema(SipCredentials, {
   updatedAt: true,
 });
 
-// Reference
-export const Post = pgTable("post", {
-  id: uuid("id").notNull().primaryKey().defaultRandom(),
-  title: varchar("name", { length: 256 }).notNull(),
-  content: text("content").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt", {
-    mode: "date",
-    withTimezone: true,
-  }).$onUpdateFn(() => sql`now()`),
-});
-
-export const CreatePostSchema = createInsertSchema(Post, {
-  title: z.string().max(256),
-  content: z.string().max(256),
-}).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
 // UserSettings
 
 export const UserSettings = pgTable("user_settings", {
-  userId: uuid("user_id").notNull().primaryKey(),
-  currentPhoneCallId: uuid("current_phone_call_id"),
+  userId: uuid("user_id")
+    .notNull()
+    .primaryKey()
+    .references(() => User.id, { onDelete: "cascade" }),
+  currentPhoneCallId: uuid("current_phone_call_id").references(
+    () => PhoneCall.id,
+  ),
   ...timeStampColumns,
 });
 
@@ -208,8 +199,9 @@ export const User = pgTable("user", {
   image: varchar("image", { length: 255 }),
 });
 
-export const UserRelations = relations(User, ({ many }) => ({
+export const UserRelations = relations(User, ({ many, one }) => ({
   accounts: many(Account),
+  SipCredentials: one(SipCredentials),
 }));
 
 export const Account = pgTable(
