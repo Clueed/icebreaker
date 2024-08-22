@@ -1,36 +1,113 @@
 import { useEffect, useMemo, useState } from "react";
 import { skipToken } from "@tanstack/react-query";
 
+import type { Strategy } from "@acme/validators/guessing-strategies";
+
 import { useCurrentStrategyQuery } from "~/app/_api-hooks/use-current-strategy";
-import { useSelectedGuessQuery } from "~/app/_api-hooks/use-selected-guess";
+import {
+  useSelectedGuessId,
+  useSelectedGuessQuery,
+} from "~/app/_api-hooks/use-selected-guess";
 import { AutoCaller } from "~/app/org/[orgId]/_components/auto-caller";
 import { AutoSkipper } from "~/app/org/[orgId]/_components/auto-skipper";
 import { GuessDisplay } from "~/app/org/[orgId]/_components/guess-display";
 import { api } from "~/trpc/react";
 
-export const NextPhoneNumberSelector = ({ orgId }: { orgId: string }) => {
+const NextPhoneNumberSelectorWrapper = ({ orgId }: { orgId: string }) => {
   const {
-    data: nextGuessIds,
-    fetchNextPage,
-    isLoading,
-    isSuccess,
-    isError,
-    error,
-    isFetching,
-  } = useStableNextGuessIdQuery({ orgId });
+    data: selectedGuessId,
+    isLoading: isLoadingSelectedGuess,
+    isSuccess: isSuccessSelectedGuess,
+  } = useSelectedGuessId({ id: orgId });
+  const {
+    data: currentStrategy,
+    isLoading: isLoadingCurrentStrategy,
+    isSuccess: isSuccessCurrentStrategy,
+  } = useCurrentStrategyQuery({
+    id: orgId,
+  });
 
-  const { data: selectedGuess } = useSelectedGuessQuery({ id: orgId });
+  const isLoading = isLoadingSelectedGuess || isLoadingCurrentStrategy;
+  const isSuccess = isSuccessSelectedGuess && isSuccessCurrentStrategy;
+
+  return (
+    <div>
+      {isSuccess && (
+        <>
+          {!selectedGuessId && (
+            <div>Create an initial guess to get started</div>
+          )}
+          {!currentStrategy && <div>Select a strategy to get started</div>}
+          {selectedGuessId && currentStrategy && (
+            <NextPhoneNumberSelector
+              orgId={orgId}
+              selectedGuessId={selectedGuessId}
+              currentStrategy={currentStrategy}
+            />
+          )}
+        </>
+      )}
+      {isLoading && <div>Loading Wrapper...</div>}
+    </div>
+  );
+};
+
+export default NextPhoneNumberSelectorWrapper;
+
+const NextPhoneNumberSelector = (props: {
+  orgId: string;
+  selectedGuessId: string;
+  currentStrategy: Strategy;
+}) => {
+  const [stableGuessId, setStableGuessId] = useState(props.selectedGuessId);
+  const {
+    data: nextGuessIdsData,
+    fetchNextPage,
+    isLoading: isLoadingNextGuessIds,
+    isSuccess: isSuccessNextGuessIds,
+    isFetching: isFetchingNextGuessIds,
+  } = api.guess.next.useInfiniteQuery(
+    {
+      guessId: stableGuessId,
+      strategy: props.currentStrategy,
+      limit: 3,
+    },
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    },
+  );
+  const nextGuessIds = useMemo(() => {
+    if (!nextGuessIdsData) {
+      return [];
+    }
+
+    return nextGuessIdsData.pages.flatMap((page) => page.data);
+  }, [nextGuessIdsData]);
+
+  const selectedGuessInNext = nextGuessIds.includes(props.selectedGuessId);
+
+  if (
+    !selectedGuessInNext &&
+    !isFetchingNextGuessIds &&
+    stableGuessId !== props.selectedGuessId
+  ) {
+    setStableGuessId(props.selectedGuessId);
+  }
+
   const indexOfSelectedGuess = nextGuessIds.findIndex(
-    (g) => g === selectedGuess?.id,
+    (g) => g === props.selectedGuessId,
   );
   const nextGuessesLeft = nextGuessIds.length - indexOfSelectedGuess;
   useEffect(() => {
-    if (nextGuessesLeft < 10 && !error && !isFetching) {
+    if (nextGuessesLeft < 10 && !isFetchingNextGuessIds) {
       fetchNextPage();
     }
-  }, [nextGuessesLeft, error, isFetching]);
+  }, [nextGuessesLeft, isFetchingNextGuessIds]);
 
   const nextGuessId = nextGuessIds[indexOfSelectedGuess + 1];
+
+  const isLoading = isLoadingNextGuessIds;
+  const isSuccess = isSuccessNextGuessIds;
 
   return (
     <div>
@@ -39,7 +116,6 @@ export const NextPhoneNumberSelector = ({ orgId }: { orgId: string }) => {
         style={{ overflowAnchor: "none" }}
       >
         {isLoading && <div>Loading...</div>}
-        {isError && <div>Error! {error.message}</div>}
         {isSuccess &&
           [...nextGuessIds]
             .reverse()
@@ -48,52 +124,9 @@ export const NextPhoneNumberSelector = ({ orgId }: { orgId: string }) => {
             ))}
       </div>
       <div>
-        <AutoSkipper orgId={orgId} nextGuessId={nextGuessId} />
-        <AutoCaller orgId={orgId} />
+        <AutoSkipper orgId={props.orgId} nextGuessId={nextGuessId} />
+        <AutoCaller orgId={props.orgId} />
       </div>
     </div>
   );
-};
-
-const useStableNextGuessIdQuery = ({ orgId }: { orgId: string }) => {
-  const { data: selectedGuess } = useSelectedGuessQuery({ id: orgId });
-  const selectedGuessId = selectedGuess?.id;
-  const { data: currentStrategy } = useCurrentStrategyQuery({
-    id: orgId,
-  });
-  const [stableGuessId, setStableGuessId] = useState(selectedGuessId);
-
-  const query = api.guess.next.useInfiniteQuery(
-    stableGuessId && currentStrategy
-      ? {
-          guessId: selectedGuess?.id ?? stableGuessId,
-          strategy: currentStrategy,
-          limit: 3,
-        }
-      : skipToken,
-    {
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-      enabled: Boolean(stableGuessId && currentStrategy),
-    },
-  );
-  const nextGuessIds = useMemo(() => {
-    if (!query.data) {
-      return [];
-    }
-
-    return query.data.pages.flatMap((page) => page.data);
-  }, [query.data]);
-
-  const selectedGuessInNext = selectedGuessId
-    ? nextGuessIds.includes(selectedGuessId)
-    : false;
-
-  useEffect(() => {
-    if (!selectedGuessId) return;
-    if (!selectedGuessInNext) {
-      setStableGuessId(selectedGuessId);
-    }
-  }, [selectedGuessId, selectedGuessInNext]);
-
-  return { ...query, data: nextGuessIds };
 };
