@@ -1,5 +1,6 @@
+import type { AppRouterInputs } from "node_modules/@acme/api/dist/root";
 import type { SessionState } from "sip.js";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useSIPProvider } from "react-sipjs";
 
 import { toast } from "@acme/ui/toast";
@@ -11,11 +12,28 @@ import {
 
 export function useSyncCallState() {
   const { data: phoneCall } = useCurrentCallQuery();
+  const { sessionId, id, state } = phoneCall ?? {};
 
   const { mutate: updatePhoneCall } = useCurrentCallUpdateMutation();
-  const { sessions } = useSIPProvider();
+  const handleUpdatePhoneCall = useCallback(
+    (inputs: AppRouterInputs["phoneCall"]["updateCurrent"]) => {
+      console.log(
+        `[sync - ${id}] \n changing current call state to: ${inputs.data.state}`,
+      );
+      updatePhoneCall(inputs, {
+        onError: (err) => {
+          console.error(
+            `[sync - ${id}] \n Error updating current call state:`,
+            err.message,
+          );
+          toast.error(err.message);
+        },
+      });
+    },
+    [id, updatePhoneCall],
+  );
 
-  const { sessionId, id } = phoneCall || {};
+  const { sessions, sessionTimer } = useSIPProvider();
 
   useEffect(() => {
     if (!sessionId) {
@@ -24,68 +42,59 @@ export function useSyncCallState() {
     }
 
     const session = sessionId ? sessions[sessionId] : undefined;
-
     console.log(`[sync - ${id}] \n Retrieved session:`, session);
+    const timer = sessionId ? sessionTimer[sessionId] : undefined;
+    console.log(`[sync - ${id}] \n Retrieved timer:`, timer);
 
     if (!session) {
-      console.log(
-        `[sync - ${id}] \n (no session) changing current call state to:`,
-        `Terminated`,
-      );
-      updatePhoneCall(
-        {
+      console.log(`[sync - ${id}] \n no session with id: ${sessionId}`);
+
+      if (state !== `Terminated`) {
+        console.log(`[sync - ${id}] \n termining call since no session`);
+        handleUpdatePhoneCall({
           data: {
             state: `Terminated`,
+            createdAt: timer?.createdAt.toISOString(),
+            answeredAt: timer?.answeredAt?.toISOString(),
+            hangupAt: timer?.hangupAt?.toISOString(),
+            receivedAt: timer?.receivedAt?.toISOString(),
           },
-        },
-        {
-          onError: (err) => {
-            console.error(
-              `[sync - ${id}] \n Error updating call state:`,
-              err.message,
-            );
-            toast.error(err.message);
-          },
-        },
-      );
+        });
+      }
+
       return;
     }
 
-    const listener = (newSessionState: SessionState) => {
+    if (
+      state !== session.state ||
+      (timer && timer.answeredAt?.toISOString() === phoneCall?.answeredAt) ||
+      (timer && timer.hangupAt?.toISOString() === phoneCall?.hangupAt) ||
+      (timer && timer.receivedAt?.toISOString() === phoneCall?.receivedAt) ||
+      (timer && timer.createdAt?.toISOString() === phoneCall?.createdAt)
+    ) {
       console.log(
-        `[sync - ${id}] \n changing current call state to:`,
-        newSessionState,
+        `[sync - ${id}] \n listener received new state: ${session.state}`,
       );
-      updatePhoneCall(
-        {
-          data: {
-            state: newSessionState,
-          },
+      handleUpdatePhoneCall({
+        data: {
+          state: session.state,
+          createdAt: timer?.createdAt.toISOString(),
+          answeredAt: timer?.answeredAt?.toISOString(),
+          hangupAt: timer?.hangupAt?.toISOString(),
+          receivedAt: timer?.receivedAt?.toISOString(),
         },
-        {
-          onError: (err) => {
-            console.error(
-              `[sync - ${id}] \n Error updating call state:`,
-              err.message,
-            );
-            toast.error(err.message);
-          },
-        },
-      );
-    };
-
-    // .addListener runs only on change
-    console.log(`[sync - ${id}] \n Updating to current state`);
-    listener(session.state);
-
-    console.log(`[sync - ${id}] \n Adding listener to session.stateChange`);
-    session.stateChange.addListener(listener);
-
-    return () => {
-      console.log(
-        `[sync - ${id}] \n Removing listener from session.stateChange`,
-      );
-      session.stateChange.removeListener(listener);
-    };
-  }, [sessionId, id, updatePhoneCall]);
+      });
+    }
+  }, [
+    sessionId,
+    id,
+    handleUpdatePhoneCall,
+    state,
+    sessions,
+    sessionTimer,
+    phoneCall?.answeredAt,
+    phoneCall?.hangupAt,
+    phoneCall?.receivedAt,
+    phoneCall?.createdAt,
+  ]);
 }

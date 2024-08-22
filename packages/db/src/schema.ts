@@ -112,7 +112,14 @@ export const PhoneCall = pgTable("phone_call", {
     .references(() => Guess.id, { onDelete: "cascade" }),
   state: phoneCallStateEnum("state").notNull(),
   rating: phoneCallRatingEnum("rating"),
-  ...timeStampColumns,
+  createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
+  receivedAt: timestamp("received_at", { mode: "string" }),
+  answeredAt: timestamp("answered_at", { mode: "string" }),
+  hangupAt: timestamp("hangup_at", { mode: "string" }),
+  updatedAt: timestamp("updated_at", {
+    mode: "string",
+    withTimezone: true,
+  }).$onUpdateFn(() => sql`now()`),
 });
 
 export const phoneCallRelation = relations(PhoneCall, ({ one }) => ({
@@ -129,11 +136,10 @@ export const CreatePhoneCallSchema = createInsertSchema(PhoneCall, {
   rating: phoneCallRatingSchema,
 }).omit({
   id: true,
-  createdAt: true,
-  updatedAt: true,
 });
 
 // SipCredential
+
 export const SipCredentials = pgTable("sip_credentials", {
   userId: uuid("id")
     .notNull()

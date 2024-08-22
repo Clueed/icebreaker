@@ -3,7 +3,6 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import type { InferSelectModel } from "@acme/db";
-import type { DB } from "@acme/db/client";
 import type { Guess } from "@acme/db/schema";
 import { and, desc, eq, not } from "@acme/db";
 import {
@@ -85,9 +84,9 @@ export const phoneCallRouter = {
   updateCurrent: protectedProcedure
     .input(
       z.object({
-        data: CreatePhoneCallSchema.pick({
-          state: true,
-          rating: true,
+        data: CreatePhoneCallSchema.omit({
+          guessId: true,
+          sessionId: true,
         }).partial(),
       }),
     )
