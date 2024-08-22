@@ -48,15 +48,11 @@ export const GuessHistory = ({ orgId }: { orgId: string }) => {
 
   const onlyWithCallsId = useId();
 
-  if (isPending) return "Loading...";
-
-  if (isError) return `Error! ${error.message}`;
-
   return (
     <div>
       <div className="h-96 overflow-y-scroll">
         {isPending && <div>Loading...</div>}
-        {isError && <div>Error! {error}</div>}
+        {isError && <div>Error! {error.message}</div>}
         {isSuccess && (
           <>
             {guesses.map((guess) => (

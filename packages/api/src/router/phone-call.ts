@@ -5,7 +5,7 @@ import { z } from "zod";
 import type { InferSelectModel } from "@acme/db";
 import type { DB } from "@acme/db/client";
 import type { Guess } from "@acme/db/schema";
-import { desc, eq, not } from "@acme/db";
+import { and, desc, eq, not } from "@acme/db";
 import {
   CreatePhoneCallSchema,
   PhoneCall,
@@ -17,14 +17,21 @@ import { protectedProcedure } from "../trpc";
 
 export const phoneCallRouter = {
   all: protectedProcedure
-    .input(z.object({ active: z.boolean().optional() }))
+    .input(
+      z.object({
+        active: z.boolean().optional(),
+        cursor: z.string().uuid().nullish(),
+        limit: z.number().min(1).max(50).default(5),
+      }),
+    )
     .query(async ({ ctx, input }) => {
-      const phoneCalls = await ctx.db.query.PhoneCall.findMany({
+      const rawData = await ctx.db.query.PhoneCall.findMany({
         orderBy: desc(PhoneCall.updatedAt),
-        where: input.active
-          ? not(eq(PhoneCall.state, "Terminated"))
-          : undefined,
-        limit: 10,
+        where: and(
+          input.cursor ? eq(PhoneCall.id, input.cursor) : undefined,
+          input.active ? not(eq(PhoneCall.state, "Terminated")) : undefined,
+        ),
+        limit: input.limit + 1,
         with: {
           guess: {
             columns: {
@@ -34,7 +41,13 @@ export const phoneCallRouter = {
         },
       });
 
-      return phoneCalls.map(transformPhoneCall);
+      const data = rawData.slice(0, input.limit - 1).map(transformPhoneCall);
+      const nextCursor = rawData[input.limit]?.id;
+
+      return {
+        data,
+        nextCursor,
+      };
     }),
 
   byId: protectedProcedure

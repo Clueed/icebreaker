@@ -9,7 +9,7 @@ const CallerPage = async () => {
       {" "}
       <RegisterSipWrapper />
       <Caller />
-      <ActiveCalls />
+      {/* <ActiveCalls /> */}
       <CallHistory />
     </div>
   );

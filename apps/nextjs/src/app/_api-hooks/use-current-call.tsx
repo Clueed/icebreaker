@@ -41,14 +41,11 @@ export const useCurrentCallUpdateMutation = () => {
       );
       toast.error(`Failed to update current call: ${err.message}`);
     },
-    onSettled(err, variables, ctx, res) {
-      // Sync with server once mutation has settled
+    onSettled(data, error, variables, context) {
       utils.phoneCall.current.invalidate();
-    },
-    onSuccess(data, variables, ctx) {
-      // Sync with server once mutation has settled
       if (data) {
-        utils.guess.byId.invalidate({ id: data.guessId });
+        utils.guess.byId.invalidate({ id: data?.id });
+        utils.phoneCall.all.invalidate();
       }
     },
   });

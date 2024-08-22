@@ -1,3 +1,4 @@
+import type { PhoneCallRating } from "@acme/db/schema";
 import { phoneCallRatingList, phoneCallRatingSchema } from "@acme/db/schema";
 import { cn } from "@acme/ui";
 import { ToggleGroup, ToggleGroupItem } from "@acme/ui/toggle-group";
@@ -8,40 +9,32 @@ import {
 } from "~/app/_api-hooks/use-current-call";
 import { RatingIcon } from "~/app/@caller/_components/rating-icon";
 
-export const CurrentCallRatingCluster = () => {
-  const ratings = [null, ...phoneCallRatingList];
-
-  const { mutate: updateCurrentPhoneCall } = useCurrentCallUpdateMutation();
-
-  const { data: currentCall, isSuccess } = useCurrentCallQuery();
-
-  const currentRating = currentCall?.rating;
-
+export const CurrentCallRatingCluster = (props: {
+  rating?: PhoneCallRating;
+  setRating: (newRating: PhoneCallRating) => void;
+  disabled: boolean;
+}) => {
   const handleOnValueChange = (value: string) => {
     const newValue = value === "null" ? null : value;
     const parsedRating = phoneCallRatingSchema.parse(newValue);
 
-    updateCurrentPhoneCall({
-      data: {
-        rating: parsedRating,
-      },
-    });
+    props.setRating(parsedRating);
   };
 
   return (
     <div className="flex gap-3">
       <ToggleGroup
         type="single"
-        value={currentRating ?? "null"}
+        value={props.rating ?? "null"}
         onValueChange={handleOnValueChange}
         className="w-full"
         size={"lg"}
       >
-        {ratings.map((rating) => (
+        {ALL_RATINGS.map((rating) => (
           <ToggleGroupItem
             value={rating ?? "null"}
             key={rating}
-            disabled={!isSuccess}
+            disabled={props.disabled}
             className="w-full"
           >
             <RatingIcon className="size-5" rating={rating} />
@@ -51,3 +44,5 @@ export const CurrentCallRatingCluster = () => {
     </div>
   );
 };
+
+const ALL_RATINGS = [null, ...phoneCallRatingList];

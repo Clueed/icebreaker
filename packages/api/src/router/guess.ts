@@ -23,7 +23,7 @@ export const guessRouter = {
     .query(async ({ ctx, input }) => {
       const { cursor, limit, orgId, onlyWithCalls } = input ?? {};
 
-      const data = await ctx.db.query.Guess.findMany({
+      const rawData = await ctx.db.query.Guess.findMany({
         orderBy: desc(Guess.updatedAt),
         where: (guess, { eq, and, isNotNull }) =>
           and(
@@ -41,7 +41,8 @@ export const guessRouter = {
         limit: limit + 1,
       });
 
-      const nextCursor = data[limit]?.id;
+      const data = rawData.slice(0, limit - 1);
+      const nextCursor = rawData[limit]?.id;
 
       return {
         data,
