@@ -20,7 +20,7 @@ import {
 import { Input } from "@acme/ui/input";
 import { toast } from "@acme/ui/toast";
 
-import { SipStatus } from "~/app/@caller/_components/register-sip/sip-status";
+import { SipStatus } from "~/app/@caller/_components/sip-cluster/sip-status";
 import { api } from "~/trpc/react";
 
 const FormSchema = z.object({
@@ -28,45 +28,10 @@ const FormSchema = z.object({
   password: z.string().min(2),
 });
 
-function RegisterSip({
-  remoteCredentials,
-}: {
-  remoteCredentials: AppRouterOutputs["sipCredentials"]["get"];
-}) {
-  const { connectAndRegister, connectStatus } = useSIPProvider();
-
-  const [connectingToastId, setConnectingToastId] = useState<string | number>();
-  const connected = connectStatus === CONNECT_STATUS.CONNECTED;
-  const disconnected = connectStatus === CONNECT_STATUS.DISCONNECTED;
-  const notConnected = connectStatus === CONNECT_STATUS.WAIT_REQUEST_CONNECT;
-
-  useEffect(() => {
-    if (connectingToastId) {
-      toast.dismiss(connectingToastId);
-    }
-    if (connected) {
-      toast.success("SIP connected");
-    }
-    if (disconnected) {
-      toast.error("SIP disconnected");
-    }
-  }, [connected, disconnected]);
-
-  useEffect(() => {
-    if (
-      remoteCredentials?.username &&
-      remoteCredentials.password &&
-      connectStatus === CONNECT_STATUS.WAIT_REQUEST_CONNECT
-    ) {
-      const toastid = toast.loading("Connecting with remote credentials...");
-      setConnectingToastId(toastid);
-      connectAndRegister(remoteCredentials);
-    }
-  }, []);
-
+export const RegisterSipForm = ({}: {}) => {
+  const { connectAndRegister } = useSIPProvider();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: remoteCredentials,
   });
 
   const { mutate: setRemoteCredentials } = api.sipCredentials.set.useMutation();
@@ -76,9 +41,6 @@ function RegisterSip({
     setRemoteCredentials(data);
   };
 
-  if (connectStatus === CONNECT_STATUS.CONNECTED) {
-    return <SipStatus />;
-  }
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
@@ -118,6 +80,4 @@ function RegisterSip({
       </form>
     </Form>
   );
-}
-
-export default RegisterSip;
+};
