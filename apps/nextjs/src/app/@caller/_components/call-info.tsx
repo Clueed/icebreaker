@@ -2,27 +2,34 @@ import type { Duration } from "luxon";
 import type { AppRouterOutputs } from "node_modules/@acme/api/dist/root";
 import React, { useEffect, useState } from "react";
 import { DateTime } from "luxon";
+import { useSessionCall } from "react-sipjs";
 
 export function CallInfo({
   phoneCall,
 }: {
-  phoneCall: Exclude<AppRouterOutputs["phoneCall"]["current"], 0>;
+  phoneCall: NonNullable<AppRouterOutputs["phoneCall"]["current"]>;
 }) {
-  const createdAt = DateTime.fromISO(phoneCall.createdAt);
-  const answeredAt = phoneCall.answeredAt
-    ? DateTime.fromISO(phoneCall.answeredAt)
-    : undefined;
-  const receivedAt = phoneCall.receivedAt
-    ? DateTime.fromISO(phoneCall.receivedAt)
-    : undefined;
-  const hangupAt = phoneCall.hangupAt
-    ? DateTime.fromISO(phoneCall.hangupAt)
-    : undefined;
+  const sessionCall = useSessionCall(phoneCall.sessionId);
+  const timer = sessionCall?.timer;
 
   const [sinceStart, setSinceStart] = useState<Duration>();
   const [sinceAnswered, setSinceAnswered] = useState<Duration>();
 
   useEffect(() => {
+    if (!timer) {
+      return;
+    }
+    const createdAt = DateTime.fromJSDate(timer.createdAt);
+    // const receivedAt = timer.receivedAt
+    //   ? DateTime.fromJSDate(timer.receivedAt)
+    //   : undefined;
+    const answeredAt = timer.answeredAt
+      ? DateTime.fromJSDate(timer.answeredAt)
+      : undefined;
+    const hangupAt = timer.hangupAt
+      ? DateTime.fromJSDate(timer.hangupAt)
+      : undefined;
+
     const interval = setInterval(() => {
       if (hangupAt?.isValid) {
         setSinceStart(createdAt.diffNow());
@@ -37,17 +44,17 @@ export function CallInfo({
       }
     }, 1000);
     return () => clearInterval(interval);
-  }, [hangupAt, createdAt, answeredAt, setSinceAnswered, setSinceStart]);
+  }, [timer, setSinceAnswered, setSinceStart]);
 
   return (
     <div>
       <div>state: {phoneCall.state}</div>
-      <div>answeredAt: {phoneCall.answeredAt}</div>
-      <div>createdAt: {phoneCall.createdAt}</div>
-      <div>receivedAt:{phoneCall.receivedAt}</div>
-      <div>hangupAt: {phoneCall.hangupAt}</div>
-      <div>sinceStart: {sinceStart?.toFormat("mm ss")}</div>
-      <div>sinceAnswered: {sinceAnswered?.toFormat("mm ss")}</div>
+      <div>answeredAt: {timer?.answeredAt?.toISOString()}</div>
+      <div>createdAt: {timer?.createdAt?.toISOString()}</div>
+      <div>receivedAt:{timer?.receivedAt?.toISOString()}</div>
+      <div>hangupAt: {timer?.hangupAt?.toISOString()}</div>
+      <div>sinceStart: {sinceStart?.toFormat("mm:ss")}</div>
+      <div>sinceAnswered: {sinceAnswered?.toFormat("mm:ss")}</div>
     </div>
   );
 }

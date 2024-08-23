@@ -1,7 +1,5 @@
 "use client";
 
-import { useSessionCall, useSIPProvider } from "react-sipjs";
-
 import { Button } from "@acme/ui/button";
 import { PhoneNumberDisplay } from "@acme/ui/custom/phone-number-display";
 
@@ -10,8 +8,6 @@ import {
   useCurrentCallUpdateMutation,
 } from "~/app/_api-hooks/use-current-call";
 import { useEndCall } from "~/app/_components/call-handler/use-end-call";
-import useStartCall from "~/app/_components/call-handler/use-start-call";
-import { CallInfo } from "~/app/@caller/_components/call-info";
 import { CurrentCallRatingCluster } from "~/app/@caller/_components/current-call-rating-cluster";
 
 export function Caller() {
@@ -40,7 +36,8 @@ export function Caller() {
           Hangup
         </Button>
       )}
-      {/* <CallInfo phoneCall={phoneCall} /> */}
+      {/* {phoneCall?.sessionId && <CallInfo phoneCall={phoneCall} />} */}
+
       <CurrentCallRatingCluster
         rating={phoneCall.rating}
         disabled={!phoneCallActive}
