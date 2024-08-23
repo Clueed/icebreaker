@@ -16,6 +16,7 @@ export const SipCluster = () => {
     undefined,
     {
       staleTime: undefined,
+      select: (data) => (data === 0 ? null : data),
     },
   );
   useEffect(() => {
@@ -43,6 +44,7 @@ export const SipCluster = () => {
     }
     if (connected && sonnerId) {
       toast.dismiss(sonnerId);
+      setSonnerId(undefined);
       toast.success("All SIP systems ready", {
         description: "successfully connected with remote credentials",
       });
