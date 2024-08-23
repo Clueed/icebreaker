@@ -34,7 +34,8 @@ export const guessRouter = {
                   ctx.db
                     .select({ id: PhoneCall.id })
                     .from(PhoneCall)
-                    .where(eq(PhoneCall.guessId, guess.id)),
+                    .where(eq(PhoneCall.guessId, guess.id))
+                    .limit(1),
                 )
               : undefined,
           ),
