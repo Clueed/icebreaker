@@ -1,3 +1,5 @@
+"use client";
+
 import { useSessionCall, useSIPProvider } from "react-sipjs";
 
 import { Button } from "@acme/ui/button";
@@ -38,7 +40,7 @@ export function Caller() {
           Hangup
         </Button>
       )}
-      <CallInfo phoneCall={phoneCall} />
+      {/* <CallInfo phoneCall={phoneCall} /> */}
       <CurrentCallRatingCluster
         rating={phoneCall.rating}
         disabled={!phoneCallActive}

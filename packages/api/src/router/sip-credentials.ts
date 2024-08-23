@@ -21,8 +21,10 @@ export const sipCredentialsRouter = {
     }),
 
   get: protectedProcedure.query(async ({ ctx }) => {
-    await ctx.db.query.SipCredentials.findFirst({
-      where: eq(SipCredentials.userId, ctx.session.user.id),
-    });
+    return (
+      (await ctx.db.query.SipCredentials.findFirst({
+        where: eq(SipCredentials.userId, ctx.session.user.id),
+      })) ?? null
+    );
   }),
 } satisfies TRPCRouterRecord;
