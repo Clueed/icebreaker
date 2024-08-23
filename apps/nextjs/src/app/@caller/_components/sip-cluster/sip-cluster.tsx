@@ -16,7 +16,6 @@ export const SipCluster = () => {
     undefined,
     {
       staleTime: undefined,
-      select: (data) => (data === 0 ? null : data),
     },
   );
   useEffect(() => {

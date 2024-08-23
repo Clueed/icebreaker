@@ -68,7 +68,7 @@ export const phoneCallRouter = {
     });
 
     if (!userSettings?.currentPhoneCallId) {
-      return 0;
+      return null;
     }
 
     const phoneCall = await ctx.db.query.PhoneCall.findFirst({
