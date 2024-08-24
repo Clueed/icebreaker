@@ -9,6 +9,10 @@ import {
   useCurrentCallCreateMutation,
   useCurrentCallQuery,
 } from "~/app/_api-hooks/use-current-call";
+import {
+  useCurrentSessionIdMutation,
+  useCurrentSessionIdQuery,
+} from "~/app/_api-hooks/use-current-session-id";
 import { api } from "~/trpc/react";
 
 function useStartCall({ guessId }: { guessId?: string }) {
@@ -19,6 +23,7 @@ function useStartCall({ guessId }: { guessId?: string }) {
     },
   );
   const { mutate: createPhoneCall } = useCurrentCallCreateMutation();
+  const { mutate: setCurrentSessionId } = useCurrentSessionIdMutation();
   const { data: phoneCall } = useCurrentCallQuery();
 
   const startCall = useStartSipCall();
@@ -46,22 +51,27 @@ function useStartCall({ guessId }: { guessId?: string }) {
         return;
       }
 
-      const { id: sessionId, state } = inviter;
-      return createPhoneCall(
-        {
-          sessionId,
-          guessId: guess.id,
-          state,
-        },
-        {
-          onSuccess: () => {
-            toast.success("Call started: " + guess.phoneNumber);
-          },
-          onError: (error) => {
-            toast.error("Starting Call failed: " + error.message);
-          },
-        },
-      );
+      const { id: sessionId } = inviter;
+      setCurrentSessionId({
+        sessionId,
+        orgId: guess.orgId,
+        phoneNumber: guess.phoneNumber,
+      });
+      //   return createPhoneCall(
+      //     {
+      //       sessionId,
+      //       guessId: guess.id,
+      //       state,
+      //     },
+      //     {
+      //       onSuccess: () => {
+      //         toast.success("Call started: " + guess.phoneNumber);
+      //       },
+      //       onError: (error) => {
+      //         toast.error("Starting Call failed: " + error.message);
+      //       },
+      //     },
+      //   );
     },
   ] as const;
 }

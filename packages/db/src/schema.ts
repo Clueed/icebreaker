@@ -105,8 +105,8 @@ export const phoneCallRatingList = ["voicemail", "person", "jackpot"] as const;
 export const phoneCallRatingEnum = pgEnum("rating_enum", phoneCallRatingList);
 
 export const PhoneCall = pgTable("phone_call", {
-  id: uuid("id").notNull().primaryKey().defaultRandom(),
-  sessionId: varchar("sessionId", { length: 256 }).notNull(),
+  id: uuid("id").notNull().defaultRandom().primaryKey(),
+  sessionId: varchar("sessionId", { length: 256 }).notNull().unique(),
   guessId: uuid("guessId")
     .notNull()
     .references(() => Guess.id, { onDelete: "cascade" }),
@@ -125,7 +125,7 @@ export type PhoneCallRating = z.infer<typeof phoneCallRatingSchema>;
 export const CreatePhoneCallSchema = createInsertSchema(PhoneCall, {
   sessionId: z.string().max(256),
   guessId: z.string().uuid(),
-  state: z.enum(phoneCallStateList),
+  state: z.enum(phoneCallStateList).default("Initial"),
   rating: phoneCallRatingSchema,
 }).omit({
   id: true,
@@ -167,11 +167,15 @@ export const UserSettings = pgTable("user_settings", {
   currentPhoneCallId: uuid("current_phone_call_id").references(
     () => PhoneCall.id,
   ),
+  currentSessionId: varchar("current_session_id", {
+    length: 256,
+  }).references(() => PhoneCall.sessionId),
   ...timeStampColumns,
 });
 
 export const CreateUserSettingsSchema = createInsertSchema(UserSettings, {
-  currentPhoneCallId: z.string().uuid(),
+  currentPhoneCallId: z.string().uuid().optional(),
+  currentSessionId: z.string().max(255).optional(),
 }).omit({
   userId: true,
   createdAt: true,
@@ -183,6 +187,10 @@ export const UserSettingsRelations = relations(UserSettings, ({ one }) => ({
   currentPhoneCall: one(PhoneCall, {
     fields: [UserSettings.currentPhoneCallId],
     references: [PhoneCall.id],
+  }),
+  currentPhoneCall2: one(PhoneCall, {
+    fields: [UserSettings.currentSessionId],
+    references: [PhoneCall.sessionId],
   }),
 }));
 

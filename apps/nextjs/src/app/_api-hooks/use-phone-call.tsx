@@ -11,8 +11,6 @@ export const usePhoneCallByIdQuery = (
   return api.phoneCall.byId.useQuery(input);
 };
 
-// TODO: drop byId completely?
-
 export const usePhoneCallUpdateMutation = () => {
   const utils = api.useUtils();
   return api.phoneCall.update.useMutation({

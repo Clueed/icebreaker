@@ -63,6 +63,19 @@ export const phoneCallRouter = {
       return transformPhoneCall(phoneCall);
     }),
 
+  bySessionId: protectedProcedure
+    .input(z.object({ sessionId: z.string().min(10).max(255) }))
+    .query(async ({ ctx, input }) => {
+      const phoneCall = await ctx.db.query.PhoneCall.findFirst({
+        where: eq(PhoneCall.sessionId, input.sessionId),
+        with: {
+          guess: { columns: { phoneNumber: true, id: true } },
+        },
+      }).then(findFirstOrThrow("find phone call"));
+
+      return transformPhoneCall(phoneCall);
+    }),
+
   current: protectedProcedure.query(async ({ ctx }) => {
     const userSettings = await ctx.db.query.UserSettings.findFirst({
       where: eq(UserSettings.userId, ctx.session.user.id),
