@@ -1,10 +1,11 @@
-import type { AppRouterOutputs } from "@icebreaker/api";
 import { useEffect, useRef } from "react";
+import { skipToken } from "@tanstack/react-query";
+
+import type { RouterOutputs } from "@icebreaker/api";
 import { cn } from "@icebreaker/ui";
 import { Button } from "@icebreaker/ui/button";
 import { PhoneNumberDisplay } from "@icebreaker/ui/custom/phone-number-display";
 import { CrosshairIcon, PhoneCallIcon } from "@icebreaker/ui/icons";
-import { skipToken } from "@tanstack/react-query";
 
 import {
   useSelectedGuessId,
@@ -57,7 +58,7 @@ const Inner = ({
   guess,
   selected,
 }: {
-  guess: AppRouterOutputs["guess"]["byId"];
+  guess: RouterOutputs["guess"]["byId"];
   selected: boolean;
 }) => {
   const [startCall] = useStartCall({ guessId: guess.id });
