@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+
 import { cn } from "@icebreaker/ui";
 import { ThemeProvider, ThemeToggle } from "@icebreaker/ui/theme";
 import { Toaster } from "@icebreaker/ui/toast";
@@ -28,22 +29,18 @@ const fontSans = Urbanist({
 export const metadata: Metadata = {
   metadataBase: new URL(
     env.VERCEL_ENV === "production"
-      ? "https://turbo.t3.gg"
+      ? "https://icebreaker-navy.vercel.app"
       : "http://localhost:3000",
   ),
-  title: "Create T3 Turbo",
-  description: "Simple monorepo with shared backend for web & mobile apps",
+  title: "Icebreaker Navy",
+  description: "Breaking ice like there is no tomorrow",
   openGraph: {
-    title: "Create T3 Turbo",
-    description: "Simple monorepo with shared backend for web & mobile apps",
-    url: "https://create-t3-turbo.vercel.app",
-    siteName: "Create T3 Turbo",
+    title: "Icebreaker Navy",
+    description: "Breaking ice like there is no tomorrow",
+    url: "https://icebreaker-navy.vercel.app",
+    siteName: "Icebreaker Navy",
   },
-  twitter: {
-    card: "summary_large_image",
-    site: "@jullerino",
-    creator: "@jullerino",
-  },
+  icons: [{ rel: "icon", url: "/favicon.svg", type: "image/svg+xml" }],
 };
 
 export const viewport: Viewport = {
