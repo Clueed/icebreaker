@@ -27,7 +27,7 @@ const FormSchema = z.object({
   }),
 });
 
-export function CreateOrgForm({}: {}) {
+export function CreateOrgForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -39,8 +39,8 @@ export function CreateOrgForm({}: {}) {
   const { mutateAsync: createOrg } = api.org.create.useMutation({
     onSuccess: (org) => {
       toast("org created");
-      utils.org.all.invalidate();
-      utils.org.byId.invalidate({ id: org.id });
+      void utils.org.all.invalidate();
+      void utils.org.byId.invalidate({ id: org.id });
     },
     onError: (error) => {
       toast("error creating org: " + error.message);
@@ -48,6 +48,7 @@ export function CreateOrgForm({}: {}) {
   });
 
   // TODO: move to server action
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const { push } = useRouter();
   const onSubmit = async (args: AppRouterInputs["org"]["create"]) => {
     const newOrg = await createOrg(args);

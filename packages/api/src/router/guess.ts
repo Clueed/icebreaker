@@ -21,7 +21,7 @@ export const guessRouter = {
       }),
     )
     .query(async ({ ctx, input }) => {
-      const { cursor, limit, orgId, onlyWithCalls } = input ?? {};
+      const { cursor, limit, orgId, onlyWithCalls } = input;
 
       const rawData = await ctx.db.query.Guess.findMany({
         orderBy: desc(Guess.updatedAt),

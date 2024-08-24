@@ -18,8 +18,8 @@ import { CurrentCallRatingCluster } from "~/app/@caller/_components/current-call
 export function Caller() {
   const { data: currentSessionId } = useCurrentSessionIdQuery();
 
-  const sessionCall = useCurrentSessionCall({ sessionId: currentSessionId });
-  const { timer, state, isActive, phoneNumber, hangup } = sessionCall ?? {};
+  const sessionCall = useCurrentSessionCall();
+  const { timer, isActive, phoneNumber, hangup } = sessionCall;
 
   const { data: phoneCall } = usePhoneCallBySessionIdQuery(
     currentSessionId ? { sessionId: currentSessionId } : skipToken,

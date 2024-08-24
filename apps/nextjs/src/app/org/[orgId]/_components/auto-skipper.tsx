@@ -6,6 +6,7 @@ import {
   useSelectedGuessIdSetQuery,
   useSelectedGuessQuery,
 } from "~/app/_api-hooks/use-selected-guess";
+import { useCurrentSessionCall } from "~/app/_components/call-handler/use-current-session-call";
 
 export const AutoSkipper = ({
   orgId,
@@ -14,9 +15,10 @@ export const AutoSkipper = ({
   orgId: string;
   nextGuessId: string | undefined;
 }) => {
+  const { hasActive } = useCurrentSessionCall();
   const { data: selectedGuess } = useSelectedGuessQuery({ id: orgId });
 
-  const setSelectedGuessIdMutation = useSelectedGuessIdSetQuery();
+  const { mutate: setSelectedGuessIdMutate } = useSelectedGuessIdSetQuery();
 
   const setSelectedGuessId = useCallback(() => {
     console.debug("[AS] setSelectedGuessId called");
@@ -30,32 +32,28 @@ export const AutoSkipper = ({
     }
 
     console.debug("[AS] Updating org with selectedGuessId:", nextGuessId);
-    setSelectedGuessIdMutation.mutate({
+    setSelectedGuessIdMutate({
       orgId: selectedGuess.orgId,
       data: { selectedGuessId: nextGuessId },
     });
-  }, [selectedGuess?.id, nextGuessId, setSelectedGuessIdMutation.mutate]);
+  }, [
+    selectedGuess?.id,
+    selectedGuess?.orgId,
+    nextGuessId,
+    setSelectedGuessIdMutate,
+  ]);
 
   const [enabled, setEnabled] = useState(false);
 
-  const selectedGuessHasActiveCalls =
-    selectedGuess?.phoneCalls.some((call) => call.state !== "Terminated") ??
-    false;
-  const selectedGuessHasCalls = selectedGuess?.phoneCalls.length || false;
+  const selectedGuessHasCalls = Boolean(selectedGuess?.phoneCalls.length);
 
   useEffect(() => {
-    console.debug("[AS] useEffect triggered", {
-      enabled,
-      selectedGuessHasActiveCalls,
-      selectedGuessHasCalls,
-    });
-
     if (!enabled) {
       console.debug("[AS] Auto Skipper is disabled, returning");
       return;
     }
 
-    if (selectedGuessHasActiveCalls) {
+    if (hasActive) {
       console.debug("[AS] Active calls found, returning");
       return;
     }
@@ -66,12 +64,7 @@ export const AutoSkipper = ({
       );
       setSelectedGuessId();
     }
-  }, [
-    enabled,
-    selectedGuessHasActiveCalls,
-    selectedGuessHasCalls,
-    setSelectedGuessId,
-  ]);
+  }, [enabled, hasActive, selectedGuessHasCalls, setSelectedGuessId]);
 
   return (
     <div>

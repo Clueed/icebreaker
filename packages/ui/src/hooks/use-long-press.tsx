@@ -34,9 +34,15 @@ export const useLongPress = (
 
   const clear = useCallback(
     (event: MouseEvent | TouchEvent, shouldTriggerClick = true) => {
-      timeout.current && clearTimeout(timeout.current);
-      //@ts-expect-error events in typescript are strange
-      shouldTriggerClick && !longPressTriggered && onClick(event);
+      if (timeout.current) {
+        clearTimeout(timeout.current);
+      }
+
+      if (shouldTriggerClick && !longPressTriggered) {
+        //@ts-expect-error events in typescript are strange
+        onClick(event);
+      }
+
       setLongPressTriggered(false);
       if (shouldPreventDefault && target.current) {
         target.current.removeEventListener("touchend", preventDefault);
@@ -66,6 +72,7 @@ const isTouchEvent = (event: Event): event is TouchEvent => {
 const preventDefault: EventListenerOrEventListenerObject = (event) => {
   if (!isTouchEvent(event)) return;
 
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (event.touches.length < 2 && event.preventDefault) {
     event.preventDefault();
   }

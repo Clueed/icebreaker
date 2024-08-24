@@ -31,13 +31,13 @@ export const useCurrentStrategySetMutation = () => {
         ctx ? ctx.prevData : undefined,
       );
     },
-    onSettled(err, variables, ctx, res) {
+    onSettled(err, variables, ctx) {
       // Sync with server once mutation has settled
-      utils.org.extensionStrategyById.invalidate();
+      void utils.org.extensionStrategyById.invalidate({ id: ctx.id });
     },
-    onSuccess(data, variables, ctx) {
+    onSuccess(data, variables) {
       // Sync with server once mutation has settled
-      utils.org.extensionStrategyById.invalidate({ id: variables.id });
+      void utils.org.extensionStrategyById.invalidate({ id: variables.id });
     },
   });
 };

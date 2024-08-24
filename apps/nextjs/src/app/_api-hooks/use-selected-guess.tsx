@@ -56,7 +56,7 @@ export const useSelectedGuessIdSetQuery = () => {
     },
     onSettled(err, variables, ctx) {
       // Sync with server once mutation has settled
-      utils.org.byId.invalidate({ id: ctx.id });
+      void utils.org.byId.invalidate({ id: ctx.id });
     },
   });
 
@@ -64,7 +64,7 @@ export const useSelectedGuessIdSetQuery = () => {
 
   return {
     ...rest,
-    mutate: async (
+    mutate: (
       input: {
         orgId: string;
         data: {

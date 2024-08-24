@@ -93,14 +93,6 @@ export const CreateGuessSchema = createInsertSchema(Guess, {
 
 // PhoneCall
 
-const phoneCallStateList = [
-  "Initial",
-  "Establishing",
-  "Established",
-  "Terminating",
-  "Terminated",
-] as const;
-export const phoneCallStateEnum = pgEnum("state_enum", phoneCallStateList);
 export const phoneCallRatingList = ["voicemail", "person", "jackpot"] as const;
 export const phoneCallRatingEnum = pgEnum("rating_enum", phoneCallRatingList);
 
@@ -110,7 +102,6 @@ export const PhoneCall = pgTable("phone_call", {
   guessId: uuid("guessId")
     .notNull()
     .references(() => Guess.id, { onDelete: "cascade" }),
-  state: phoneCallStateEnum("state").notNull(),
   rating: phoneCallRatingEnum("rating"),
   ...timeStampColumns,
 });
@@ -125,7 +116,6 @@ export type PhoneCallRating = z.infer<typeof phoneCallRatingSchema>;
 export const CreatePhoneCallSchema = createInsertSchema(PhoneCall, {
   sessionId: z.string().max(256),
   guessId: z.string().uuid(),
-  state: z.enum(phoneCallStateList).default("Initial"),
   rating: phoneCallRatingSchema,
 }).omit({
   id: true,
@@ -156,43 +146,6 @@ export const CreateSipCredentialsSchema = createInsertSchema(SipCredentials, {
   createdAt: true,
   updatedAt: true,
 });
-
-// UserSettings
-
-export const UserSettings = pgTable("user_settings", {
-  userId: uuid("user_id")
-    .notNull()
-    .primaryKey()
-    .references(() => User.id, { onDelete: "cascade" }),
-  currentPhoneCallId: uuid("current_phone_call_id").references(
-    () => PhoneCall.id,
-  ),
-  currentSessionId: varchar("current_session_id", {
-    length: 256,
-  }).references(() => PhoneCall.sessionId),
-  ...timeStampColumns,
-});
-
-export const CreateUserSettingsSchema = createInsertSchema(UserSettings, {
-  currentPhoneCallId: z.string().uuid().optional(),
-  currentSessionId: z.string().max(255).optional(),
-}).omit({
-  userId: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
-export const UserSettingsRelations = relations(UserSettings, ({ one }) => ({
-  user: one(User, { fields: [UserSettings.userId], references: [User.id] }),
-  currentPhoneCall: one(PhoneCall, {
-    fields: [UserSettings.currentPhoneCallId],
-    references: [PhoneCall.id],
-  }),
-  currentPhoneCall2: one(PhoneCall, {
-    fields: [UserSettings.currentSessionId],
-    references: [PhoneCall.sessionId],
-  }),
-}));
 
 // User
 

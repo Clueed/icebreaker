@@ -25,7 +25,7 @@ const FormSchema = z.object({
   password: z.string().min(2),
 });
 
-export const RegisterSipForm = ({}: {}) => {
+export const RegisterSipForm = () => {
   const { connectAndRegister } = useSIPProvider();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),

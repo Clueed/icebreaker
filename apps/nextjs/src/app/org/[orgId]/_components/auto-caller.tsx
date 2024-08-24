@@ -15,7 +15,8 @@ export const AutoCaller = ({ orgId }: { orgId: string }) => {
   const [enabled, setEnabled] = useState(false);
 
   const selectedGuessExists = !!selectedGuess;
-  const selectedGuessHasCalls = selectedGuess?.phoneCalls.length || false;
+  const selectedGuessHasCalls =
+    selectedGuessExists && selectedGuess.phoneCalls.length !== 0;
 
   useEffect(() => {
     console.log("[AC] triggered");
@@ -34,10 +35,16 @@ export const AutoCaller = ({ orgId }: { orgId: string }) => {
 
     if (!selectedGuessHasCalls) {
       console.log("[AC] No calls found for selectedGuess, starting a new call");
-      startCall();
+      void startCall();
       console.log("[AC] Call started and locked set to true");
     }
-  }, [enabled, selectedGuessHasCalls, disabled, selectedGuessExists]);
+  }, [
+    enabled,
+    selectedGuessHasCalls,
+    disabled,
+    selectedGuessExists,
+    startCall,
+  ]);
 
   return (
     <div>

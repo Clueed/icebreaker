@@ -12,6 +12,7 @@ export const Guesser = ({ orgId }: { orgId: string }) => {
 
       <GuesserStrategySelector
         orgId={orgId}
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         onApplyExtensionStrategyOnce={() => {}}
       />
 

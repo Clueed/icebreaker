@@ -56,7 +56,14 @@ export const SipCluster = () => {
 
       toast.error("All SIP systems offline");
     }
-  }, [notConnected, remoteCredentials, connected, disconnected]);
+  }, [
+    notConnected,
+    remoteCredentials,
+    connected,
+    disconnected,
+    sonnerId,
+    connectAndRegister,
+  ]);
 
   return (
     <div>

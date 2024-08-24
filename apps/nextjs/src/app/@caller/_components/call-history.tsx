@@ -21,9 +21,7 @@ export const CallHistory = () => {
     error,
     isPending,
   } = api.phoneCall.all.useInfiniteQuery(
-    {
-      active: false,
-    },
+    {},
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     },
@@ -54,7 +52,6 @@ const HistoryCall = ({
 }: {
   call: RouterOutputs["phoneCall"]["all"]["data"][number];
 }) => {
-  const { base, extension } = call.phoneNumber;
   const lastModified = new Date(
     call.updatedAt ?? call.createdAt,
   ).toLocaleTimeString();

@@ -32,12 +32,14 @@ export function AddNewGuessForm({ orgId }: { orgId: string }) {
     defaultValues: selectedGuess?.phoneNumber,
   });
 
+  const { setValue } = form;
+
   useEffect(() => {
     if (selectedGuess) {
-      form.setValue("base", selectedGuess.phoneNumber.base);
-      form.setValue("extension", selectedGuess.phoneNumber.extension);
+      setValue("base", selectedGuess.phoneNumber.base);
+      setValue("extension", selectedGuess.phoneNumber.extension);
     }
-  }, [selectedGuess]);
+  }, [setValue, selectedGuess]);
 
   const { createGuess } = useCreateGuess();
   const setSelectedGuessIdMutation = useSelectedGuessIdSetQuery();

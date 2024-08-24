@@ -33,8 +33,8 @@ const NextPhoneNumberSelectorWrapper = ({ orgId }: { orgId: string }) => {
           {!selectedGuessId && (
             <div>Create an initial guess to get started</div>
           )}
-          {!currentStrategy && <div>Select a strategy to get started</div>}
-          {selectedGuessId && currentStrategy && (
+          {<div>Select a strategy to get started</div>}
+          {selectedGuessId && (
             <NextPhoneNumberSelector
               orgId={orgId}
               selectedGuessId={selectedGuessId}
@@ -96,9 +96,9 @@ const NextPhoneNumberSelector = (props: {
   const nextGuessesLeft = nextGuessIds.length - indexOfSelectedGuess;
   useEffect(() => {
     if (nextGuessesLeft < 10 && !isFetchingNextGuessIds) {
-      fetchNextPage();
+      void fetchNextPage();
     }
-  }, [nextGuessesLeft, isFetchingNextGuessIds]);
+  }, [nextGuessesLeft, isFetchingNextGuessIds, fetchNextPage]);
 
   const nextGuessId = nextGuessIds[indexOfSelectedGuess + 1];
 

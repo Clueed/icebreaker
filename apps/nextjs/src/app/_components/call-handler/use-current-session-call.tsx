@@ -1,17 +1,21 @@
 import type { Timer } from "react-sipjs";
 import { useSIPProvider } from "react-sipjs";
+import { SessionState } from "sip.js";
 
-export const useCurrentSessionCall = (props: { sessionId?: string | null }) => {
+import { useCurrentSessionIdQuery } from "~/app/_components/use-current-session-id";
+
+export const useCurrentSessionCall = () => {
+  const { data: sessionId } = useCurrentSessionIdQuery();
   const { sessions, sessionManager, sessionTimer } = useSIPProvider();
 
-  const session = props.sessionId ? sessions[props.sessionId] : null;
+  const session = sessionId ? sessions[sessionId] : null;
 
-  if (!session) {
-    return null;
-  }
+  const hasActive = Object.values(sessions).some(
+    (session) => session.state !== SessionState.Terminated,
+  );
 
-  if (props.sessionId && session) {
-    const timer: Timer | undefined = sessionTimer[props.sessionId];
+  if (sessionId && session) {
+    const timer: Timer | undefined = sessionTimer[sessionId];
 
     const friendlyName = session.remoteIdentity.friendlyName;
     const atIndex = friendlyName.indexOf("@");
@@ -19,10 +23,13 @@ export const useCurrentSessionCall = (props: { sessionId?: string | null }) => {
 
     return {
       state: session.state,
-      isActive: session.state !== "Terminated",
+      isActive: hasActive,
+      hasActive,
       timer,
       phoneNumber: phoneNumber,
       hangup: () => sessionManager?.hangup(session),
     };
   }
+
+  return { hasActive };
 };

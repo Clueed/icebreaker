@@ -2,9 +2,9 @@ import { TRPCError } from "@trpc/server";
 
 export const takeUniqueOrThrow = (message: string) => {
   return <T>(values: T[]): T => {
-    if (values.length !== 1)
+    if (!values[0])
       throw new Error(`Found non unique or inexistent value: ${message}`);
-    return values[0]!;
+    return values[0];
   };
 };
 

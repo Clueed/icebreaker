@@ -9,11 +9,6 @@ import {
 import { isRandomStrategy, randomStrategySchema } from "./strategy-random";
 
 const strategySchema = z.union([additionStrategySchema, randomStrategySchema]);
-const strategySchemaPartial = z.union([
-  additionStrategySchema.partial(),
-  randomStrategySchema.partial(),
-]);
-
 type Strategy = z.infer<typeof strategySchema>;
 
 const extionsionStrategiesAreEqual = (

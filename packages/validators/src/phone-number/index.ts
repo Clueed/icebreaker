@@ -2,14 +2,6 @@ import { z } from "zod";
 
 import { CountryDialCodes } from "./country-codes";
 
-const emptyStringToNull = (value: unknown) => {
-  if (typeof value === "string" && value === "") {
-    return null;
-  } else {
-    return value;
-  }
-};
-
 const phoneNumberSchema = z.object({
   base: z
     .string()
@@ -26,6 +18,17 @@ const phoneNumberSchema = z.object({
 });
 type PhoneNumber = z.infer<typeof phoneNumberSchema>;
 
+export { phoneNumberSchema, type PhoneNumber };
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const emptyStringToNull = (value: unknown) => {
+  if (typeof value === "string" && value === "") {
+    return null;
+  } else {
+    return value;
+  }
+};
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const perfectPhoneNumberSchema = z.object({
   base: phoneNumberSchema.shape.base
     .transform((value) =>
@@ -46,19 +49,6 @@ const perfectPhoneNumberSchema = z.object({
   extension: phoneNumberSchema.shape.extension,
 });
 
-// const phoneNumberSchema = z.object({
-//   ...phoneNumberSchema.shape,
-//   base: z.preprocess(
-//     emptyStringToNull,
-//     phoneNumberSchema.shape.base.nullable(),
-//   ),
-//   extension: z.preprocess(
-//     emptyStringToNull,
-//     phoneNumberSchema.shape.extension.nullable(),
-//   ),
-// });
-// type PhoneNumber = z.infer<typeof phoneNumberSchema>;
-
 const phoneNumbersAreEqual = (
   phoneNumber1: PhoneNumber,
   phoneNumber2: PhoneNumber,
@@ -66,4 +56,4 @@ const phoneNumbersAreEqual = (
   phoneNumber1.base === phoneNumber2.base &&
   phoneNumber1.extension === phoneNumber2.extension;
 
-export { phoneNumberSchema, phoneNumbersAreEqual, type PhoneNumber };
+export { phoneNumbersAreEqual };

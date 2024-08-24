@@ -2,7 +2,7 @@ import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
 import type { InferSelectModel } from "@acme/db";
-import { and, desc, eq, not, sql } from "@acme/db";
+import { and, desc, eq, sql } from "@acme/db";
 import { CreatePhoneCallSchema, Guess, PhoneCall } from "@acme/db/schema";
 import { phoneNumberSchema } from "@acme/validators/phone-number";
 
@@ -13,7 +13,6 @@ export const phoneCallRouter = {
   all: protectedProcedure
     .input(
       z.object({
-        active: z.boolean().optional(), // TODO: remove
         cursor: z.string().uuid().nullish(),
         limit: z.number().min(1).max(50).default(5),
       }),
@@ -21,10 +20,7 @@ export const phoneCallRouter = {
     .query(async ({ ctx, input }) => {
       const rawData = await ctx.db.query.PhoneCall.findMany({
         orderBy: desc(PhoneCall.updatedAt),
-        where: and(
-          input.cursor ? eq(PhoneCall.id, input.cursor) : undefined,
-          input.active ? not(eq(PhoneCall.state, "Terminated")) : undefined,
-        ),
+        where: and(input.cursor ? eq(PhoneCall.id, input.cursor) : undefined),
         limit: input.limit + 1,
         with: {
           guess: {
@@ -113,8 +109,7 @@ export const phoneCallRouter = {
         .insert(PhoneCall)
         .values({
           sessionId,
-          guessId: guessId,
-          state: "Terminated",
+          guessId,
         })
         .returning()
         .then(takeUniqueOrThrow("create phone call"));

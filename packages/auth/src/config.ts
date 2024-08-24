@@ -57,7 +57,7 @@ export const authConfig = {
         },
       };
     },
-    signIn: async ({ profile }) => {
+    signIn: ({ profile }) => {
       return profile?.email?.endsWith("@softwaregini.com") ?? false;
     },
     authorized({ auth }) {

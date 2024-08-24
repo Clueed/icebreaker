@@ -13,7 +13,6 @@ export const GuessHistory = ({ orgId }: { orgId: string }) => {
   const { data: selectedGuessId } = useSelectedGuessId({ id: orgId });
   const {
     data: guessesData,
-    status,
     error,
     isError,
     isPending,
@@ -42,9 +41,9 @@ export const GuessHistory = ({ orgId }: { orgId: string }) => {
 
   useEffect(() => {
     if (isInView && !isFetchingNextPage) {
-      fetchNextPage();
+      void fetchNextPage();
     }
-  }, [isInView, isFetchingNextPage]);
+  }, [isInView, isFetchingNextPage, fetchNextPage]);
 
   const onlyWithCallsId = useId();
 

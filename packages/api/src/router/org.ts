@@ -48,9 +48,10 @@ export const orgRouter = {
         });
       }
 
-      return org.currentStrategy === null
-        ? ({ numberToAdd: 1, type: "add" } satisfies Strategy)
-        : org.currentStrategy;
+      return (
+        org.currentStrategy ??
+        ({ numberToAdd: 1, type: "add" } satisfies Strategy)
+      );
     }),
 
   setExtensionStrategy: protectedProcedure

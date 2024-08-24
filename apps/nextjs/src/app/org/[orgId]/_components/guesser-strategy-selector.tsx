@@ -26,7 +26,7 @@ const GuesserStrategySelector = (props: {
   orgId: string;
   onApplyExtensionStrategyOnce: (strategy: Strategy) => void;
 }) => {
-  const { data: currentStrategy, isLoading } = useCurrentStrategyQuery({
+  const { data: currentStrategy } = useCurrentStrategyQuery({
     id: props.orgId,
   });
 
@@ -106,9 +106,6 @@ const LoopAtValueSlider = (props: {
   const currentStrategy = props.currentStrategy;
 
   const { mutate: setCurrentStrategy } = useCurrentStrategySetMutation();
-  if (!currentStrategy) {
-    return "loading...";
-  }
 
   const handleSliderOnValueChange = (value: number[]): void => {
     if (!value[0]) {
@@ -134,8 +131,11 @@ const LoopAtValueSlider = (props: {
 
   const isAddition = isAdditionStrategy(currentStrategy);
 
+  const loopAtPowerFromDBAddition = isAddition
+    ? currentStrategy.loopAtPower
+    : undefined;
   const loopAtPowerFromDB =
-    (isAddition && currentStrategy.loopAtPower) || props.strategyCount - 1;
+    loopAtPowerFromDBAddition ?? props.strategyCount - 1;
 
   const [oldLoopAtPower, setOldLoopAtPower] =
     useState<number>(loopAtPowerFromDB);

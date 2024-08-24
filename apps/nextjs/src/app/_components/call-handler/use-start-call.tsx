@@ -1,5 +1,6 @@
 import { skipToken } from "@tanstack/react-query";
 import { useSIPProvider } from "react-sipjs";
+import { SessionState } from "sip.js";
 
 import type { PhoneNumber } from "@acme/validators/phone-number";
 import { toast } from "@acme/ui/toast";
@@ -51,7 +52,9 @@ const useStartSipCall = () => {
   const { sessionManager, sessions } = useSIPProvider();
 
   const activeSession = Boolean(
-    Object.values(sessions).find((session) => session.state !== "Terminated"),
+    Object.values(sessions).find(
+      (session) => session.state !== SessionState.Terminated,
+    ),
   );
 
   const start = async (args: { phoneNumber: PhoneNumber }) => {

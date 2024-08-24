@@ -2,7 +2,7 @@ import React from "react";
 
 import { AuthShowcase } from "~/app/_components/auth-showcase";
 
-async function NavBar() {
+function NavBar() {
   return (
     <nav className="container mx-auto flex items-center justify-between py-4">
       <div>ICEBREAKER</div>
