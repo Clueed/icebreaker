@@ -27,7 +27,8 @@
     "@turbo/gen": "^2.0.14",
     "prettier": "catalog:",
     "turbo": "^2.0.14",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vercel": "^37.1.1"
   },
   "prettier": "@icebreaker/prettier-config"
 }
