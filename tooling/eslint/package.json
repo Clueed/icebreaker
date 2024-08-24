@@ -1,5 +1,5 @@
 {
-  "name": "@acme/eslint-config",
+  "name": "@icebreaker/eslint-config",
   "private": true,
   "version": "0.3.0",
   "type": "module",
@@ -24,12 +24,12 @@
     "typescript-eslint": "^8.0.1"
   },
   "devDependencies": {
-    "@acme/prettier-config": "workspace:*",
-    "@acme/tsconfig": "workspace:*",
+    "@icebreaker/prettier-config": "workspace:*",
+    "@icebreaker/tsconfig": "workspace:*",
     "eslint": "catalog:",
     "eslint-plugin-unused-imports": "^4.1.3",
     "prettier": "catalog:",
     "typescript": "catalog:"
   },
-  "prettier": "@acme/prettier-config"
+  "prettier": "@icebreaker/prettier-config"
 }

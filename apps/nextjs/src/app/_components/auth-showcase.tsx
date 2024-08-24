@@ -1,7 +1,7 @@
-import { auth, signIn, signOut } from "@acme/auth";
-import { Avatar, AvatarFallback, AvatarImage } from "@acme/ui/avatar";
-import { Button } from "@acme/ui/button";
-import { LogOutIcon } from "@acme/ui/icons";
+import { auth, signIn, signOut } from "@icebreaker/auth";
+import { Avatar, AvatarFallback, AvatarImage } from "@icebreaker/ui/avatar";
+import { Button } from "@icebreaker/ui/button";
+import { LogOutIcon } from "@icebreaker/ui/icons";
 
 export async function AuthShowcase() {
   const session = await auth();

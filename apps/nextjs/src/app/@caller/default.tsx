@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader } from "@acme/ui/card";
+import { Card, CardContent, CardHeader } from "@icebreaker/ui/card";
 
 import { CallHistory } from "~/app/@caller/_components/call-history";
 import { Caller } from "~/app/@caller/_components/caller";

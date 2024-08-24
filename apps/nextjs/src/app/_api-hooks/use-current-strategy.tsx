@@ -1,4 +1,4 @@
-import type { AppRouterInputs } from "node_modules/@acme/api/dist/root";
+import type { AppRouterInputs } from "node_modules/@icebreaker/api/dist/root";
 
 import { api } from "~/trpc/react";
 

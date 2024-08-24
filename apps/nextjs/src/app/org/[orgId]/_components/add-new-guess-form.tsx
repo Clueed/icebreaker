@@ -1,9 +1,7 @@
 import type { z } from "zod";
 import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-
-import { Button } from "@acme/ui/button";
+import { Button } from "@icebreaker/ui/button";
 import {
   Form,
   FormControl,
@@ -12,9 +10,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@acme/ui/form";
-import { Input } from "@acme/ui/input";
-import { phoneNumberSchema } from "@acme/validators/phone-number";
+} from "@icebreaker/ui/form";
+import { Input } from "@icebreaker/ui/input";
+import { phoneNumberSchema } from "@icebreaker/validators/phone-number";
+import { useForm } from "react-hook-form";
 
 import { useCreateGuess } from "~/app/_api-hooks/use-create-guess";
 import {

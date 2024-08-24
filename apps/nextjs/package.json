@@ -1,5 +1,5 @@
 {
-  "name": "@acme/nextjs",
+  "name": "@icebreaker/nextjs",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -14,11 +14,11 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@acme/api": "workspace:*",
-    "@acme/auth": "workspace:*",
-    "@acme/db": "workspace:*",
-    "@acme/ui": "workspace:*",
-    "@acme/validators": "workspace:*",
+    "@icebreaker/api": "workspace:*",
+    "@icebreaker/auth": "workspace:*",
+    "@icebreaker/db": "workspace:*",
+    "@icebreaker/ui": "workspace:*",
+    "@icebreaker/validators": "workspace:*",
     "@formkit/auto-animate": "^0.8.2",
     "@t3-oss/env-nextjs": "^0.10.1",
     "@tanstack/react-query": "catalog:",
@@ -36,10 +36,10 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@acme/eslint-config": "workspace:*",
-    "@acme/prettier-config": "workspace:*",
-    "@acme/tailwind-config": "workspace:*",
-    "@acme/tsconfig": "workspace:*",
+    "@icebreaker/eslint-config": "workspace:*",
+    "@icebreaker/prettier-config": "workspace:*",
+    "@icebreaker/tailwind-config": "workspace:*",
+    "@icebreaker/tsconfig": "workspace:*",
     "@tanstack/react-query-devtools": "^5.51.23",
     "@types/luxon": "^3.4.2",
     "@types/node": "^20.16.1",
@@ -52,5 +52,5 @@
     "tailwindcss": "^3.4.10",
     "typescript": "catalog:"
   },
-  "prettier": "@acme/prettier-config"
+  "prettier": "@icebreaker/prettier-config"
 }

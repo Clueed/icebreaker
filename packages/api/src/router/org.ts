@@ -1,10 +1,9 @@
+import type { Strategy } from "@icebreaker/validators/guessing-strategies";
 import type { TRPCRouterRecord } from "@trpc/server";
+import { desc, eq } from "@icebreaker/db";
+import { CreateOrgSchema, Org } from "@icebreaker/db/schema";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-
-import type { Strategy } from "@acme/validators/guessing-strategies";
-import { desc, eq } from "@acme/db";
-import { CreateOrgSchema, Org } from "@acme/db/schema";
 
 import { findFirstOrThrow, takeUniqueOrThrow } from "../helpers";
 import { protectedProcedure } from "../trpc";

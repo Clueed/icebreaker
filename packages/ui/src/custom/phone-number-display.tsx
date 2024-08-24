@@ -1,4 +1,4 @@
-import type { PhoneNumber } from "@acme/validators/phone-number";
+import type { PhoneNumber } from "@icebreaker/validators/phone-number";
 
 export const PhoneNumberDisplay = (props: { phoneNumber: PhoneNumber }) => {
   return (

@@ -1,12 +1,15 @@
 "use client";
 
+import type { RouterOutputs } from "@icebreaker/api";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-
-import type { RouterOutputs } from "@acme/api";
-import { Button } from "@acme/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@acme/ui/card";
-import { PhoneNumberDisplay } from "@acme/ui/custom/phone-number-display";
-import { Popover, PopoverContent, PopoverTrigger } from "@acme/ui/popover";
+import { Button } from "@icebreaker/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@icebreaker/ui/card";
+import { PhoneNumberDisplay } from "@icebreaker/ui/custom/phone-number-display";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@icebreaker/ui/popover";
 
 import { usePhoneCallUpdateMutation } from "~/app/_api-hooks/use-phone-call";
 import { CurrentCallRatingCluster } from "~/app/@caller/_components/current-call-rating-cluster";

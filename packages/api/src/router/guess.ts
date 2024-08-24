@@ -1,10 +1,9 @@
 import type { TRPCRouterRecord } from "@trpc/server";
+import { desc, eq, sql } from "@icebreaker/db";
+import { CreateGuessSchema, Guess, PhoneCall } from "@icebreaker/db/schema";
+import { strategySchema } from "@icebreaker/validators/guessing-strategies";
+import { generateNextPhoneNumbers } from "@icebreaker/validators/guessing-strategies/apply-strategy";
 import { z } from "zod";
-
-import { desc, eq, sql } from "@acme/db";
-import { CreateGuessSchema, Guess, PhoneCall } from "@acme/db/schema";
-import { strategySchema } from "@acme/validators/guessing-strategies";
-import { generateNextPhoneNumbers } from "@acme/validators/guessing-strategies/apply-strategy";
 
 import { findFirstOrThrow, takeUniqueOrThrow } from "../helpers";
 import { protectedProcedure } from "../trpc";

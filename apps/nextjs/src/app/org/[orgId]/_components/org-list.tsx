@@ -4,15 +4,14 @@
 import type { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 import * as React from "react";
 import { useRouter } from "next/navigation";
-
-import { Button } from "@acme/ui/button";
+import { Button } from "@icebreaker/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@acme/ui/dropdown-menu";
+} from "@icebreaker/ui/dropdown-menu";
 
 import { api } from "~/trpc/react";
 

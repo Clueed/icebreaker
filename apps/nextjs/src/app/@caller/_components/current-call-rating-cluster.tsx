@@ -1,6 +1,9 @@
-import type { PhoneCallRating } from "@acme/db/schema";
-import { phoneCallRatingList, phoneCallRatingSchema } from "@acme/db/schema";
-import { ToggleGroup, ToggleGroupItem } from "@acme/ui/toggle-group";
+import type { PhoneCallRating } from "@icebreaker/db/schema";
+import {
+  phoneCallRatingList,
+  phoneCallRatingSchema,
+} from "@icebreaker/db/schema";
+import { ToggleGroup, ToggleGroupItem } from "@icebreaker/ui/toggle-group";
 
 import { RatingIcon } from "~/app/@caller/_components/rating-icon";
 

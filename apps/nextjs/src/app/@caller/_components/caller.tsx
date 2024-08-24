@@ -1,10 +1,9 @@
 "use client";
 
+import type { PhoneCallRating } from "@icebreaker/db/schema";
+import { Button } from "@icebreaker/ui/button";
+import { PhoneNumberDisplay } from "@icebreaker/ui/custom/phone-number-display";
 import { skipToken } from "@tanstack/react-query";
-
-import type { PhoneCallRating } from "@acme/db/schema";
-import { Button } from "@acme/ui/button";
-import { PhoneNumberDisplay } from "@acme/ui/custom/phone-number-display";
 
 import {
   usePhoneCallBySessionIdQuery,

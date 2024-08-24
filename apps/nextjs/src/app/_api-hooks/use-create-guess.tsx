@@ -1,4 +1,4 @@
-import { toast } from "@acme/ui/toast";
+import { toast } from "@icebreaker/ui/toast";
 
 import { api } from "~/trpc/react";
 

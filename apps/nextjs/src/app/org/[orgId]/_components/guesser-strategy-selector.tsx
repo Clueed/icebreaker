@@ -1,20 +1,19 @@
 "use client";
 
+import type { Strategy } from "@icebreaker/validators/guessing-strategies";
 import { useState } from "react";
-
-import type { Strategy } from "@acme/validators/guessing-strategies";
-import { cn } from "@acme/ui";
-import { Dices } from "@acme/ui/icons";
-import { Label } from "@acme/ui/label";
-import { LongPressButton } from "@acme/ui/long-press-button";
-import { Skeleton } from "@acme/ui/skeleton";
-import { Slider } from "@acme/ui/slider";
+import { cn } from "@icebreaker/ui";
+import { Dices } from "@icebreaker/ui/icons";
+import { Label } from "@icebreaker/ui/label";
+import { LongPressButton } from "@icebreaker/ui/long-press-button";
+import { Skeleton } from "@icebreaker/ui/skeleton";
+import { Slider } from "@icebreaker/ui/slider";
 import {
   extionsionStrategiesAreEqual,
   isAdditionStrategy,
   isRandomStrategy,
-} from "@acme/validators/guessing-strategies";
-import { getAvailableExtensionStrategies } from "@acme/validators/guessing-strategies/get-available-strategies";
+} from "@icebreaker/validators/guessing-strategies";
+import { getAvailableExtensionStrategies } from "@icebreaker/validators/guessing-strategies/get-available-strategies";
 
 import {
   useCurrentStrategyQuery,

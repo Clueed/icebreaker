@@ -1,11 +1,11 @@
-import type { PhoneCallRating } from "@acme/db/schema";
-import type { LucideProps } from "@acme/ui/icons";
+import type { PhoneCallRating } from "@icebreaker/db/schema";
+import type { LucideProps } from "@icebreaker/ui/icons";
 import {
   MailboxIcon,
   PhoneMissedIcon,
   TargetIcon,
   UserIcon,
-} from "@acme/ui/icons";
+} from "@icebreaker/ui/icons";
 
 export const RatingIcon = ({
   rating,

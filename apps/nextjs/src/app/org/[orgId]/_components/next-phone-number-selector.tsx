@@ -1,6 +1,5 @@
+import type { Strategy } from "@icebreaker/validators/guessing-strategies";
 import { useEffect, useMemo, useState } from "react";
-
-import type { Strategy } from "@acme/validators/guessing-strategies";
 
 import { useCurrentStrategyQuery } from "~/app/_api-hooks/use-current-strategy";
 import { useSelectedGuessId } from "~/app/_api-hooks/use-selected-guess";

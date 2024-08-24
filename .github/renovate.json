@@ -3,7 +3,7 @@
   "extends": ["config:base"],
   "packageRules": [
     {
-      "matchPackagePatterns": ["^@acme/"],
+      "matchPackagePatterns": ["^@icebreaker/"],
       "enabled": false
     },
     {
@@ -28,6 +28,10 @@
   "rangeStrategy": "bump",
   "automerge": true,
   "npm": {
-    "fileMatch": ["(^|/)package\\.json$", "(^|/)pnpm-workspace\\.yaml$", "(^|/)package\\.json\\.hbs$"]
+    "fileMatch": [
+      "(^|/)package\\.json$",
+      "(^|/)pnpm-workspace\\.yaml$",
+      "(^|/)package\\.json\\.hbs$"
+    ]
   }
 }

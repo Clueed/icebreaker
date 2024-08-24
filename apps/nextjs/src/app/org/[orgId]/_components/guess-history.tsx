@@ -1,8 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
+import { Label } from "@icebreaker/ui/label";
+import { Switch } from "@icebreaker/ui/switch";
 import { useInView } from "framer-motion";
-
-import { Label } from "@acme/ui/label";
-import { Switch } from "@acme/ui/switch";
 
 import { useSelectedGuessId } from "~/app/_api-hooks/use-selected-guess";
 import { GuessDisplay } from "~/app/org/[orgId]/_components/guess-display";

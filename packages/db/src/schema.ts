@@ -1,3 +1,5 @@
+import type { Strategy } from "@icebreaker/validators/guessing-strategies";
+import { strategySchema } from "@icebreaker/validators/guessing-strategies";
 import { relations, sql } from "drizzle-orm";
 import {
   index,
@@ -14,9 +16,6 @@ import {
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
-
-import type { Strategy } from "@acme/validators/guessing-strategies";
-import { strategySchema } from "@acme/validators/guessing-strategies";
 
 import { encryptedText } from "./helpers/encrypted-text";
 

@@ -1,7 +1,9 @@
 import type { TRPCRouterRecord } from "@trpc/server";
-
-import { eq } from "@acme/db";
-import { CreateSipCredentialsSchema, SipCredentials } from "@acme/db/schema";
+import { eq } from "@icebreaker/db";
+import {
+  CreateSipCredentialsSchema,
+  SipCredentials,
+} from "@icebreaker/db/schema";
 
 import { protectedProcedure } from "../trpc";
 

@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from "next";
-
-import { cn } from "@acme/ui";
-import { ThemeProvider, ThemeToggle } from "@acme/ui/theme";
-import { Toaster } from "@acme/ui/toast";
+import { cn } from "@icebreaker/ui";
+import { ThemeProvider, ThemeToggle } from "@icebreaker/ui/theme";
+import { Toaster } from "@icebreaker/ui/toast";
 
 import { TRPCReactProvider } from "~/trpc/react";
 

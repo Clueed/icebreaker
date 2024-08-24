@@ -1,5 +1,5 @@
 {
-  "name": "@acme/db",
+  "name": "@icebreaker/db",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -38,10 +38,10 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@acme/eslint-config": "workspace:*",
-    "@acme/prettier-config": "workspace:*",
-    "@acme/tsconfig": "workspace:*",
-    "@acme/validators": "workspace:*",
+    "@icebreaker/eslint-config": "workspace:*",
+    "@icebreaker/prettier-config": "workspace:*",
+    "@icebreaker/tsconfig": "workspace:*",
+    "@icebreaker/validators": "workspace:*",
     "@types/crypto-js": "^4.2.2",
     "dotenv-cli": "^7.4.2",
     "drizzle-kit": "^0.22.8",
@@ -49,5 +49,5 @@
     "prettier": "catalog:",
     "typescript": "catalog:"
   },
-  "prettier": "@acme/prettier-config"
+  "prettier": "@icebreaker/prettier-config"
 }

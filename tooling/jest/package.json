@@ -1,5 +1,5 @@
 {
-  "name": "@acme/jest",
+  "name": "@icebreaker/jest",
   "private": true,
   "version": "0.1.0",
   "files": [
@@ -16,5 +16,5 @@
     "ts-jest": "catalog:",
     "jest-environment-jsdom": "catalog:"
   },
-  "prettier": "@acme/prettier-config"
+  "prettier": "@icebreaker/prettier-config"
 }
