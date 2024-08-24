@@ -7,7 +7,6 @@ import { phoneNumberSchema } from "@acme/validators/phone-number";
 
 import { takeUniqueOrThrow } from "../helpers";
 import { protectedProcedure } from "../trpc";
-import { transformPhoneCall } from "./phone-call";
 
 export const currentPhoneCallRouter = {
   getCurrent: protectedProcedure.query(async ({ ctx }) => {

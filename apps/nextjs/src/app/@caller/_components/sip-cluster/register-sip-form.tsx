@@ -1,10 +1,9 @@
 "use client";
 
-import type { AppRouterOutputs } from "node_modules/@acme/api/dist/root";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { CONNECT_STATUS, useSIPProvider } from "react-sipjs";
+import { useSIPProvider } from "react-sipjs";
 import { z } from "zod";
 
 import { Button } from "@acme/ui/button";
@@ -18,9 +17,7 @@ import {
   FormMessage,
 } from "@acme/ui/form";
 import { Input } from "@acme/ui/input";
-import { toast } from "@acme/ui/toast";
 
-import { SipStatus } from "~/app/@caller/_components/sip-cluster/sip-status";
 import { api } from "~/trpc/react";
 
 const FormSchema = z.object({

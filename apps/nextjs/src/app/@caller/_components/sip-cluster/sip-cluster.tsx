@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { CONNECT_STATUS, useSIPProvider } from "react-sipjs";
 
 import { Badge } from "@acme/ui/badge";
-import { Card } from "@acme/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@acme/ui/popover";
 import { toast } from "@acme/ui/toast";
 

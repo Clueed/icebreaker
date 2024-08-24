@@ -5,14 +5,7 @@ import type { PhoneNumber } from "@acme/validators/phone-number";
 import { toast } from "@acme/ui/toast";
 import { phoneNumberSchema } from "@acme/validators/phone-number";
 
-import {
-  useCurrentCallCreateMutation,
-  useCurrentCallQuery,
-} from "~/app/_api-hooks/use-current-call";
-import {
-  useCurrentSessionIdMutation,
-  useCurrentSessionIdQuery,
-} from "~/app/_api-hooks/use-current-session-id";
+import { useCurrentSessionIdMutation } from "~/app/_api-hooks/use-current-session-id";
 import { api } from "~/trpc/react";
 
 function useStartCall({ guessId }: { guessId?: string }) {
@@ -22,32 +15,19 @@ function useStartCall({ guessId }: { guessId?: string }) {
       throwOnError: true,
     },
   );
-  const { mutate: createPhoneCall } = useCurrentCallCreateMutation();
   const { mutate: setCurrentSessionId } = useCurrentSessionIdMutation();
-  const { data: phoneCall } = useCurrentCallQuery();
-
-  const startCall = useStartSipCall();
+  const [startCall, options] = useStartSipCall();
 
   return [
     async () => {
       if (!guess) {
-        toast.error("Starting Call failed: guess not found");
-        return;
-      }
-
-      if (phoneCall === undefined) {
-        toast.warning("Starting Call failed: something went wrong");
-        return;
-      }
-
-      if (phoneCall && phoneCall.state !== "Terminated") {
-        toast.warning("Starting Call failed: call in progress");
+        toast.error("[SC]: guess not found");
         return;
       }
 
       const inviter = await startCall({ phoneNumber: guess.phoneNumber });
       if (!inviter) {
-        toast.error("Starting Call failed: no inviter");
+        toast.error("[SC]: no inviter");
         return;
       }
 
@@ -57,22 +37,8 @@ function useStartCall({ guessId }: { guessId?: string }) {
         orgId: guess.orgId,
         phoneNumber: guess.phoneNumber,
       });
-      //   return createPhoneCall(
-      //     {
-      //       sessionId,
-      //       guessId: guess.id,
-      //       state,
-      //     },
-      //     {
-      //       onSuccess: () => {
-      //         toast.success("Call started: " + guess.phoneNumber);
-      //       },
-      //       onError: (error) => {
-      //         toast.error("Starting Call failed: " + error.message);
-      //       },
-      //     },
-      //   );
     },
+    options,
   ] as const;
 }
 
@@ -81,18 +47,18 @@ export default useStartCall;
 const useStartSipCall = () => {
   const { sessionManager, sessions } = useSIPProvider();
 
-  const activeSession = Object.values(sessions).find(
-    (session) => session.state !== "Terminated",
+  const activeSession = Boolean(
+    Object.values(sessions).find((session) => session.state !== "Terminated"),
   );
 
-  return async (args: { phoneNumber: PhoneNumber }) => {
+  const start = async (args: { phoneNumber: PhoneNumber }) => {
     const { data: phoneNumber, success } = phoneNumberSchema.safeParse(
       args.phoneNumber,
     );
 
     if (!success) {
       toast.error(
-        "Starting Call failed: invalid phone number " +
+        "[SC]: invalid phone number " +
           args.phoneNumber.base +
           args.phoneNumber.extension,
       );
@@ -100,12 +66,12 @@ const useStartSipCall = () => {
     }
 
     if (activeSession) {
-      toast.error("Starting Call failed: failed, different call in progress");
+      toast.error("[SC]: different call in progress");
       return;
     }
 
     if (!sessionManager) {
-      toast.error("Starting Call failed: no session manager");
+      toast.error("[SC]: no session manager");
       return;
     }
 
@@ -113,4 +79,6 @@ const useStartSipCall = () => {
       `sip:${phoneNumber.base + phoneNumber.extension}@sipgate.de`,
     );
   };
+
+  return [start, { disabled: activeSession }] as const;
 };

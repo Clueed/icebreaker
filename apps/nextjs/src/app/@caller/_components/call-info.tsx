@@ -1,9 +1,7 @@
 import type { Duration } from "luxon";
-import type { AppRouterOutputs } from "node_modules/@acme/api/dist/root";
 import type { Timer } from "react-sipjs";
 import React, { useEffect, useState } from "react";
 import { DateTime } from "luxon";
-import { useSessionCall } from "react-sipjs";
 
 export function CallInfo({ timer }: { timer?: Timer }) {
   const [sinceStart, setSinceStart] = useState<Duration>();
@@ -44,7 +42,7 @@ export function CallInfo({ timer }: { timer?: Timer }) {
     <div>
       {/* <div>state: {phoneCall.state}</div> */}
       <div>answeredAt: {timer?.answeredAt?.toISOString()}</div>
-      <div>createdAt: {timer?.createdAt?.toISOString()}</div>
+      <div>createdAt: {timer?.createdAt.toISOString()}</div>
       <div>receivedAt:{timer?.receivedAt?.toISOString()}</div>
       <div>hangupAt: {timer?.hangupAt?.toISOString()}</div>
       <div>sinceStart: {sinceStart?.toFormat("mm:ss")}</div>

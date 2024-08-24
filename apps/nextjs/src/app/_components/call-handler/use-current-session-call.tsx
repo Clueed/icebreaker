@@ -1,9 +1,5 @@
 import type { Timer } from "react-sipjs";
-import { useState } from "react";
-import { SessionDirection, useSIPProvider } from "react-sipjs";
-import { Inviter } from "sip.js";
-
-import { useCurrentSessionIdQuery } from "~/app/_api-hooks/use-current-session-id";
+import { useSIPProvider } from "react-sipjs";
 
 export const useCurrentSessionCall = (props: { sessionId?: string | null }) => {
   const { sessions, sessionManager, sessionTimer } = useSIPProvider();

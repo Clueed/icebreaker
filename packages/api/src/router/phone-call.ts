@@ -3,7 +3,6 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import type { InferSelectModel } from "@acme/db";
-import type { DB } from "@acme/db/client";
 import type { Guess } from "@acme/db/schema";
 import { and, desc, eq, not } from "@acme/db";
 import {
@@ -94,81 +93,6 @@ export const phoneCallRouter = {
 
     return transformPhoneCall(phoneCall);
   }),
-
-  updateCurrent: protectedProcedure
-    .input(
-      z.object({
-        data: CreatePhoneCallSchema.pick({
-          state: true,
-          rating: true,
-        }).partial(),
-      }),
-    )
-    .mutation(async ({ ctx, input: { data } }) => {
-      const userSettings = await ctx.db.query.UserSettings.findFirst({
-        where: eq(UserSettings.userId, ctx.session.user.id),
-      });
-
-      if (!userSettings?.currentPhoneCallId) {
-        return null;
-      }
-
-      return ctx.db
-        .update(PhoneCall)
-        .set(data)
-        .where(eq(PhoneCall.id, userSettings.currentPhoneCallId))
-        .returning()
-        .then(takeUniqueOrThrow("update phone call"));
-    }),
-
-  createCurrent: protectedProcedure
-    .input(CreatePhoneCallSchema)
-    .mutation(async ({ ctx, input }) => {
-      const userSettings = await ctx.db.query.UserSettings.findFirst({
-        where: eq(UserSettings.userId, ctx.session.user.id),
-        with: {
-          currentPhoneCall: {
-            columns: {
-              state: true,
-            },
-          },
-        },
-      });
-
-      if (
-        userSettings &&
-        userSettings.currentPhoneCall?.state !== "Terminated"
-      ) {
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: "Phone call in progress",
-        });
-      }
-      const newPhoneCall = await ctx.db
-        .insert(PhoneCall)
-        .values(input)
-        .returning()
-        .then(takeUniqueOrThrow("create phone call"));
-
-      const a = await ctx.db
-        .insert(UserSettings)
-        .values({
-          currentPhoneCallId: newPhoneCall.id,
-          userId: ctx.session.user.id,
-        })
-        .onConflictDoUpdate({
-          target: UserSettings.userId,
-          set: {
-            currentPhoneCallId: newPhoneCall.id,
-          },
-        })
-        .returning()
-        .then(takeUniqueOrThrow("create user settings"));
-
-      console.log("create user settings", a);
-
-      return newPhoneCall;
-    }),
 
   update: protectedProcedure
     .input(

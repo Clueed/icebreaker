@@ -1,12 +1,7 @@
 import type { PhoneCallRating } from "@acme/db/schema";
 import { phoneCallRatingList, phoneCallRatingSchema } from "@acme/db/schema";
-import { cn } from "@acme/ui";
 import { ToggleGroup, ToggleGroupItem } from "@acme/ui/toggle-group";
 
-import {
-  useCurrentCallQuery,
-  useCurrentCallUpdateMutation,
-} from "~/app/_api-hooks/use-current-call";
 import { RatingIcon } from "~/app/@caller/_components/rating-icon";
 
 export const CurrentCallRatingCluster = (props: {

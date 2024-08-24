@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@acme/ui/card";
 import { PhoneNumberDisplay } from "@acme/ui/custom/phone-number-display";
 import { Popover, PopoverContent, PopoverTrigger } from "@acme/ui/popover";
 
-import { useCurrentCallUpdateMutation } from "~/app/_api-hooks/use-current-call";
 import { usePhoneCallUpdateMutation } from "~/app/_api-hooks/use-phone-call";
 import { CurrentCallRatingCluster } from "~/app/@caller/_components/current-call-rating-cluster";
 import { RatingIcon } from "~/app/@caller/_components/rating-icon";

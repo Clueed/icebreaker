@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader } from "@acme/ui/card";
 
-import { ActiveCalls } from "~/app/@caller/_components/active-calls/active-calls";
 import { CallHistory } from "~/app/@caller/_components/call-history";
 import { Caller } from "~/app/@caller/_components/caller";
 import { SipCluster } from "~/app/@caller/_components/sip-cluster/sip-cluster";

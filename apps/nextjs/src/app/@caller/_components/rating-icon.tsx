@@ -1,5 +1,5 @@
+import type { PhoneCallRating } from "@acme/db/schema";
 import type { LucideProps } from "@acme/ui/icons";
-import { PhoneCallRating } from "@acme/db/schema";
 import {
   MailboxIcon,
   PhoneMissedIcon,
