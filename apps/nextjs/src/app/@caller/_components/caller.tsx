@@ -2,24 +2,42 @@
 
 import { skipToken } from "@tanstack/react-query";
 
+import type { PhoneCallRating } from "@acme/db/schema";
 import { Button } from "@acme/ui/button";
 import { PhoneNumberDisplay } from "@acme/ui/custom/phone-number-display";
 
-import { useCurrentSessionIdQuery } from "~/app/_api-hooks/use-current-session-id";
-import { usePhoneCallByIdQuery } from "~/app/_api-hooks/use-phone-call";
+import {
+  usePhoneCallBySessionIdQuery,
+  usePhoneCallUpdateMutation,
+} from "~/app/_api-hooks/use-phone-call";
 import { useCurrentSessionCall } from "~/app/_components/call-handler/use-current-session-call";
+import { useCurrentSessionIdQuery } from "~/app/_components/use-current-session-id";
 import { CallInfo } from "~/app/@caller/_components/call-info";
 import { CurrentCallRatingCluster } from "~/app/@caller/_components/current-call-rating-cluster";
 
 export function Caller() {
-  const { data: current } = useCurrentSessionIdQuery();
-  const { currentSessionId, callId } = current ?? {};
+  const { data: currentSessionId } = useCurrentSessionIdQuery();
+
   const sessionCall = useCurrentSessionCall({ sessionId: currentSessionId });
   const { timer, state, isActive, phoneNumber, hangup } = sessionCall ?? {};
 
-  const { data: phoneCall } = usePhoneCallByIdQuery(
-    callId ? { id: callId } : skipToken,
+  const { data: phoneCall } = usePhoneCallBySessionIdQuery(
+    currentSessionId ? { sessionId: currentSessionId } : skipToken,
   );
+
+  const { mutate: updatePhoneCall } = usePhoneCallUpdateMutation();
+
+  const handleSetRating = (newRating: PhoneCallRating) => {
+    if (!currentSessionId) {
+      throw new Error("cant update call: currentSessionId not found");
+    }
+    updatePhoneCall({
+      sessionId: currentSessionId,
+      data: {
+        rating: newRating,
+      },
+    });
+  };
 
   return (
     <div>
@@ -44,17 +62,11 @@ export function Caller() {
       )}
       <CallInfo timer={timer} />
 
-      {/* <CurrentCallRatingCluster
+      <CurrentCallRatingCluster
         rating={phoneCall?.rating}
         disabled={!isActive}
-        setRating={(newRating) =>
-          updateCurrentPhoneCall({
-            data: {
-              rating: newRating,
-            },
-          })
-        }
-      /> */}
+        setRating={handleSetRating}
+      />
     </div>
   );
 }

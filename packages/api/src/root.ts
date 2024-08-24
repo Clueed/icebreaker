@@ -1,7 +1,6 @@
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 import { authRouter } from "./router/auth";
-import { currentPhoneCallRouter } from "./router/current-phone-call";
 import { guessRouter } from "./router/guess";
 import { orgRouter } from "./router/org";
 import { phoneCallRouter } from "./router/phone-call";
@@ -16,7 +15,6 @@ export const appRouter = createTRPCRouter({
   phoneCall: phoneCallRouter,
   sipCredentials: sipCredentialsRouter,
   userSettings: userSettingsRouter,
-  currentPhoneCall: currentPhoneCallRouter,
 });
 
 // export type definition of API

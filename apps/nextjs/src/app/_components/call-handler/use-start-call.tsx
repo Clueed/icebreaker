@@ -5,7 +5,8 @@ import type { PhoneNumber } from "@acme/validators/phone-number";
 import { toast } from "@acme/ui/toast";
 import { phoneNumberSchema } from "@acme/validators/phone-number";
 
-import { useCurrentSessionIdMutation } from "~/app/_api-hooks/use-current-session-id";
+import { usePhoneCallCreateMutation } from "~/app/_api-hooks/use-phone-call";
+import { useCurrentSessionIdMutation } from "~/app/_components/use-current-session-id";
 import { api } from "~/trpc/react";
 
 function useStartCall({ guessId }: { guessId?: string }) {
@@ -16,6 +17,7 @@ function useStartCall({ guessId }: { guessId?: string }) {
     },
   );
   const { mutate: setCurrentSessionId } = useCurrentSessionIdMutation();
+  const { mutate: createPhoneCall } = usePhoneCallCreateMutation();
   const [startCall, options] = useStartSipCall();
 
   return [
@@ -32,11 +34,12 @@ function useStartCall({ guessId }: { guessId?: string }) {
       }
 
       const { id: sessionId } = inviter;
-      setCurrentSessionId({
+      createPhoneCall({
         sessionId,
         orgId: guess.orgId,
         phoneNumber: guess.phoneNumber,
       });
+      setCurrentSessionId(sessionId);
     },
     options,
   ] as const;

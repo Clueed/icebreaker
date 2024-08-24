@@ -13,6 +13,7 @@ import { Urbanist, Victor_Mono } from "next/font/google";
 
 import NavBar from "~/app/_components/nav";
 import SipProviderConfigured from "~/app/_components/sip-provider";
+import { CurrentSessionIdProvider } from "~/app/_components/use-current-session-id";
 import { env } from "~/env";
 
 const fontMono = Victor_Mono({
@@ -69,17 +70,19 @@ export default function RootLayout(props: {
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <TRPCReactProvider>
             <SipProviderConfigured>
-              <NavBar />
-              <main className="container flex gap-16">
-                <div className="flex-grow">
+              <CurrentSessionIdProvider>
+                <NavBar />
+                <main className="container flex gap-16">
+                  <div className="flex-grow">
+                    <Suspense fallback={<div>loading...</div>}>
+                      {props.children}
+                    </Suspense>
+                  </div>
                   <Suspense fallback={<div>loading...</div>}>
-                    {props.children}
+                    {props.caller}
                   </Suspense>
-                </div>
-                <Suspense fallback={<div>loading...</div>}>
-                  {props.caller}
-                </Suspense>
-              </main>
+                </main>
+              </CurrentSessionIdProvider>
             </SipProviderConfigured>
           </TRPCReactProvider>
           <div className="absolute bottom-4 right-4">

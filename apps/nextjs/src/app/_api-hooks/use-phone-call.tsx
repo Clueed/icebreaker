@@ -11,6 +11,12 @@ export const usePhoneCallByIdQuery = (
   return api.phoneCall.byId.useQuery(input);
 };
 
+export const usePhoneCallBySessionIdQuery = (
+  input: AppRouterInputs["phoneCall"]["bySessionId"] | typeof skipToken,
+) => {
+  return api.phoneCall.bySessionId.useQuery(input);
+};
+
 export const usePhoneCallUpdateMutation = () => {
   const utils = api.useUtils();
   return api.phoneCall.update.useMutation({
@@ -18,14 +24,16 @@ export const usePhoneCallUpdateMutation = () => {
       // byId
       await utils.phoneCall.byId.cancel();
       const prevByIdData = utils.phoneCall.byId.getData();
-      utils.phoneCall.byId.setData({ id: payload.id }, (old) =>
-        old
-          ? {
-              ...old,
-              ...payload.data,
-              updatedAt: new Date().toISOString(),
-            }
-          : undefined,
+      utils.phoneCall.bySessionId.setData(
+        { sessionId: payload.sessionId },
+        (old) =>
+          old
+            ? {
+                ...old,
+                ...payload.data,
+                updatedAt: new Date().toISOString(),
+              }
+            : undefined,
       );
 
       // all
@@ -41,7 +49,7 @@ export const usePhoneCallUpdateMutation = () => {
               pages: old.pages.map((page) => ({
                 ...page,
                 data: page.data.map((item) =>
-                  item.id === payload.id
+                  item.sessionId === payload.sessionId
                     ? {
                         ...item,
                         ...payload.data,
@@ -57,7 +65,10 @@ export const usePhoneCallUpdateMutation = () => {
       return { prevByIdData, prevAllData };
     },
     onError(err, payload, ctx) {
-      utils.phoneCall.byId.setData({ id: payload.id }, ctx?.prevByIdData);
+      utils.phoneCall.bySessionId.setData(
+        { sessionId: payload.sessionId },
+        ctx?.prevByIdData,
+      );
       utils.phoneCall.all.setInfiniteData(
         {
           active: false,
@@ -67,8 +78,29 @@ export const usePhoneCallUpdateMutation = () => {
       toast.error(`Failed to update call: ${err.message}`);
     },
     onSettled(err, variables, ctx, res) {
-      utils.phoneCall.byId.invalidate({ id: ctx.id });
+      //   utils.phoneCall.bySessionId.invalidate({ sessionId: ctx.id });
+      utils.phoneCall.bySessionId.invalidate({ sessionId: ctx.sessionId });
       utils.phoneCall.all.invalidate({ active: false });
+    },
+  });
+};
+
+export const usePhoneCallCreateMutation = () => {
+  const utils = api.useUtils();
+  return api.phoneCall.create.useMutation({
+    onError(error, variables, context) {
+      toast.error(`Failed to create call: ${error.message}`);
+    },
+    onSettled(data, error, variables) {
+      toast.success(`Call created`);
+      utils.phoneCall.all.invalidate({ active: false });
+      utils.phoneCall.bySessionId.invalidate({
+        sessionId: variables.sessionId,
+      });
+      utils.guess.all.invalidate();
+      if (data) {
+        utils.guess.byId.invalidate({ id: data.guessId });
+      }
     },
   });
 };

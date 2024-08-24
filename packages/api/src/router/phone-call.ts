@@ -1,15 +1,10 @@
 import type { TRPCRouterRecord } from "@trpc/server";
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import type { InferSelectModel } from "@acme/db";
-import type { Guess } from "@acme/db/schema";
-import { and, desc, eq, not } from "@acme/db";
-import {
-  CreatePhoneCallSchema,
-  PhoneCall,
-  UserSettings,
-} from "@acme/db/schema";
+import { and, desc, eq, not, sql } from "@acme/db";
+import { CreatePhoneCallSchema, Guess, PhoneCall } from "@acme/db/schema";
+import { phoneNumberSchema } from "@acme/validators/phone-number";
 
 import { findFirstOrThrow, takeUniqueOrThrow } from "../helpers";
 import { protectedProcedure } from "../trpc";
@@ -18,7 +13,7 @@ export const phoneCallRouter = {
   all: protectedProcedure
     .input(
       z.object({
-        active: z.boolean().optional(),
+        active: z.boolean().optional(), // TODO: remove
         cursor: z.string().uuid().nullish(),
         limit: z.number().min(1).max(50).default(5),
       }),
@@ -75,44 +70,55 @@ export const phoneCallRouter = {
       return transformPhoneCall(phoneCall);
     }),
 
-  current: protectedProcedure.query(async ({ ctx }) => {
-    const userSettings = await ctx.db.query.UserSettings.findFirst({
-      where: eq(UserSettings.userId, ctx.session.user.id),
-    });
-
-    if (!userSettings?.currentPhoneCallId) {
-      return null;
-    }
-
-    const phoneCall = await ctx.db.query.PhoneCall.findFirst({
-      where: eq(PhoneCall.id, userSettings.currentPhoneCallId),
-      with: {
-        guess: { columns: { phoneNumber: true } },
-      },
-    }).then(findFirstOrThrow("find phone call"));
-
-    return transformPhoneCall(phoneCall);
-  }),
-
   update: protectedProcedure
     .input(
       z.object({
-        id: z.string().uuid(),
+        sessionId: z.string().min(10).max(255),
         data: CreatePhoneCallSchema.pick({ rating: true }),
       }),
     )
-    .mutation(({ ctx, input: { id, data } }) => {
+    .mutation(({ ctx, input: { sessionId, data } }) => {
       return ctx.db
         .update(PhoneCall)
         .set(data)
-        .where(eq(PhoneCall.id, id))
+        .where(eq(PhoneCall.sessionId, sessionId))
         .returning()
         .then(takeUniqueOrThrow("update phone call"));
     }),
 
-  delete: protectedProcedure.input(z.string()).mutation(({ ctx, input }) => {
-    return ctx.db.delete(PhoneCall).where(eq(PhoneCall.id, input));
-  }),
+  create: protectedProcedure
+    .input(
+      z.object({
+        sessionId: z.string().min(10).max(255),
+        phoneNumber: phoneNumberSchema,
+        orgId: z.string().uuid(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { sessionId, phoneNumber, orgId } = input;
+
+      const { id: guessId } = await ctx.db
+        .insert(Guess)
+        .values({ phoneNumber, orgId })
+        .onConflictDoUpdate({
+          target: Guess.phoneNumber,
+          set: {
+            updatedAt: sql`now()`,
+          },
+        })
+        .returning({ id: Guess.id })
+        .then(takeUniqueOrThrow("create guess"));
+
+      return await ctx.db
+        .insert(PhoneCall)
+        .values({
+          sessionId,
+          guessId: guessId,
+          state: "Terminated",
+        })
+        .returning()
+        .then(takeUniqueOrThrow("create phone call"));
+    }),
 } satisfies TRPCRouterRecord;
 
 type DBPhoneCallWithGuessPhoneNumber = InferSelectModel<typeof PhoneCall> & {

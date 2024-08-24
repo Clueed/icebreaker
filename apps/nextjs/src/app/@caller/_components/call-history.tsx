@@ -76,7 +76,7 @@ const HistoryCall = ({
               disabled={false}
               setRating={(newRating) =>
                 updatePhoneCall({
-                  id: call.id,
+                  sessionId: call.sessionId,
                   data: {
                     rating: newRating,
                   },
