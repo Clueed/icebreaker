@@ -3,7 +3,7 @@ import type { Timer } from "react-sipjs";
 import { useEffect, useState } from "react";
 import { DateTime } from "luxon";
 
-export const useCallTimer = ({ timer }: { timer: Timer }) => {
+export const useCallTimer = ({ timer }: { timer?: Timer }) => {
   const [sinceStart, setSinceStart] = useState<Duration>();
   const [sinceAnswered, setSinceAnswered] = useState<Duration>();
 
@@ -24,18 +24,26 @@ export const useCallTimer = ({ timer }: { timer: Timer }) => {
 
     const interval = setInterval(() => {
       if (hangupAt?.isValid) {
-        setSinceStart(createdAt.diffNow());
-        setSinceAnswered(answeredAt?.diffNow());
+        setSinceStart(DateTime.now().diff(createdAt));
+        setSinceAnswered(
+          answeredAt ? DateTime.now().diff(answeredAt) : undefined,
+        );
+
         clearInterval(interval);
         return;
       }
 
       if (createdAt.isValid) {
-        setSinceStart(createdAt.diffNow());
-        setSinceAnswered(answeredAt?.diffNow());
+        setSinceStart(DateTime.now().diff(createdAt));
+        setSinceAnswered(
+          answeredAt ? DateTime.now().diff(answeredAt) : undefined,
+        );
       }
     }, 1000);
     return () => clearInterval(interval);
   }, [timer, setSinceAnswered, setSinceStart]);
-  return <></>;
+  return {
+    sinceStart,
+    sinceAnswered,
+  };
 };

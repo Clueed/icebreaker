@@ -36,7 +36,7 @@ export const OrgCardContent = ({
   const noCalls = isSuccess && rawStats.length === 0;
 
   return (
-    <div className="h-40">
+    <div className="h-52">
       {isLoading && <Skeleton className="h-full w-full" />}
       {isSuccess && (
         <>
@@ -53,7 +53,7 @@ export const OrgCardContent = ({
                     <RatingIcon rating={stat.rating} className="h-[1.25cap]" />
                   </div>
                   <div className="">{stat.rating}</div>
-                  <div>{stat.count}</div>
+                  <div className="text-right">{stat.count}</div>
                 </Fragment>
               ))}
               <div className="col-span-3 h-0.5 rounded-full bg-muted-foreground" />

@@ -45,7 +45,7 @@ export const LoadingOrgCard = () => {
       </CardHeader>
       <CardContent>
         {" "}
-        <Skeleton className="h-40 w-full" />
+        <Skeleton className="h-52 w-full" />
       </CardContent>
       <CardFooter>
         <Skeleton className="h-[1.65cap] w-full" />
