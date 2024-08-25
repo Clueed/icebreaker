@@ -3,11 +3,14 @@
 import type { AppRouterInputs } from "node_modules/@icebreaker/api/dist/root";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
 import { Button } from "@icebreaker/ui/button";
+import { CardContent, CardHeader, CardTitle } from "@icebreaker/ui/card";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -15,8 +18,6 @@ import {
 } from "@icebreaker/ui/form";
 import { Input } from "@icebreaker/ui/input";
 import { toast } from "@icebreaker/ui/toast";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { api } from "~/trpc/react";
 
@@ -56,24 +57,35 @@ export function CreateOrgForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>name</FormLabel>
-              <FormControl>
-                <Input placeholder="shadcn" {...field} />
-              </FormControl>
-              <FormDescription>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
+        <CardHeader>
+          <CardTitle>add new org</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Saudi Aramco" {...field} />
+                </FormControl>
+                {/* <FormDescription>
                 This is your public display name.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Submit</Button>
+              </FormDescription> */}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={!form.formState.isDirty || !form.formState.isValid}
+          >
+            add
+          </Button>
+        </CardContent>
       </form>
     </Form>
   );

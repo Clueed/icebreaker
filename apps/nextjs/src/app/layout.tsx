@@ -32,13 +32,13 @@ export const metadata: Metadata = {
       ? "https://icebreaker-navy.vercel.app"
       : "http://localhost:3000",
   ),
-  title: "Icebreaker Navy",
+  title: "Icebreaker",
   description: "Breaking ice like there is no tomorrow",
   openGraph: {
-    title: "Icebreaker Navy",
+    title: "Icebreaker",
     description: "Breaking ice like there is no tomorrow",
     url: "https://icebreaker-navy.vercel.app",
-    siteName: "Icebreaker Navy",
+    siteName: "Icebreaker",
   },
   icons: [{ rel: "icon", url: "/favicon.svg", type: "image/svg+xml" }],
 };

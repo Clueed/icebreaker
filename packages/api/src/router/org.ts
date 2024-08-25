@@ -1,9 +1,10 @@
-import type { Strategy } from "@icebreaker/validators/guessing-strategies";
 import type { TRPCRouterRecord } from "@trpc/server";
-import { desc, eq } from "@icebreaker/db";
-import { CreateOrgSchema, Org } from "@icebreaker/db/schema";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+
+import type { Strategy } from "@icebreaker/validators/guessing-strategies";
+import { count, desc, eq } from "@icebreaker/db";
+import { CreateOrgSchema, Guess, Org, PhoneCall } from "@icebreaker/db/schema";
 
 import { findFirstOrThrow, takeUniqueOrThrow } from "../helpers";
 import { protectedProcedure } from "../trpc";
@@ -27,7 +28,7 @@ export const orgRouter = {
 
       return ctx.db.query.Org.findFirst({
         where: eq(Org.id, input.id),
-      }).then(findFirstOrThrow("org byId"));
+      }).then(findFirstOrThrow("Org byId"));
     }),
 
   extensionStrategyById: protectedProcedure
@@ -80,7 +81,22 @@ export const orgRouter = {
         .insert(Org)
         .values(input)
         .returning({ id: Org.id })
-        .then(takeUniqueOrThrow("org create"));
+        .then(takeUniqueOrThrow("Org create"));
+    }),
+
+  statsById: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return await ctx.db
+        .select({
+          count: count(PhoneCall.id),
+          rating: PhoneCall.rating,
+        })
+        .from(Org)
+        .innerJoin(Guess, eq(Guess.orgId, Org.id))
+        .innerJoin(PhoneCall, eq(PhoneCall.guessId, Guess.id))
+        .where(eq(Org.id, input.id))
+        .groupBy(PhoneCall.rating, Org.id, Guess.id);
     }),
 
   delete: protectedProcedure.input(z.string()).mutation(({ ctx, input }) => {

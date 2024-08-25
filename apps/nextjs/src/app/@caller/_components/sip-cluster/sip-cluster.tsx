@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { CONNECT_STATUS, useSIPProvider } from "react-sipjs";
+
 import { Badge } from "@icebreaker/ui/badge";
 import {
   Popover,
@@ -8,7 +10,6 @@ import {
   PopoverTrigger,
 } from "@icebreaker/ui/popover";
 import { toast } from "@icebreaker/ui/toast";
-import { CONNECT_STATUS, useSIPProvider } from "react-sipjs";
 
 import { RegisterSipForm } from "~/app/@caller/_components/sip-cluster/register-sip-form";
 import { api } from "~/trpc/react";
@@ -37,7 +38,7 @@ export const SipCluster = () => {
   const [sonnerId, setSonnerId] = useState<string | number>();
 
   useEffect(() => {
-    if (notConnected && remoteCredentials) {
+    if (!sonnerId && notConnected && remoteCredentials) {
       const id = toast.loading("Connecting with remote SIP credentials...");
       setSonnerId(id);
 

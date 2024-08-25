@@ -1,13 +1,11 @@
 import React from "react";
 
-import { CreateOrgForm } from "~/app/_components/create-org-form";
-import { OrgList } from "~/app/org/[orgId]/_components/org-list";
+import { OrgList } from "~/app/_components/org-list/org-list";
 
 export default function NoOrgPage() {
   return (
-    <>
-      <OrgList currentOrgId={null} />
-      <CreateOrgForm />
-    </>
+    <div>
+      <OrgList />
+    </div>
   );
 }
