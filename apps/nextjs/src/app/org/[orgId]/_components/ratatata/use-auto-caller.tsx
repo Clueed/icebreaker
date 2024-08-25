@@ -1,22 +1,30 @@
 import { useEffect, useState } from "react";
 
-import { Button } from "@icebreaker/ui/button";
-
 import { useSelectedGuessQuery } from "~/app/_api-hooks/use-selected-guess";
 import useStartCall from "~/app/_components/call-handler/use-start-call";
 
-export const AutoCaller = ({ orgId }: { orgId: string }) => {
+export const useAutoCaller = ({
+  orgId,
+  enabled,
+}: {
+  orgId: string;
+  enabled: boolean;
+}) => {
   const { data: selectedGuess } = useSelectedGuessQuery({ id: orgId });
 
   const [startCall, { disabled }] = useStartCall({
     guessId: selectedGuess?.id,
   });
 
-  const [enabled, setEnabled] = useState(false);
-
   const selectedGuessExists = !!selectedGuess;
   const selectedGuessHasCalls =
-    selectedGuessExists && selectedGuess.phoneCalls.length !== 0;
+    selectedGuessExists && selectedGuess.phoneCallCount !== 0;
+
+  const [lock, setLock] = useState(false);
+
+  useEffect(() => {
+    setLock(false);
+  }, [selectedGuess?.id]);
 
   useEffect(() => {
     console.log("[AC] triggered");
@@ -33,10 +41,18 @@ export const AutoCaller = ({ orgId }: { orgId: string }) => {
       return;
     }
 
-    if (!selectedGuessHasCalls) {
+    if (!selectedGuessHasCalls && !lock) {
       console.log("[AC] No calls found for selectedGuess, starting a new call");
       void startCall();
       console.log("[AC] Call started and locked set to true");
+      setLock(true);
+    }
+
+    if (selectedGuessHasCalls && lock) {
+      console.log(
+        "[AC] Calls found for selectedGuess, unlocking and returning",
+      );
+      setLock(false);
     }
   }, [
     enabled,
@@ -44,30 +60,6 @@ export const AutoCaller = ({ orgId }: { orgId: string }) => {
     disabled,
     selectedGuessExists,
     startCall,
+    lock,
   ]);
-
-  return (
-    <div>
-      <div>Auto Caller {enabled ? "enabled" : "disabled"}</div>
-      {!enabled ? (
-        <Button
-          onClick={() => {
-            setEnabled(true);
-            console.log("[AC] AutoCaller enabled");
-          }}
-        >
-          enable
-        </Button>
-      ) : (
-        <Button
-          onClick={() => {
-            setEnabled(false);
-            console.log("[AC] AutoCaller disabled");
-          }}
-        >
-          disable
-        </Button>
-      )}
-    </div>
-  );
 };

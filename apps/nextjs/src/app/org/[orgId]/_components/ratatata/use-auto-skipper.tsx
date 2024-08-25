@@ -1,6 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
-
-import { Button } from "@icebreaker/ui/button";
+import { useCallback, useEffect } from "react";
 
 import {
   useSelectedGuessIdSetQuery,
@@ -8,12 +6,14 @@ import {
 } from "~/app/_api-hooks/use-selected-guess";
 import { useCurrentSessionCall } from "~/app/_components/call-handler/use-current-session-call";
 
-export const AutoSkipper = ({
+export const useAutoSkipper = ({
   orgId,
   nextGuessId,
+  enabled,
 }: {
   orgId: string;
   nextGuessId: string | undefined;
+  enabled: boolean;
 }) => {
   const { hasActive } = useCurrentSessionCall();
   const { data: selectedGuess } = useSelectedGuessQuery({ id: orgId });
@@ -43,9 +43,7 @@ export const AutoSkipper = ({
     setSelectedGuessIdMutate,
   ]);
 
-  const [enabled, setEnabled] = useState(false);
-
-  const selectedGuessHasCalls = Boolean(selectedGuess?.phoneCalls.length);
+  const selectedGuessHasCalls = Boolean(selectedGuess?.phoneCallCount);
 
   useEffect(() => {
     if (!enabled) {
@@ -65,29 +63,4 @@ export const AutoSkipper = ({
       setSelectedGuessId();
     }
   }, [enabled, hasActive, selectedGuessHasCalls, setSelectedGuessId]);
-
-  return (
-    <div>
-      <div>Auto Skipper {enabled ? "enabled" : "disabled"}</div>
-      {!enabled ? (
-        <Button
-          onClick={() => {
-            console.debug("[AS] Enabling Auto Skipper");
-            setEnabled(true);
-          }}
-        >
-          enable
-        </Button>
-      ) : (
-        <Button
-          onClick={() => {
-            console.debug("[AS] Disabling Auto Skipper");
-            setEnabled(false);
-          }}
-        >
-          disable
-        </Button>
-      )}
-    </div>
-  );
 };

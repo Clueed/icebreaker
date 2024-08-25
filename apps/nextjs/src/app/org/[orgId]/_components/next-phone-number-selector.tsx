@@ -4,9 +4,8 @@ import type { Strategy } from "@icebreaker/validators/guessing-strategies";
 
 import { useCurrentStrategyQuery } from "~/app/_api-hooks/use-current-strategy";
 import { useSelectedGuessId } from "~/app/_api-hooks/use-selected-guess";
-import { AutoCaller } from "~/app/org/[orgId]/_components/auto-caller";
-import { AutoSkipper } from "~/app/org/[orgId]/_components/auto-skipper";
 import { GuessDisplay } from "~/app/org/[orgId]/_components/guess-display";
+import { Ratatatata } from "~/app/org/[orgId]/_components/ratatata/ratatatata";
 import { api } from "~/trpc/react";
 
 const NextPhoneNumberSelectorWrapper = ({ orgId }: { orgId: string }) => {
@@ -119,9 +118,8 @@ const NextPhoneNumberSelector = (props: {
               <GuessDisplay key={index + guessId} guessId={guessId} />
             ))}
       </div>
-      <div>
-        <AutoSkipper orgId={props.orgId} nextGuessId={nextGuessId} />
-        <AutoCaller orgId={props.orgId} />
+      <div className="space-y-4 py-8">
+        <Ratatatata orgId={props.orgId} nextGuessId={nextGuessId} />
       </div>
     </div>
   );

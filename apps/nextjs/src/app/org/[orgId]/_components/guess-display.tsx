@@ -62,7 +62,7 @@ const Inner = ({
   selected: boolean;
 }) => {
   const [startCall] = useStartCall({ guessId: guess.id });
-  const calls = guess.phoneCalls.length > 0;
+  const calls = guess.phoneCallCount > 0;
 
   return (
     <div className="flex h-full items-center gap-1">

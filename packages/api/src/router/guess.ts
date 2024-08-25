@@ -1,7 +1,7 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
-import { desc, eq, sql } from "@icebreaker/db";
+import { count, desc, eq, sql } from "@icebreaker/db";
 import { CreateGuessSchema, Guess, PhoneCall } from "@icebreaker/db/schema";
 import { strategySchema } from "@icebreaker/validators/guessing-strategies";
 import { generateNextPhoneNumbers } from "@icebreaker/validators/guessing-strategies/apply-strategy";
@@ -53,18 +53,29 @@ export const guessRouter = {
 
   byId: protectedProcedure
     .input(z.object({ id: z.string() }))
-    .query(({ ctx, input }) => {
+    .query(async ({ ctx, input }) => {
       // return ctx.db
       //   .select()
       //   .from(schema.Guess)
       //   .where(eq(schema.Guess.id, input.id));
 
-      return ctx.db.query.Guess.findFirst({
-        where: eq(Guess.id, input.id),
-        with: {
-          phoneCalls: true,
-        },
-      }).then(findFirstOrThrow("guess"));
+      return ctx.db
+        .select({
+          id: Guess.id,
+          phoneNumber: Guess.phoneNumber,
+          orgId: Guess.orgId,
+          phoneCallCount: count(PhoneCall.id),
+        })
+        .from(Guess)
+        .where(eq(Guess.id, input.id))
+        .leftJoin(PhoneCall, eq(Guess.id, PhoneCall.guessId))
+        .groupBy(Guess.id)
+        .then((data) => {
+          if (!data[0]) {
+            throw new Error("Guess not found");
+          }
+          return data[0];
+        });
     }),
 
   next: protectedProcedure
