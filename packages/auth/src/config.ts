@@ -5,9 +5,10 @@ import type {
 } from "next-auth";
 import { skipCSRFCheck } from "@auth/core";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import google from "next-auth/providers/google";
+
 import { db } from "@icebreaker/db/client";
 import { Account, Session, User } from "@icebreaker/db/schema";
-import google from "next-auth/providers/google";
 
 import { env } from "../env";
 

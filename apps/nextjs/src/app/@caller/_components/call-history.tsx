@@ -1,7 +1,8 @@
 "use client";
 
-import type { RouterOutputs } from "@icebreaker/api";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+
+import type { RouterOutputs } from "@icebreaker/api";
 import { Button } from "@icebreaker/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@icebreaker/ui/card";
 import { PhoneNumberDisplay } from "@icebreaker/ui/custom/phone-number-display";

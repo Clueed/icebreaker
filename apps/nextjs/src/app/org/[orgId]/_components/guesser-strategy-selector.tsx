@@ -1,7 +1,8 @@
 "use client";
 
-import type { Strategy } from "@icebreaker/validators/guessing-strategies";
 import { useState } from "react";
+
+import type { Strategy } from "@icebreaker/validators/guessing-strategies";
 import { cn } from "@icebreaker/ui";
 import { Dices } from "@icebreaker/ui/icons";
 import { Label } from "@icebreaker/ui/label";

@@ -1,9 +1,10 @@
-import type { AppRouter } from "@icebreaker/api";
 import { cache } from "react";
 import { headers } from "next/headers";
+import { createHydrationHelpers } from "@trpc/react-query/rsc";
+
+import type { AppRouter } from "@icebreaker/api";
 import { createCaller, createTRPCContext } from "@icebreaker/api";
 import { auth } from "@icebreaker/auth";
-import { createHydrationHelpers } from "@trpc/react-query/rsc";
 
 import { createQueryClient } from "./query-client";
 
