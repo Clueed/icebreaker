@@ -3,47 +3,48 @@ import type { Timer } from "react-sipjs";
 import { useEffect, useState } from "react";
 import { DateTime } from "luxon";
 
+const getDuration = (timer?: Partial<Timer>) => {
+  if (!timer?.createdAt) {
+    return null;
+  }
+
+  const end = timer.hangupAt
+    ? DateTime.fromJSDate(timer.hangupAt)
+    : DateTime.now();
+  const start = DateTime.fromJSDate(timer.answeredAt ?? timer.createdAt);
+
+  const duration = end.diff(start);
+
+  if (!duration.isValid) {
+    return null;
+  }
+
+  return duration;
+};
+
 export const useCallTimer = ({ timer }: { timer?: Timer }) => {
-  const [sinceStart, setSinceStart] = useState<Duration>();
-  const [sinceAnswered, setSinceAnswered] = useState<Duration>();
+  const [duration, setDuration] = useState<Duration<true> | null>(
+    getDuration(timer),
+  );
+
+  const { createdAt, answeredAt, hangupAt } = timer ?? {};
 
   useEffect(() => {
-    if (!timer) {
+    const reTimer = { createdAt, answeredAt, hangupAt };
+    if (hangupAt) {
+      const newDuration = getDuration(reTimer);
+      setDuration(newDuration);
       return;
     }
-    const createdAt = DateTime.fromJSDate(timer.createdAt);
-    // const receivedAt = timer.receivedAt
-    //   ? DateTime.fromJSDate(timer.receivedAt)
-    //   : undefined;
-    const answeredAt = timer.answeredAt
-      ? DateTime.fromJSDate(timer.answeredAt)
-      : undefined;
-    const hangupAt = timer.hangupAt
-      ? DateTime.fromJSDate(timer.hangupAt)
-      : undefined;
 
     const interval = setInterval(() => {
-      if (hangupAt?.isValid) {
-        setSinceStart(DateTime.now().diff(createdAt));
-        setSinceAnswered(
-          answeredAt ? DateTime.now().diff(answeredAt) : undefined,
-        );
-
-        clearInterval(interval);
-        return;
-      }
-
-      if (createdAt.isValid) {
-        setSinceStart(DateTime.now().diff(createdAt));
-        setSinceAnswered(
-          answeredAt ? DateTime.now().diff(answeredAt) : undefined,
-        );
-      }
+      const newDuration = getDuration(reTimer);
+      setDuration(newDuration);
     }, 1000);
     return () => clearInterval(interval);
-  }, [timer, setSinceAnswered, setSinceStart]);
+  }, [createdAt, answeredAt, hangupAt]);
+
   return {
-    sinceStart,
-    sinceAnswered,
+    duration,
   };
 };

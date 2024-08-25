@@ -56,7 +56,7 @@ export function Caller() {
     }
   });
 
-  const { sinceStart, sinceAnswered } = useCallTimer({ timer });
+  const { duration } = useCallTimer({ timer });
 
   const phoneNumberToDisplay = phoneCall ? (
     <PhoneNumberDisplay phoneNumber={phoneCall.phoneNumber} />
@@ -75,11 +75,13 @@ export function Caller() {
         <div
           className={cn(
             "size-[1.65cap] rounded-md bg-muted-foreground",
-            true && "animate-pulse",
+            isActive && "animate-pulse",
             timer?.answeredAt && "bg-green-500 dark:bg-green-200",
           )}
         />
-        <div>{sinceStart && <div>{sinceStart.toFormat("mm:ss")}</div>}</div>
+        <div className="tabular-nums">
+          {duration && <div>{duration.toFormat("mm:ss")}</div>}
+        </div>
       </div>
       <CurrentCallRatingCluster
         rating={phoneCall?.rating}
