@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { skipToken } from "@tanstack/react-query";
 
 import type { PhoneCallRating } from "@icebreaker/db/schema";
@@ -38,6 +39,21 @@ export function Caller() {
       },
     });
   };
+
+  useEffect(() => {
+    if (!phoneCall) {
+      return;
+    }
+
+    if (phoneCall.rating !== null) {
+      return;
+    }
+
+    if (timer?.answeredAt) {
+      handleSetRating("answered");
+      return;
+    }
+  });
 
   return (
     <div>

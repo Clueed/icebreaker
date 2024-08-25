@@ -3,6 +3,7 @@ import type { LucideProps } from "@icebreaker/ui/icons";
 import {
   MailboxIcon,
   PhoneMissedIcon,
+  SkullIcon,
   TargetIcon,
   UserIcon,
 } from "@icebreaker/ui/icons";
@@ -13,6 +14,8 @@ export const RatingIcon = ({
 }: { rating: PhoneCallRating } & LucideProps) => {
   switch (rating) {
     case null:
+      return <SkullIcon {...props} />;
+    case "answered":
       return <PhoneMissedIcon {...props} />;
     case "voicemail":
       return <MailboxIcon {...props} />;

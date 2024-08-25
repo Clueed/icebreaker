@@ -93,7 +93,12 @@ export const CreateGuessSchema = createInsertSchema(Guess, {
 
 // PhoneCall
 
-export const phoneCallRatingList = ["voicemail", "person", "jackpot"] as const;
+export const phoneCallRatingList = [
+  "answered",
+  "voicemail",
+  "person",
+  "jackpot",
+] as const;
 export const phoneCallRatingEnum = pgEnum("rating_enum", phoneCallRatingList);
 
 export const PhoneCall = pgTable(
