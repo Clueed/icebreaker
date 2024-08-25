@@ -96,15 +96,23 @@ export const CreateGuessSchema = createInsertSchema(Guess, {
 export const phoneCallRatingList = ["voicemail", "person", "jackpot"] as const;
 export const phoneCallRatingEnum = pgEnum("rating_enum", phoneCallRatingList);
 
-export const PhoneCall = pgTable("phone_call", {
-  id: uuid("id").notNull().defaultRandom().primaryKey(),
-  sessionId: varchar("sessionId", { length: 256 }).notNull().unique(),
-  guessId: uuid("guessId")
-    .notNull()
-    .references(() => Guess.id, { onDelete: "cascade" }),
-  rating: phoneCallRatingEnum("rating"),
-  ...timeStampColumns,
-});
+export const PhoneCall = pgTable(
+  "phone_call",
+  {
+    id: uuid("id").notNull().defaultRandom().primaryKey(),
+    sessionId: varchar("sessionId", { length: 256 }).notNull().unique(),
+    guessId: uuid("guessId")
+      .notNull()
+      .references(() => Guess.id, { onDelete: "cascade" }),
+    rating: phoneCallRatingEnum("rating"),
+    ...timeStampColumns,
+  },
+  (table) => ({
+    sessionIdIndex: uniqueIndex("session_id_index").on(table.sessionId),
+    guessIdIndex: index("guess_id_index").on(table.guessId),
+    ratingIndex: index("rating_index").on(table.rating),
+  }),
+);
 
 export const phoneCallRelation = relations(PhoneCall, ({ one }) => ({
   guess: one(Guess, { fields: [PhoneCall.guessId], references: [Guess.id] }),
