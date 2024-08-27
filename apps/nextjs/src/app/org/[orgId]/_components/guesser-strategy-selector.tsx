@@ -118,15 +118,17 @@ const LoopAtValueSlider = (props: {
       );
     }
 
-    if (value[0] === currentStrategy.loopAtPower) {
+    const newValue = value[0] ** 10;
+
+    if (newValue === currentStrategy.loopAtPower) {
       return;
     }
 
     setCurrentStrategy({
       id: props.orgId,
-      data: { ...currentStrategy, loopAtPower: value[0] },
+      data: { ...currentStrategy, loopAtPower: newValue },
     });
-    setOldLoopAtPower(value[0]);
+    setOldLoopAtPower(newValue);
   };
 
   const isAddition = isAdditionStrategy(currentStrategy);
