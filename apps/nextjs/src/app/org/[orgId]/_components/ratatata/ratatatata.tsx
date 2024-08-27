@@ -49,7 +49,7 @@ export const Ratatatata = (props: { orgId: string; nextGuessId?: string }) => {
     if (!props.nextGuessId) {
       setEnabled(false);
     }
-  }, [props.nextGuessId, setEnabled]);
+  }, [props.nextGuessId]);
 
   useAutoSkipper({
     orgId: props.orgId,
