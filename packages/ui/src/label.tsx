@@ -22,4 +22,12 @@ const Label = React.forwardRef<
 ));
 Label.displayName = LabelPrimitive.Root.displayName;
 
-export { Label };
+const Legend = React.forwardRef<
+  HTMLLegendElement,
+  React.HTMLAttributes<HTMLLegendElement> & VariantProps<typeof labelVariants>
+>(({ className, ...props }, ref) => (
+  <legend ref={ref} className={cn(labelVariants(), className)} {...props} />
+));
+Label.displayName = "Legend";
+
+export { Label, Legend };

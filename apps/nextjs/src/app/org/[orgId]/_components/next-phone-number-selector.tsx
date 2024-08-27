@@ -1,19 +1,30 @@
-import { useEffect, useMemo, useState } from "react";
+import type { AppRouterOutputs } from "node_modules/@icebreaker/api/dist/root";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { Strategy } from "@icebreaker/validators/guessing-strategies";
 
 import { useCurrentStrategyQuery } from "~/app/_api-hooks/use-current-strategy";
-import { useSelectedGuessId } from "~/app/_api-hooks/use-selected-guess";
+import {
+  useSelectedGuessId,
+  useSelectedGuessQuery,
+} from "~/app/_api-hooks/use-selected-guess";
 import { GuessDisplay } from "~/app/org/[orgId]/_components/guess-display";
 import { Ratatatata } from "~/app/org/[orgId]/_components/ratatata/ratatatata";
 import { api } from "~/trpc/react";
 
+// TODO NEXT: useIfinity doesn't work with skipToken. Fix it.
+
 const NextPhoneNumberSelectorWrapper = ({ orgId }: { orgId: string }) => {
   const {
     data: selectedGuessId,
+    isLoading: isLoadingSelectedGuessId,
+    isSuccess: isSuccessSelectedGuessId,
+  } = useSelectedGuessId({ id: orgId });
+  const {
+    data: selectedGuess,
     isLoading: isLoadingSelectedGuess,
     isSuccess: isSuccessSelectedGuess,
-  } = useSelectedGuessId({ id: orgId });
+  } = useSelectedGuessQuery({ id: orgId });
   const {
     data: currentStrategy,
     isLoading: isLoadingCurrentStrategy,
@@ -22,8 +33,13 @@ const NextPhoneNumberSelectorWrapper = ({ orgId }: { orgId: string }) => {
     id: orgId,
   });
 
-  const isLoading = isLoadingSelectedGuess || isLoadingCurrentStrategy;
-  const isSuccess = isSuccessSelectedGuess && isSuccessCurrentStrategy;
+  const isLoading =
+    isLoadingSelectedGuess ||
+    (isLoadingCurrentStrategy && isLoadingSelectedGuessId);
+  const isSuccess =
+    isSuccessSelectedGuess &&
+    isSuccessCurrentStrategy &&
+    isSuccessSelectedGuessId;
 
   return (
     <div>
@@ -32,11 +48,10 @@ const NextPhoneNumberSelectorWrapper = ({ orgId }: { orgId: string }) => {
           {!selectedGuessId && (
             <div>Create an initial guess to get started</div>
           )}
-          {<div>Select a strategy to get started</div>}
           {selectedGuessId && (
             <NextPhoneNumberSelector
               orgId={orgId}
-              selectedGuessId={selectedGuessId}
+              selectedGuess={selectedGuess}
               currentStrategy={currentStrategy}
             />
           )}
@@ -51,12 +66,13 @@ export default NextPhoneNumberSelectorWrapper;
 
 const NextPhoneNumberSelector = (props: {
   orgId: string;
-  selectedGuessId: string;
+  selectedGuess: AppRouterOutputs["guess"]["byId"];
   currentStrategy: Strategy;
 }) => {
-  const [stableGuessId, setStableGuessId] = useState(props.selectedGuessId);
+  const selectedGuessId = props.selectedGuess.id;
+  const [stableGuessId, setStableGuessId] = useState(selectedGuessId);
   const {
-    data: nextGuessIdsData,
+    data: nextGuesses,
     fetchNextPage,
     isLoading: isLoadingNextGuessIds,
     isSuccess: isSuccessNextGuessIds,
@@ -72,26 +88,26 @@ const NextPhoneNumberSelector = (props: {
     },
   );
   const nextGuessIds = useMemo(() => {
-    if (!nextGuessIdsData) {
+    if (!nextGuesses) {
       return [];
     }
 
-    return nextGuessIdsData.pages.flatMap((page) => page.data);
-  }, [nextGuessIdsData]);
+    return nextGuesses.pages.flatMap((page) => page.data);
+  }, [nextGuesses]);
 
-  const selectedGuessInNext = nextGuessIds.includes(props.selectedGuessId);
+  const indexOfSelectedGuess = nextGuessIds.findIndex(
+    (g) => g.id === selectedGuessId,
+  );
+  const selectedGuessInNext = indexOfSelectedGuess !== -1;
 
   if (
     !selectedGuessInNext &&
     !isFetchingNextGuessIds &&
-    stableGuessId !== props.selectedGuessId
+    stableGuessId !== selectedGuessId
   ) {
-    setStableGuessId(props.selectedGuessId);
+    setStableGuessId(selectedGuessId);
   }
 
-  const indexOfSelectedGuess = nextGuessIds.findIndex(
-    (g) => g === props.selectedGuessId,
-  );
   const nextGuessesLeft = nextGuessIds.length - indexOfSelectedGuess;
   useEffect(() => {
     if (nextGuessesLeft < 10 && !isFetchingNextGuessIds) {
@@ -99,7 +115,7 @@ const NextPhoneNumberSelector = (props: {
     }
   }, [nextGuessesLeft, isFetchingNextGuessIds, fetchNextPage]);
 
-  const nextGuessId = nextGuessIds[indexOfSelectedGuess + 1];
+  const nextGuessId = nextGuessIds[indexOfSelectedGuess + 1]?.id;
 
   const isLoading = isLoadingNextGuessIds;
   const isSuccess = isSuccessNextGuessIds;
@@ -107,15 +123,21 @@ const NextPhoneNumberSelector = (props: {
   return (
     <div>
       <div
-        className="h-96 overflow-y-scroll"
+        className="h-96 space-y-4 overflow-y-scroll"
         style={{ overflowAnchor: "none" }}
       >
         {isLoading && <div>Loading...</div>}
         {isSuccess &&
           [...nextGuessIds]
             .reverse()
-            .map((guessId, index) => (
-              <GuessDisplay key={index + guessId} guessId={guessId} />
+            .map((guess, index) => (
+              <GuessDisplayWrapper
+                key={index + guess.id}
+                guess={
+                  selectedGuessId === guess.id ? props.selectedGuess : guess
+                }
+                selected={selectedGuessId === guess.id}
+              />
             ))}
       </div>
       <div className="space-y-4 py-8">
@@ -123,4 +145,23 @@ const NextPhoneNumberSelector = (props: {
       </div>
     </div>
   );
+};
+
+const GuessDisplayWrapper = ({
+  guess,
+  selected,
+}: {
+  guess: AppRouterOutputs["guess"]["next"]["data"][number];
+  selected: boolean;
+}) => {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (selected) {
+      ref.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }
+  }, [selected]);
+  return <GuessDisplay ref={ref} guess={guess} selected={selected} />;
 };

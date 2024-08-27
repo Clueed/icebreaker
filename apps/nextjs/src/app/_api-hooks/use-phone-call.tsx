@@ -60,6 +60,8 @@ export const usePhoneCallUpdateMutation = () => {
           : undefined,
       );
 
+      // guess
+
       return { prevByIdData, prevAllData };
     },
     onError(err, payload, ctx) {
@@ -70,8 +72,21 @@ export const usePhoneCallUpdateMutation = () => {
       utils.phoneCall.all.setInfiniteData({}, ctx?.prevAllData);
       toast.error(`Failed to update call: ${err.message}`);
     },
-    onSettled(err, variables, ctx) {
-      //   utils.phoneCall.bySessionId.invalidate({ sessionId: ctx.id });
+    onSuccess(data) {
+      void utils.guess.byId.cancel({ id: data.guessId });
+      utils.guess.byId.setData({ id: data.guessId }, (old) =>
+        old
+          ? {
+              ...old,
+              phoneCallRating: [...old.phoneCallRating, data.rating].filter(
+                (rating) => rating !== null,
+              ),
+              updatedAt: new Date().toISOString(),
+            }
+          : undefined,
+      );
+    },
+    onSettled(_err, _variables, ctx) {
       void utils.phoneCall.bySessionId.invalidate({ sessionId: ctx.sessionId });
       void utils.phoneCall.all.invalidate({});
     },
@@ -85,15 +100,27 @@ export const usePhoneCallCreateMutation = () => {
       toast.error(`Failed to create call: ${error.message}`);
     },
     onSettled(data, error, variables) {
+      if (data) {
+        utils.guess.byId.setData({ id: data.guessId }, (old) =>
+          old
+            ? {
+                ...old,
+                phoneCallRating: [...old.phoneCallRating, data.rating].filter(
+                  (rating) => rating !== null,
+                ),
+                phoneCallCount: old.phoneCallCount + 1,
+                guessId: data.guessId,
+                updatedAt: new Date().toISOString(),
+              }
+            : undefined,
+        );
+      }
+
       toast.success(`Call created`);
       void utils.phoneCall.all.invalidate({});
       void utils.phoneCall.bySessionId.invalidate({
         sessionId: variables.sessionId,
       });
-      void utils.guess.all.invalidate();
-      if (data) {
-        void utils.guess.byId.invalidate({ id: data.guessId });
-      }
     },
   });
 };

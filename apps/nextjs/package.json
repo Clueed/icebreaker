@@ -14,12 +14,12 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
+    "@formkit/auto-animate": "^0.8.2",
     "@icebreaker/api": "workspace:*",
     "@icebreaker/auth": "workspace:*",
     "@icebreaker/db": "workspace:*",
     "@icebreaker/ui": "workspace:*",
     "@icebreaker/validators": "workspace:*",
-    "@formkit/auto-animate": "^0.8.2",
     "@t3-oss/env-nextjs": "^0.10.1",
     "@tanstack/react-query": "catalog:",
     "@trpc/client": "catalog:",
@@ -33,6 +33,7 @@
     "react-sipjs": "^0.0.5",
     "sip.js": "^0.21.2",
     "superjson": "2.2.1",
+    "usehooks-ts": "^3.1.0",
     "zod": "catalog:"
   },
   "devDependencies": {

@@ -1,109 +1,77 @@
-import { useEffect, useRef } from "react";
-import { skipToken } from "@tanstack/react-query";
+import { forwardRef } from "react";
 
 import type { RouterOutputs } from "@icebreaker/api";
+import type { PhoneCallRating } from "@icebreaker/db/schema";
 import { cn } from "@icebreaker/ui";
 import { Button } from "@icebreaker/ui/button";
 import { PhoneNumberDisplay } from "@icebreaker/ui/custom/phone-number-display";
-import { CrosshairIcon, PhoneCallIcon } from "@icebreaker/ui/icons";
+import { PhoneCallIcon } from "@icebreaker/ui/icons";
 
-import {
-  useSelectedGuessId,
-  useSelectedGuessIdSetQuery,
-} from "~/app/_api-hooks/use-selected-guess";
+import { useSelectedGuessIdSetQuery } from "~/app/_api-hooks/use-selected-guess";
 import useStartCall from "~/app/_components/call-handler/use-start-call";
-import { api } from "~/trpc/react";
+import { RatingIcon } from "~/app/@caller/_components/rating-icon";
 
-export const GuessDisplay = ({ guessId }: { guessId: string }) => {
-  const {
-    data: guess,
-    isLoading,
-    isFetching,
-    isError,
-    isSuccess,
-  } = api.guess.byId.useQuery({ id: guessId });
-  const { data: selectedGuessId } = useSelectedGuessId(
-    guess ? { id: guess.orgId } : skipToken,
-  );
-  const selected = selectedGuessId === guessId;
-
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (selected) {
-      ref.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "end",
-      });
-    }
-  }, [selected]);
-
-  return (
-    <div
-      ref={ref}
-      className={cn(
-        "h-16 rounded border-2 px-4",
-        isFetching && "animate-pulse bg-muted/50",
-        // calls && "opacity-10",
-        selected && "border-primary",
-      )}
-    >
-      {isLoading ? "loading..." : null}
-      {isError && <>Error</>}
-      {isSuccess && <Inner guess={guess} selected={selected} />}
-    </div>
-  );
-};
-
-const Inner = ({
-  guess,
-  selected,
-}: {
-  guess: RouterOutputs["guess"]["byId"];
-  selected: boolean;
-}) => {
-  const [startCall] = useStartCall({ guessId: guess.id });
-  const calls = guess.phoneCallCount > 0;
-
-  return (
-    <div className="flex h-full items-center gap-1">
-      {" "}
-      <SelectButton
-        guessId={guess.id}
-        orgId={guess.orgId}
-        selected={selected}
-      />
-      <PhoneNumberDisplay phoneNumber={guess.phoneNumber} />
-      {selected && (
-        <Button onClick={startCall}>
-          <PhoneCallIcon />
-        </Button>
-      )}
-      <div>{calls && <PhoneCallIcon className="h-6 w-6" />}</div>
-    </div>
-  );
-};
-
-const SelectButton = (props: {
-  guessId: string;
-  orgId: string;
-  selected: boolean;
-}) => {
+export const GuessDisplay = forwardRef<
+  HTMLDivElement,
+  { guess: RouterOutputs["guess"]["byId"]; selected: boolean }
+>(({ guess, selected }, ref) => {
   const setSelectedGuessIdMutation = useSelectedGuessIdSetQuery();
   function handleOnClick(): void {
     setSelectedGuessIdMutation.mutate({
-      orgId: props.orgId,
-      data: { selectedGuessId: props.guessId },
+      orgId: guess.orgId,
+      data: { selectedGuessId: guess.id },
     });
   }
+
+  const [startCall] = useStartCall({ guessId: guess.id });
+
   return (
-    <Button
-      size={"icon"}
-      onClick={handleOnClick}
-      variant={"ghost"}
-      disabled={props.selected}
-      className={cn(props.selected && "text-primary")}
-    >
-      <CrosshairIcon />
-    </Button>
+    <div ref={ref} className="grid grid-cols-[auto,5rem] items-center gap-4">
+      <button
+        onClick={handleOnClick}
+        className={cn(
+          "rounded-md px-8 transition-all",
+          "h-12",
+          selected && "h-16 border-[1px] border-primary",
+          !selected && "hover:bg-muted/50",
+        )}
+      >
+        <div className="flex h-full max-w-sm items-center justify-between gap-3">
+          {" "}
+          <PhoneNumberDisplay phoneNumber={guess.phoneNumber} />
+          <div>{guess.phoneCallCount > 0 && `${guess.phoneCallCount}x`}</div>
+          <div>
+            {guess.phoneCallCount > 0 && guess.phoneCallRating.length > 0 && (
+              <RatingIcon
+                className="size-[1.3cap]"
+                rating={getHighestRated(guess.phoneCallRating)}
+              />
+            )}
+          </div>
+        </div>
+      </button>
+      {selected && (
+        <Button onClick={startCall} className="" size={"icon-lg"}>
+          <PhoneCallIcon />
+        </Button>
+      )}
+    </div>
   );
-};
+});
+
+const phoneCallRatingList = [
+  null,
+  "answered",
+  "voicemail",
+  "person",
+  "jackpot",
+] as const;
+
+function getHighestRated(ratings: PhoneCallRating[]): PhoneCallRating {
+  return ratings.reduce((highest, rating) => {
+    return phoneCallRatingList.indexOf(rating) >
+      phoneCallRatingList.indexOf(highest)
+      ? rating
+      : highest;
+  }, null);
+}

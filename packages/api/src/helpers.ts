@@ -1,4 +1,10 @@
 import { TRPCError } from "@trpc/server";
+import type { SQL} from "drizzle-orm";
+import { getTableColumns, sql } from "drizzle-orm";
+import type { PgTable } from "drizzle-orm/pg-core";
+import type { SQLiteTable } from "drizzle-orm/sqlite-core";
+
+import type { AnyColumn, GetColumnData } from "@icebreaker/db";
 
 export const takeUniqueOrThrow = (message: string) => {
   return <T>(values: T[]): T => {
@@ -17,4 +23,34 @@ export const findFirstOrThrow = (object_name: string) => {
       });
     return data;
   };
+};
+
+export const buildConflictUpdateColumns = <
+  T extends PgTable | SQLiteTable,
+  Q extends keyof T["_"]["columns"],
+>(
+  table: T,
+  columns: Q[],
+) => {
+  const cls = getTableColumns(table);
+  return columns.reduce(
+    (acc, column) => {
+      const col = cls[column];
+      if (!col) {
+        throw new Error(
+          `Column ${String(column)} not found in ${table._.name}`,
+        );
+      }
+      const colName = col.name;
+      acc[column] = sql.raw(`excluded.${colName}`);
+      return acc;
+    },
+    {} as Record<Q, SQL>,
+  );
+};
+
+export const jsonAgg = <Column extends AnyColumn>(column: Column) => {
+  return sql<
+    GetColumnData<Column, "raw">[]
+  >`json_agg(distinct ${sql`${column}`})`;
 };

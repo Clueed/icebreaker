@@ -1,6 +1,7 @@
-import { useEffect, useId, useRef, useState } from "react";
-import { useInView } from "framer-motion";
+import { useId, useRef, useState } from "react";
+import { useIntersectionObserver } from "usehooks-ts";
 
+import { LoaderCircleIcon } from "@icebreaker/ui/icons";
 import { Label } from "@icebreaker/ui/label";
 import { Switch } from "@icebreaker/ui/switch";
 
@@ -19,7 +20,7 @@ export const GuessHistory = ({ orgId }: { orgId: string }) => {
     isSuccess,
     isFetchingNextPage,
     fetchNextPage,
-  } = api.guess.all.useInfiniteQuery(
+  } = api.guess.history.useInfiniteQuery(
     {
       orgId,
       onlyWithCalls,
@@ -36,29 +37,40 @@ export const GuessHistory = ({ orgId }: { orgId: string }) => {
         .filter((guess) => selectedGuessId && guess.id !== selectedGuessId)
     : [];
 
-  const ref = useRef(null);
-  const isInView = useInView(ref);
+  const container = useRef(null);
 
-  useEffect(() => {
-    if (isInView && !isFetchingNextPage) {
-      void fetchNextPage();
-    }
-  }, [isInView, isFetchingNextPage, fetchNextPage]);
+  const { ref: nextPageTriggerRef } = useIntersectionObserver({
+    threshold: 0.5,
+    root: container.current,
+    onChange: (isIntersecting) => {
+      console.log("isIntersecting >>", isIntersecting);
+      if (isIntersecting && !isFetchingNextPage) {
+        console.log("ftech");
+        void fetchNextPage();
+      }
+    },
+  });
 
   const onlyWithCallsId = useId();
 
   return (
     <div>
-      <div className="h-96 overflow-y-scroll">
+      <div className="h-96 overflow-y-scroll" ref={container}>
         {isPending && <div>Loading...</div>}
         {isError && <div>Error! {error.message}</div>}
         {isSuccess && (
           <>
             {guesses.map((guess) => (
-              <GuessDisplay key={guess.id} guessId={guess.id} />
+              <div key={guess.id}>
+                <GuessDisplay key={guess.id} guess={guess} selected={false} />
+              </div>
             ))}
-            <div ref={ref} className="h-1 w-full" />
-            {isFetchingNextPage && <div>Loading next page...</div>}
+
+            <div className="h-20 w-full" ref={nextPageTriggerRef}>
+              {isFetchingNextPage && (
+                <LoaderCircleIcon className="animate-spin" />
+              )}
+            </div>
           </>
         )}
       </div>
