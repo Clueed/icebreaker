@@ -1,15 +1,7 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
-import {
-  and,
-  count,
-  desc,
-  eq,
-  inArray,
-  isNotNull,
-  sql,
-} from "@icebreaker/db";
+import { and, count, desc, eq, inArray, isNotNull, sql } from "@icebreaker/db";
 import { CreateGuessSchema, Guess, PhoneCall } from "@icebreaker/db/schema";
 import { strategySchema } from "@icebreaker/validators/guessing-strategies";
 import { generateNextPhoneNumbers } from "@icebreaker/validators/guessing-strategies/apply-strategy";
@@ -106,9 +98,6 @@ export const guessRouter = {
       const { cursor, limit, strategy } = input;
       const guessId = cursor ?? input.guessId;
 
-      console.log("Input:", input);
-      console.log("Resolved guessId:", guessId);
-
       const guess = await ctx.db
         .select({
           id: Guess.id,
@@ -123,15 +112,13 @@ export const guessRouter = {
         .groupBy(Guess.id)
         .then((data) => {
           if (!data[0]) {
-            console.error("Error: Guess not found");
             throw new Error("Guess not found");
           }
-          console.log("Fetched guess data:", data[0]);
+
           return data[0];
         });
 
       const numToGenerate = limit + 1;
-      console.log("Number to generate:", numToGenerate);
 
       const guessUpsertInputs = generateNextPhoneNumbers({
         phoneNumber: guess.phoneNumber,
@@ -141,8 +128,6 @@ export const guessRouter = {
         phoneNumber,
         orgId: guess.orgId,
       }));
-
-      console.log("Guess upsert inputs:", guessUpsertInputs);
 
       const newGuessIds = await ctx.db
         .insert(Guess)
@@ -180,15 +165,9 @@ export const guessRouter = {
         return indexB - indexA;
       });
 
-      console.log("New guesses data:", newGuesses);
-
       const itemCount = newGuesses.length;
       const data = [guess, ...newGuessesSorted.slice(0, itemCount - 1)];
       const nextCursor = newGuesses[itemCount - 1]?.id;
-
-      console.log("Item count:", itemCount);
-      console.log("Final data:", data);
-      console.log("Next cursor:", nextCursor);
 
       return {
         data,
