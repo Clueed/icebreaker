@@ -12,8 +12,6 @@ import { GuessDisplay } from "~/app/org/[orgId]/_components/guess-display";
 import { Ratatatata } from "~/app/org/[orgId]/_components/ratatata/ratatatata";
 import { api } from "~/trpc/react";
 
-// TODO NEXT: useIfinity doesn't work with skipToken. Fix it.
-
 const NextPhoneNumberSelectorWrapper = ({ orgId }: { orgId: string }) => {
   const {
     data: selectedGuessId,
@@ -35,7 +33,8 @@ const NextPhoneNumberSelectorWrapper = ({ orgId }: { orgId: string }) => {
 
   const isLoading =
     isLoadingSelectedGuess ||
-    (isLoadingCurrentStrategy && isLoadingSelectedGuessId);
+    isLoadingCurrentStrategy ||
+    isLoadingSelectedGuessId;
   const isSuccess =
     isSuccessSelectedGuess &&
     isSuccessCurrentStrategy &&
