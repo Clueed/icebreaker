@@ -1,20 +1,12 @@
 "use client";
 
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { useIntersectionObserver } from "usehooks-ts";
 
-import type { RouterOutputs } from "@icebreaker/api";
-import { Button } from "@icebreaker/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@icebreaker/ui/card";
-import { PhoneNumberDisplay } from "@icebreaker/ui/custom/phone-number-display";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@icebreaker/ui/popover";
+import { cn } from "@icebreaker/ui";
+import { ArrowDownIcon } from "@icebreaker/ui/icons";
 
-import { usePhoneCallUpdateMutation } from "~/app/_api-hooks/use-phone-call";
-import { CurrentCallRatingCluster } from "~/app/@caller/_components/current-call-rating-cluster";
-import { RatingIcon } from "~/app/@caller/_components/rating-icon";
+import { HistoryCall } from "~/app/@caller/_components/history-call-item";
 import { api } from "~/trpc/react";
 
 export const CallHistory = () => {
@@ -24,73 +16,47 @@ export const CallHistory = () => {
     isError,
     error,
     isPending,
-  } = api.phoneCall.all.useInfiniteQuery(
-    {},
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = api.phoneCall.history.useInfiniteQuery(
+    { limit: 10 },
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     },
   );
 
-  const calls = callsData?.pages.flatMap((page) => page.data) ?? [];
+  const calls = isSuccess ? callsData.pages.flatMap((page) => page.data) : [];
   const [animateRef] = useAutoAnimate();
 
+  const { ref: nextPageRef } = useIntersectionObserver({
+    onChange: (isIntersection) => {
+      if (isIntersection && hasNextPage) {
+        void fetchNextPage();
+      }
+    },
+  });
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Call History</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div ref={animateRef} className="h-96 space-y-2 overflow-y-auto">
-          {isPending && <div>Loading...</div>}
-          {isError && <div>Error! {error.message}</div>}
-          {isSuccess &&
-            calls.map((call) => <HistoryCall key={call.id} call={call} />)}
+    <div>
+      <div ref={animateRef} className="h-96 space-y-2 overflow-y-auto p-2">
+        {isPending && <div>Loading...</div>}
+        {isError && <div>Error! {error.message}</div>}
+        {isSuccess &&
+          calls.map((call, index) => (
+            <HistoryCall first={index === 0} key={call.id} call={call} />
+          ))}
+
+        <div
+          className="flex h-20 w-full items-center justify-center"
+          ref={nextPageRef}
+        >
+          <ArrowDownIcon
+            className={cn(isFetchingNextPage && "animate-bounce")}
+          />
+          {!hasNextPage && "the end"}
         </div>
-      </CardContent>
-    </Card>
-  );
-};
-
-const HistoryCall = ({
-  call,
-}: {
-  call: RouterOutputs["phoneCall"]["all"]["data"][number];
-}) => {
-  const lastModified = new Date(
-    call.updatedAt ?? call.createdAt,
-  ).toLocaleTimeString();
-
-  const { mutate: updatePhoneCall } = usePhoneCallUpdateMutation();
-
-  return (
-    <div className="flex w-full items-center justify-between gap-2 rounded px-4 py-2">
-      <div>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="ghost" size={"icon"}>
-              <RatingIcon rating={call.rating} />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent>
-            <CurrentCallRatingCluster
-              rating={call.rating}
-              disabled={false}
-              setRating={(newRating) =>
-                updatePhoneCall({
-                  sessionId: call.sessionId,
-                  data: {
-                    rating: newRating,
-                  },
-                })
-              }
-            />
-          </PopoverContent>
-        </Popover>
       </div>
-      <div className="text-lg">
-        <PhoneNumberDisplay phoneNumber={call.phoneNumber} />
-      </div>
-      <div className="text-sm">{lastModified}</div>
     </div>
   );
 };

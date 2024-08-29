@@ -14,7 +14,7 @@ import {
 } from "~/app/_api-hooks/use-phone-call";
 import { useCurrentSessionCall } from "~/app/_components/call-handler/use-current-session-call";
 import { useCurrentSessionIdQuery } from "~/app/_components/use-current-session-id";
-import { CurrentCallRatingCluster } from "~/app/@caller/_components/current-call-rating-cluster";
+import { CallRatingCluster } from "~/app/@caller/_components/current-call-rating-cluster";
 import { useCallTimer } from "~/app/@caller/_components/use-call-timer";
 
 export function Caller() {
@@ -83,7 +83,7 @@ export function Caller() {
           {duration && <div>{duration.toFormat("mm:ss")}</div>}
         </div>
       </div>
-      <CurrentCallRatingCluster
+      <CallRatingCluster
         rating={phoneCall?.rating}
         disabled={!isActive}
         setRating={handleSetRating}

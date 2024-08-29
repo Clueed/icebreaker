@@ -1,8 +1,8 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
-import type { InferSelectModel } from "@icebreaker/db";
-import { and, desc, eq, sql } from "@icebreaker/db";
+import type { PhoneNumber } from "@icebreaker/validators/phone-number";
+import { desc, eq, sql } from "@icebreaker/db";
 import { CreatePhoneCallSchema, Guess, PhoneCall } from "@icebreaker/db/schema";
 import { phoneNumberSchema } from "@icebreaker/validators/phone-number";
 
@@ -10,47 +10,38 @@ import { findFirstOrThrow, takeUniqueOrThrow } from "../helpers";
 import { protectedProcedure } from "../trpc";
 
 export const phoneCallRouter = {
-  all: protectedProcedure
+  history: protectedProcedure
     .input(
       z.object({
-        cursor: z.string().uuid().nullish(),
+        // cursor is offset
+        cursor: z.number().min(0).default(0),
         limit: z.number().min(1).max(50).default(5),
       }),
     )
     .query(async ({ ctx, input }) => {
       const rawData = await ctx.db.query.PhoneCall.findMany({
-        orderBy: desc(PhoneCall.updatedAt),
-        where: and(input.cursor ? eq(PhoneCall.id, input.cursor) : undefined),
-        limit: input.limit + 1,
+        orderBy: desc(PhoneCall.createdAt),
+        limit: input.limit,
+        offset: input.cursor,
         with: {
           guess: {
             columns: {
               phoneNumber: true,
+              orgId: true,
             },
           },
         },
       });
 
-      const data = rawData.slice(0, input.limit - 1).map(transformPhoneCall);
-      const nextCursor = rawData[input.limit]?.id;
+      const itemsCount = rawData.length;
+      const data = rawData.map(transformPhoneCall);
+      const nextCursor =
+        itemsCount < input.limit ? undefined : input.cursor + input.limit;
 
       return {
         data,
         nextCursor,
       };
-    }),
-
-  byId: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const phoneCall = await ctx.db.query.PhoneCall.findFirst({
-        where: eq(PhoneCall.id, input.id),
-        with: {
-          guess: { columns: { phoneNumber: true, id: true } },
-        },
-      }).then(findFirstOrThrow("find phone call"));
-
-      return transformPhoneCall(phoneCall);
     }),
 
   bySessionId: protectedProcedure
@@ -116,12 +107,10 @@ export const phoneCallRouter = {
     }),
 } satisfies TRPCRouterRecord;
 
-type DBPhoneCallWithGuessPhoneNumber = InferSelectModel<typeof PhoneCall> & {
-  guess: Pick<InferSelectModel<typeof Guess>, "phoneNumber">;
-};
-
-export const transformPhoneCall = (
-  phoneCall: DBPhoneCallWithGuessPhoneNumber,
+export const transformPhoneCall = <
+  T extends { guess: { phoneNumber: PhoneNumber } },
+>(
+  phoneCall: T,
 ) => {
   const { guess, ...rest } = phoneCall;
   return { ...rest, phoneNumber: guess.phoneNumber };

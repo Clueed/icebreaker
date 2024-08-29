@@ -1,8 +1,8 @@
-import { TRPCError } from "@trpc/server";
-import type { SQL} from "drizzle-orm";
-import { getTableColumns, sql } from "drizzle-orm";
+import type { SQL } from "drizzle-orm";
 import type { PgTable } from "drizzle-orm/pg-core";
 import type { SQLiteTable } from "drizzle-orm/sqlite-core";
+import { TRPCError } from "@trpc/server";
+import { getTableColumns, sql } from "drizzle-orm";
 
 import type { AnyColumn, GetColumnData } from "@icebreaker/db";
 

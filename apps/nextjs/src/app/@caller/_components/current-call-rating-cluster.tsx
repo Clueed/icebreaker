@@ -7,7 +7,7 @@ import { ToggleGroup, ToggleGroupItem } from "@icebreaker/ui/toggle-group";
 
 import { RatingIcon } from "~/app/@caller/_components/rating-icon";
 
-export const CurrentCallRatingCluster = (props: {
+export const CallRatingCluster = (props: {
   rating?: PhoneCallRating;
   setRating: (newRating: PhoneCallRating) => void;
   disabled: boolean;

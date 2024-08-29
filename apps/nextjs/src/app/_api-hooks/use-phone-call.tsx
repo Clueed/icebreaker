@@ -5,12 +5,6 @@ import { toast } from "@icebreaker/ui/toast";
 
 import { api } from "~/trpc/react";
 
-export const usePhoneCallByIdQuery = (
-  input: AppRouterInputs["phoneCall"]["byId"] | typeof skipToken,
-) => {
-  return api.phoneCall.byId.useQuery(input);
-};
-
 export const usePhoneCallBySessionIdQuery = (
   input: AppRouterInputs["phoneCall"]["bySessionId"] | typeof skipToken,
 ) => {
@@ -21,9 +15,9 @@ export const usePhoneCallUpdateMutation = () => {
   const utils = api.useUtils();
   return api.phoneCall.update.useMutation({
     async onMutate(payload) {
-      // byId
-      await utils.phoneCall.byId.cancel();
-      const prevByIdData = utils.phoneCall.byId.getData();
+      // bySessionId
+      await utils.phoneCall.bySessionId.cancel();
+      const prevBySessionId = utils.phoneCall.bySessionId.getData();
       utils.phoneCall.bySessionId.setData(
         { sessionId: payload.sessionId },
         (old) =>
@@ -38,9 +32,9 @@ export const usePhoneCallUpdateMutation = () => {
 
       // all
 
-      await utils.phoneCall.all.cancel();
-      const prevAllData = utils.phoneCall.all.getInfiniteData({});
-      utils.phoneCall.all.setInfiniteData({}, (old) =>
+      await utils.phoneCall.history.cancel();
+      const prevHistory = utils.phoneCall.history.getInfiniteData({});
+      utils.phoneCall.history.setInfiniteData({}, (old) =>
         old
           ? {
               ...old,
@@ -62,14 +56,14 @@ export const usePhoneCallUpdateMutation = () => {
 
       // guess
 
-      return { prevByIdData, prevAllData };
+      return { prevBySessionId, prevHistory };
     },
     onError(err, payload, ctx) {
       utils.phoneCall.bySessionId.setData(
         { sessionId: payload.sessionId },
-        ctx?.prevByIdData,
+        ctx?.prevBySessionId,
       );
-      utils.phoneCall.all.setInfiniteData({}, ctx?.prevAllData);
+      utils.phoneCall.history.setInfiniteData({}, ctx?.prevHistory);
       toast.error(`Failed to update call: ${err.message}`);
     },
     onSuccess(data) {
@@ -88,7 +82,7 @@ export const usePhoneCallUpdateMutation = () => {
     },
     onSettled(_err, _variables, ctx) {
       void utils.phoneCall.bySessionId.invalidate({ sessionId: ctx.sessionId });
-      void utils.phoneCall.all.invalidate({});
+      void utils.phoneCall.history.invalidate({});
     },
   });
 };
@@ -117,7 +111,7 @@ export const usePhoneCallCreateMutation = () => {
       }
 
       toast.success(`Call created`);
-      void utils.phoneCall.all.invalidate({});
+      void utils.phoneCall.history.invalidate({});
       void utils.phoneCall.bySessionId.invalidate({
         sessionId: variables.sessionId,
       });
