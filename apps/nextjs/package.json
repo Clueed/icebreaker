@@ -43,7 +43,7 @@
     "@icebreaker/tsconfig": "workspace:*",
     "@tanstack/react-query-devtools": "^5.51.23",
     "@types/luxon": "^3.4.2",
-    "@types/node": "^20.16.1",
+    "@types/node": "^20.16.2",
     "@types/react": "catalog:react18",
     "@types/react-dom": "catalog:react18",
     "dotenv-cli": "^7.4.2",
