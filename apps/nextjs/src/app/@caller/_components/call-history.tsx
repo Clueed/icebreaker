@@ -4,7 +4,7 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useIntersectionObserver } from "usehooks-ts";
 
 import { cn } from "@icebreaker/ui";
-import { ArrowDownIcon } from "@icebreaker/ui/icons";
+import { ArrowDownIcon, Loader2Icon } from "@icebreaker/ui/icons";
 
 import { HistoryCall } from "~/app/@caller/_components/history-call-item";
 import { api } from "~/trpc/react";
@@ -20,7 +20,7 @@ export const CallHistory = () => {
     fetchNextPage,
     isFetchingNextPage,
   } = api.phoneCall.history.useInfiniteQuery(
-    { limit: 10 },
+    {},
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     },
@@ -39,12 +39,27 @@ export const CallHistory = () => {
 
   return (
     <div>
-      <div ref={animateRef} className="h-96 space-y-2 overflow-y-auto p-2">
-        {isPending && <div>Loading...</div>}
+      <div
+        ref={animateRef}
+        className="h-96 space-y-2 overflow-y-auto rounded-md border-y-[1px] p-4"
+        style={{
+          scrollbarWidth: "thin",
+          scrollbarGutter: "stable",
+        }}
+      >
+        {isPending && (
+          <div className="flex h-full items-center justify-center">
+            <Loader2Icon className="animate-spin" />
+          </div>
+        )}
         {isError && <div>Error! {error.message}</div>}
         {isSuccess &&
           calls.map((call, index) => (
-            <HistoryCall first={index === 0} key={call.id} call={call} />
+            <HistoryCall
+              initialExpanded={index === 0}
+              key={call.id}
+              call={call}
+            />
           ))}
 
         <div

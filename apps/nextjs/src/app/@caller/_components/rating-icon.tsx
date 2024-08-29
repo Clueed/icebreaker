@@ -10,13 +10,15 @@ import {
 
 export const RatingIcon = ({
   rating,
+  answered,
   ...props
-}: { rating: PhoneCallRating } & LucideProps) => {
+}: { rating: PhoneCallRating; answered?: boolean } & LucideProps) => {
   switch (rating) {
     case null:
+      if (answered) {
+        return <PhoneMissedIcon {...props} />;
+      }
       return <SkullIcon {...props} />;
-    case "answered":
-      return <PhoneMissedIcon {...props} />;
     case "voicemail":
       return <MailboxIcon {...props} />;
     case "person":

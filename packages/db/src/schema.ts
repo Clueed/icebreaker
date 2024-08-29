@@ -21,7 +21,9 @@ import { strategySchema } from "@icebreaker/validators/guessing-strategies";
 import { encryptedText } from "./helpers/encrypted-text";
 
 const timeStampColumns = {
-  createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
+  createdAt: timestamp("created_at", { mode: "string", withTimezone: true })
+    .defaultNow()
+    .notNull(),
   updatedAt: timestamp("updatedAt", {
     mode: "string",
     withTimezone: true,
@@ -93,12 +95,7 @@ export const CreateGuessSchema = createInsertSchema(Guess, {
 
 // PhoneCall
 
-export const phoneCallRatingList = [
-  "answered",
-  "voicemail",
-  "person",
-  "jackpot",
-] as const;
+export const phoneCallRatingList = ["voicemail", "person", "jackpot"] as const;
 export const phoneCallRatingEnum = pgEnum("rating_enum", phoneCallRatingList);
 
 export const PhoneCall = pgTable(
@@ -110,6 +107,14 @@ export const PhoneCall = pgTable(
       .notNull()
       .references(() => Guess.id, { onDelete: "cascade" }),
     rating: phoneCallRatingEnum("rating"),
+    answeredAt: timestamp("answeredAt", {
+      mode: "string",
+      withTimezone: true,
+    }),
+    hangupAt: timestamp("hangupAt", {
+      mode: "string",
+      withTimezone: true,
+    }),
     ...timeStampColumns,
   },
   (table) => ({

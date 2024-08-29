@@ -61,7 +61,11 @@ export const phoneCallRouter = {
     .input(
       z.object({
         sessionId: z.string().min(10).max(255),
-        data: CreatePhoneCallSchema.pick({ rating: true }),
+        data: CreatePhoneCallSchema.pick({
+          rating: true,
+          answeredAt: true,
+          hangupAt: true,
+        }),
       }),
     )
     .mutation(({ ctx, input: { sessionId, data } }) => {

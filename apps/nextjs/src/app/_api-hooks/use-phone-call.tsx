@@ -30,7 +30,7 @@ export const usePhoneCallUpdateMutation = () => {
             : undefined,
       );
 
-      // all
+      // history
 
       await utils.phoneCall.history.cancel();
       const prevHistory = utils.phoneCall.history.getInfiniteData({});
@@ -53,8 +53,6 @@ export const usePhoneCallUpdateMutation = () => {
             }
           : undefined,
       );
-
-      // guess
 
       return { prevBySessionId, prevHistory };
     },
@@ -111,7 +109,7 @@ export const usePhoneCallCreateMutation = () => {
       }
 
       toast.success(`Call created`);
-      void utils.phoneCall.history.invalidate({});
+      void utils.phoneCall.history.invalidate();
       void utils.phoneCall.bySessionId.invalidate({
         sessionId: variables.sessionId,
       });

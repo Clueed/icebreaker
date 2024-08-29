@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
-import { skipToken } from "@tanstack/react-query";
+import type { AppRouterInputs } from "node_modules/@icebreaker/api/dist/root";
+import { useCallback, useEffect } from "react";
+import { skipToken, useIsMutating } from "@tanstack/react-query";
+import { getMutationKey } from "@trpc/react-query";
+import { DateTime } from "luxon";
 
-import type { PhoneCallRating } from "@icebreaker/db/schema";
 import { cn } from "@icebreaker/ui";
 import { Button } from "@icebreaker/ui/button";
 import { PhoneNumberDisplay } from "@icebreaker/ui/custom/phone-number-display";
@@ -16,6 +18,7 @@ import { useCurrentSessionCall } from "~/app/_components/call-handler/use-curren
 import { useCurrentSessionIdQuery } from "~/app/_components/use-current-session-id";
 import { CallRatingCluster } from "~/app/@caller/_components/current-call-rating-cluster";
 import { useCallTimer } from "~/app/@caller/_components/use-call-timer";
+import { api } from "~/trpc/react";
 
 export function Caller() {
   const { data: currentSessionId } = useCurrentSessionIdQuery();
@@ -29,32 +32,59 @@ export function Caller() {
 
   const { mutate: updatePhoneCall } = usePhoneCallUpdateMutation();
 
-  const handleSetRating = (newRating: PhoneCallRating) => {
-    if (!currentSessionId) {
-      throw new Error("cant update call: currentSessionId not found");
-    }
-    updatePhoneCall({
-      sessionId: currentSessionId,
-      data: {
-        rating: newRating,
-      },
-    });
-  };
+  const handleUpdatePhoneCall = useCallback(
+    (data: AppRouterInputs["phoneCall"]["update"]["data"]) => {
+      if (!currentSessionId) {
+        throw new Error("cant update call: currentSessionId not found");
+      }
+      updatePhoneCall({
+        sessionId: currentSessionId,
+        data,
+      });
+    },
+    [currentSessionId, updatePhoneCall],
+  );
+
+  const { hangupAt, answeredAt } = phoneCall ?? {};
+
+  const callIsUpdating =
+    useIsMutating({
+      mutationKey: getMutationKey(api.phoneCall.update),
+      status: "pending",
+    }) > 0;
 
   useEffect(() => {
-    if (!phoneCall) {
+    if (!timer || callIsUpdating) {
       return;
     }
 
-    if (phoneCall.rating !== null) {
-      return;
+    const newHangupAt =
+      timer.hangupAt &&
+      (!hangupAt ||
+        DateTime.fromJSDate(timer.hangupAt).toSeconds() !==
+          DateTime.fromSQL(hangupAt).toSeconds())
+        ? DateTime.fromJSDate(timer.hangupAt).toSQL({ includeOffset: true })
+        : undefined;
+
+    const newAnsweredAt =
+      timer.answeredAt &&
+      (!answeredAt ||
+        DateTime.fromJSDate(timer.answeredAt).toSeconds() !==
+          DateTime.fromSQL(answeredAt).toSeconds())
+        ? DateTime.fromJSDate(timer.answeredAt).toSQL({ includeOffset: true })
+        : undefined;
+
+    if (newHangupAt || newAnsweredAt) {
+      handleUpdatePhoneCall({
+        hangupAt: newHangupAt ?? null,
+        answeredAt: newAnsweredAt ?? null,
+      });
     }
 
-    if (timer?.answeredAt) {
-      handleSetRating("answered");
+    if (timer.answeredAt) {
       return;
     }
-  });
+  }, [answeredAt, hangupAt, handleUpdatePhoneCall, timer, callIsUpdating]);
 
   const { duration } = useCallTimer({ timer });
 
@@ -86,7 +116,7 @@ export function Caller() {
       <CallRatingCluster
         rating={phoneCall?.rating}
         disabled={!isActive}
-        setRating={handleSetRating}
+        setRating={(rating) => handleUpdatePhoneCall({ rating })}
       />
       <Button
         className="w-full"
