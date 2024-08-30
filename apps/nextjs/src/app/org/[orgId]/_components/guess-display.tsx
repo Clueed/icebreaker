@@ -4,11 +4,11 @@ import type { RouterOutputs } from "@icebreaker/api";
 import type { PhoneCallRating } from "@icebreaker/db/schema";
 import { cn } from "@icebreaker/ui";
 import { Button } from "@icebreaker/ui/button";
-import { PhoneNumberDisplay } from "@icebreaker/ui/custom/phone-number-display";
 import { PhoneCallIcon } from "@icebreaker/ui/icons";
 
 import { useSelectedGuessIdSetQuery } from "~/app/_api-hooks/use-selected-guess";
 import useStartCall from "~/app/_components/call-handler/use-start-call";
+import { RatingEffect } from "~/app/@caller/_components/rating-effect";
 import { RatingIcon } from "~/app/@caller/_components/rating-icon";
 
 export const GuessDisplay = forwardRef<
@@ -25,28 +25,40 @@ export const GuessDisplay = forwardRef<
 
   const [startCall] = useStartCall({ guessId: guess.id });
 
+  const highestRating = getHighestRated(guess.phoneCallRating);
+
+  const hasCalls = guess.phoneCallCount > 0;
+
   return (
     <div ref={ref} className="grid grid-cols-[auto,5rem] items-center gap-4">
       <button
         onClick={handleOnClick}
         className={cn(
           "rounded-md px-8 transition-all",
-          "h-12",
+          "grid grid-cols-[repeat(3,auto)] items-center justify-start gap-x-4",
           selected && "h-16 border-[1px] border-primary",
           !selected && "hover:bg-muted/50",
         )}
       >
-        <div className="flex h-full max-w-sm items-center justify-between gap-3">
+        <div className={cn("w-[4ch]", !hasCalls && "opacity-0")}>
+          {guess.phoneCallCount}x
+        </div>
+        <div className={cn("text-xl", !hasCalls && "opacity-0")}>
+          <RatingEffect rating={highestRating} answered={true}>
+            <RatingIcon
+              rating={highestRating}
+              answered={guess.phoneCallAnswered}
+              className={cn("size-[1.25cap]")}
+            />
+          </RatingEffect>
+        </div>
+        <div className="flex h-full items-center justify-between gap-3">
           {" "}
-          <PhoneNumberDisplay phoneNumber={guess.phoneNumber} />
-          <div>{guess.phoneCallCount > 0 && `${guess.phoneCallCount}x`}</div>
-          <div>
-            {guess.phoneCallCount > 0 && guess.phoneCallRating.length > 0 && (
-              <RatingIcon
-                className="size-[1.3cap]"
-                rating={getHighestRated(guess.phoneCallRating)}
-              />
-            )}
+          <div className="text-xl">
+            <span className={"text-muted-foreground"}>
+              {guess.phoneNumber.base} -{" "}
+            </span>
+            {guess.phoneNumber.extension}
           </div>
         </div>
       </button>

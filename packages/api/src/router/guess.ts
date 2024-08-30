@@ -7,7 +7,7 @@ import { strategySchema } from "@icebreaker/validators/guessing-strategies";
 import { generateNextPhoneNumbers } from "@icebreaker/validators/guessing-strategies/apply-strategy";
 import { phoneNumbersAreEqual } from "@icebreaker/validators/phone-number";
 
-import { jsonAgg, takeUniqueOrThrow } from "../helpers";
+import { arrayAggNotNull, jsonAgg, takeUniqueOrThrow } from "../helpers";
 import { protectedProcedure } from "../trpc";
 
 export const guessRouter = {
@@ -16,13 +16,14 @@ export const guessRouter = {
       z.object({
         orgId: z.string().optional(),
         onlyWithCalls: z.boolean().optional(),
-        cursor: z.string().uuid().nullish(),
+        // cursor is offset
+        cursor: z.number().min(0).default(0),
         // Limit: The number of posts to fetch. The default value is 5.
         limit: z.number().min(1).max(50).default(5),
       }),
     )
     .query(async ({ ctx, input }) => {
-      const { cursor, limit, orgId, onlyWithCalls } = input;
+      const { cursor: offset, limit, orgId, onlyWithCalls } = input;
       const rawData = await ctx.db
         .select({
           id: Guess.id,
@@ -30,11 +31,13 @@ export const guessRouter = {
           orgId: Guess.orgId,
           phoneCallCount: count(PhoneCall.id),
           phoneCallRating: jsonAgg(PhoneCall.rating),
+          phoneCallAnswered: sql<boolean>`array_length(${arrayAggNotNull(PhoneCall.answeredAt)}, 1) != 0`,
         })
         .from(Guess)
+        .offset(offset)
+        .limit(limit)
         .where(
           and(
-            cursor ? eq(Guess.id, cursor) : undefined,
             orgId ? eq(Guess.orgId, orgId) : undefined,
             onlyWithCalls
               ? isNotNull(
@@ -47,14 +50,14 @@ export const guessRouter = {
               : undefined,
           ),
         )
-        .orderBy(desc(Guess.updatedAt))
-        .limit(limit + 1)
+        .orderBy(desc(Guess.updatedAt), desc(Guess.createdAt))
         .leftJoin(PhoneCall, eq(Guess.id, PhoneCall.guessId))
         .groupBy(Guess.id);
 
-      const itemCount = rawData.length;
-      const data = rawData.slice(0, itemCount - 2);
-      const nextCursor = rawData[limit - 1]?.id;
+      const itemsCount = rawData.length;
+      const data = rawData;
+      const nextCursor =
+        itemsCount < input.limit ? undefined : input.cursor + input.limit;
 
       return {
         data,

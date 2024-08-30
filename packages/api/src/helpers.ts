@@ -54,3 +54,9 @@ export const jsonAgg = <Column extends AnyColumn>(column: Column) => {
     GetColumnData<Column, "raw">[]
   >`json_agg(distinct ${sql`${column}`})`;
 };
+
+export const arrayAggNotNull = <Column extends AnyColumn>(column: Column) => {
+  return sql<
+    GetColumnData<Column, "raw">[]
+  >`array_agg(distinct ${sql`${column}`}) filter (where ${column} is not null)`;
+};

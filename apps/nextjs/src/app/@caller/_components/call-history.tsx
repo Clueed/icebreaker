@@ -29,7 +29,7 @@ export const CallHistory = () => {
   const calls = isSuccess ? callsData.pages.flatMap((page) => page.data) : [];
   const [animateRef] = useAutoAnimate();
 
-  const { ref: nextPageRef } = useIntersectionObserver({
+  const { ref: nextPageTriggerRef } = useIntersectionObserver({
     onChange: (isIntersection) => {
       if (isIntersection && hasNextPage) {
         void fetchNextPage();
@@ -64,7 +64,7 @@ export const CallHistory = () => {
 
         <div
           className="flex h-20 w-full items-center justify-center"
-          ref={nextPageRef}
+          ref={nextPageTriggerRef}
         >
           <ArrowDownIcon
             className={cn(isFetchingNextPage && "animate-bounce")}

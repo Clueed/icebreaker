@@ -1,7 +1,8 @@
 import { useId, useRef, useState } from "react";
 import { useIntersectionObserver } from "usehooks-ts";
 
-import { LoaderCircleIcon } from "@icebreaker/ui/icons";
+import { cn } from "@icebreaker/ui";
+import { ArrowDownIcon, Loader2Icon } from "@icebreaker/ui/icons";
 import { Label } from "@icebreaker/ui/label";
 import { Switch } from "@icebreaker/ui/switch";
 
@@ -20,11 +21,11 @@ export const GuessHistory = ({ orgId }: { orgId: string }) => {
     isSuccess,
     isFetchingNextPage,
     fetchNextPage,
+    hasNextPage,
   } = api.guess.history.useInfiniteQuery(
     {
       orgId,
       onlyWithCalls,
-      limit: 10,
     },
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
@@ -43,9 +44,7 @@ export const GuessHistory = ({ orgId }: { orgId: string }) => {
     threshold: 0.5,
     root: container.current,
     onChange: (isIntersecting) => {
-      console.log("isIntersecting >>", isIntersecting);
       if (isIntersecting && !isFetchingNextPage) {
-        console.log("ftech");
         void fetchNextPage();
       }
     },
@@ -55,8 +54,19 @@ export const GuessHistory = ({ orgId }: { orgId: string }) => {
 
   return (
     <div>
-      <div className="h-96 overflow-y-scroll" ref={container}>
-        {isPending && <div>Loading...</div>}
+      <div
+        className="h-96 space-y-2 overflow-y-auto rounded-md border-y-[1px] p-4"
+        ref={container}
+        style={{
+          scrollbarWidth: "thin",
+          scrollbarGutter: "stable",
+        }}
+      >
+        {isPending && (
+          <div className="flex h-full items-center justify-center">
+            <Loader2Icon className="animate-spin" />
+          </div>
+        )}
         {isError && <div>Error! {error.message}</div>}
         {isSuccess && (
           <>
@@ -66,10 +76,14 @@ export const GuessHistory = ({ orgId }: { orgId: string }) => {
               </div>
             ))}
 
-            <div className="h-20 w-full" ref={nextPageTriggerRef}>
-              {isFetchingNextPage && (
-                <LoaderCircleIcon className="animate-spin" />
-              )}
+            <div
+              className="flex h-20 w-full items-center justify-center"
+              ref={nextPageTriggerRef}
+            >
+              <ArrowDownIcon
+                className={cn(isFetchingNextPage && "animate-bounce")}
+              />
+              {!hasNextPage && "the end"}
             </div>
           </>
         )}
