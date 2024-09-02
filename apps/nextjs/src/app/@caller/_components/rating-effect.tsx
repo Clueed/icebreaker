@@ -1,23 +1,15 @@
-import type { PhoneCallRating } from "@icebreaker/db/schema";
+import type { PhoneCallRating } from "@icebreaker/validators/phone-call-rating";
 import { cn } from "@icebreaker/ui";
 
 export const RatingEffect = ({
   rating,
-  answered,
   children,
 }: {
   rating: PhoneCallRating;
-  answered?: boolean;
-  children?: React.ReactNode;
+  children: React.ReactNode;
 }) => {
   return (
-    <div
-      className={cn(
-        "relative",
-        rating === null && answered && "text-muted-foreground",
-        !answered && "text-muted-foreground opacity-50",
-      )}
-    >
+    <div className={cn("relative", rating === null && "text-muted-foreground")}>
       {" "}
       <div
         className={cn(

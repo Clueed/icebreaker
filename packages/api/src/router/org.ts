@@ -96,7 +96,7 @@ export const orgRouter = {
         .innerJoin(Guess, eq(Guess.orgId, Org.id))
         .innerJoin(PhoneCall, eq(PhoneCall.guessId, Guess.id))
         .where(eq(Org.id, input.id))
-        .groupBy(PhoneCall.rating, Org.id, Guess.id);
+        .groupBy(PhoneCall.rating, Org.id);
     }),
 
   delete: protectedProcedure.input(z.string()).mutation(({ ctx, input }) => {

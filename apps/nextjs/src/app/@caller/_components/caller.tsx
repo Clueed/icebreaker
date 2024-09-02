@@ -9,6 +9,10 @@ import { DateTime } from "luxon";
 import { cn } from "@icebreaker/ui";
 import { Button } from "@icebreaker/ui/button";
 import { PhoneNumberDisplay } from "@icebreaker/ui/custom/phone-number-display";
+import {
+  getRating,
+  ratingToDbValue,
+} from "@icebreaker/validators/phone-call-rating";
 
 import {
   usePhoneCallBySessionIdQuery,
@@ -114,9 +118,11 @@ export function Caller() {
         </div>
       </div>
       <CallRatingCluster
-        rating={phoneCall?.rating}
+        rating={getRating(phoneCall)}
         disabled={!isActive}
-        setRating={(rating) => handleUpdatePhoneCall({ rating })}
+        setRating={(rating) =>
+          handleUpdatePhoneCall({ rating: ratingToDbValue(rating) })
+        }
       />
       <Button
         className="w-full"

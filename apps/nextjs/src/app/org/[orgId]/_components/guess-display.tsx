@@ -1,10 +1,10 @@
 import { forwardRef } from "react";
 
 import type { RouterOutputs } from "@icebreaker/api";
-import type { PhoneCallRating } from "@icebreaker/db/schema";
 import { cn } from "@icebreaker/ui";
 import { Button } from "@icebreaker/ui/button";
 import { PhoneCallIcon } from "@icebreaker/ui/icons";
+import { getHighestRated } from "@icebreaker/validators/phone-call-rating";
 
 import { useSelectedGuessIdSetQuery } from "~/app/_api-hooks/use-selected-guess";
 import useStartCall from "~/app/_components/call-handler/use-start-call";
@@ -44,10 +44,9 @@ export const GuessDisplay = forwardRef<
           {guess.phoneCallCount}x
         </div>
         <div className={cn("text-xl", !hasCalls && "opacity-0")}>
-          <RatingEffect rating={highestRating} answered={true}>
+          <RatingEffect rating={highestRating}>
             <RatingIcon
               rating={highestRating}
-              answered={guess.phoneCallAnswered}
               className={cn("size-[1.25cap]")}
             />
           </RatingEffect>
@@ -70,20 +69,3 @@ export const GuessDisplay = forwardRef<
     </div>
   );
 });
-
-const phoneCallRatingList = [
-  null,
-  "answered",
-  "voicemail",
-  "person",
-  "jackpot",
-] as const;
-
-function getHighestRated(ratings: PhoneCallRating[]): PhoneCallRating {
-  return ratings.reduce((highest, rating) => {
-    return phoneCallRatingList.indexOf(rating) >
-      phoneCallRatingList.indexOf(highest)
-      ? rating
-      : highest;
-  }, null);
-}

@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import { PhoneCallIcon } from "@icebreaker/ui/icons";
 import { Skeleton } from "@icebreaker/ui/skeleton";
 
+import { RatingEffect } from "~/app/@caller/_components/rating-effect";
 import { RatingIcon } from "~/app/@caller/_components/rating-icon";
 import { api } from "~/trpc/react";
 
@@ -50,7 +51,12 @@ export const OrgCardContent = ({
               {stats.map((stat, i) => (
                 <Fragment key={i}>
                   <div className="text-muted-foreground">
-                    <RatingIcon rating={stat.rating} className="h-[1.25cap]" />
+                    <RatingEffect rating={stat.rating}>
+                      <RatingIcon
+                        rating={stat.rating}
+                        className="h-[1.25cap]"
+                      />
+                    </RatingEffect>
                   </div>
                   <div className="">{stat.rating}</div>
                   <div className="text-right">{stat.count}</div>

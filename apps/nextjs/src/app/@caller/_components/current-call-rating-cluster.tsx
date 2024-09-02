@@ -1,15 +1,16 @@
-import type { PhoneCallRating } from "@icebreaker/db/schema";
-import {
-  phoneCallRatingList,
-  phoneCallRatingSchema,
-} from "@icebreaker/db/schema";
+import type { PhoneCallRating } from "@icebreaker/validators/phone-call-rating";
+import { cn } from "@icebreaker/ui";
 import { ToggleGroup, ToggleGroupItem } from "@icebreaker/ui/toggle-group";
+import {
+  phoneCallRatingList2,
+  phoneCallRatingSchema,
+} from "@icebreaker/validators/phone-call-rating";
 
 import { RatingIcon } from "~/app/@caller/_components/rating-icon";
 
 export const CallRatingCluster = (props: {
-  rating?: PhoneCallRating;
-  setRating: (newRating: PhoneCallRating) => void;
+  rating: PhoneCallRating;
+  setRating: (newRating: NonNullable<PhoneCallRating>) => void;
   disabled: boolean;
 }) => {
   const handleOnValueChange = (value: string) => {
@@ -19,18 +20,22 @@ export const CallRatingCluster = (props: {
     props.setRating(parsedRating);
   };
 
+  if (props.rating === null) {
+    return null;
+  }
+
   return (
-    <div className="flex gap-3">
+    <div className={cn("flex gap-3")}>
       <ToggleGroup
         type="single"
-        value={props.rating ?? "null"}
+        value={props.rating}
         onValueChange={handleOnValueChange}
         className="w-full"
         size={"lg"}
       >
-        {ALL_RATINGS.map((rating) => (
+        {phoneCallRatingList2.map((rating) => (
           <ToggleGroupItem
-            value={rating ?? "null"}
+            value={rating}
             key={rating}
             disabled={props.disabled}
             className="w-full"
@@ -42,5 +47,3 @@ export const CallRatingCluster = (props: {
     </div>
   );
 };
-
-const ALL_RATINGS = [null, ...phoneCallRatingList];
