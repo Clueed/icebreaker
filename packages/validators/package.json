@@ -30,15 +30,15 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "ts-jest": "catalog:",
     "@icebreaker/eslint-config": "workspace:*",
+    "@icebreaker/jest": "workspace:*",
     "@icebreaker/prettier-config": "workspace:*",
     "@icebreaker/tsconfig": "workspace:*",
-    "@icebreaker/jest": "workspace:*",
+    "@types/jest": "catalog:",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "typescript": "catalog:",
-    "@types/jest": "catalog:"
+    "ts-jest": "catalog:",
+    "typescript": "catalog:"
   },
   "prettier": "@icebreaker/prettier-config"
 }

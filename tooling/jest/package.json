@@ -12,9 +12,9 @@
     "format": "prettier --check . --ignore-path ../../.gitignore"
   },
   "devDependencies": {
+    "jest-environment-jsdom": "catalog:",
     "prettier": "catalog:",
-    "ts-jest": "catalog:",
-    "jest-environment-jsdom": "catalog:"
+    "ts-jest": "catalog:"
   },
   "prettier": "@icebreaker/prettier-config"
 }
