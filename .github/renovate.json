@@ -26,7 +26,7 @@
   ],
   "updateInternalDeps": true,
   "rangeStrategy": "bump",
-  "automerge": true,
+  "automerge": false,
   "npm": {
     "fileMatch": [
       "(^|/)package\\.json$",
