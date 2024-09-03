@@ -21,6 +21,7 @@ import {
 import { useCurrentSessionCall } from "~/app/_components/call-handler/use-current-session-call";
 import { useCurrentSessionIdQuery } from "~/app/_components/use-current-session-id";
 import { CallRatingCluster } from "~/app/@caller/_components/current-call-rating-cluster";
+import { useSyncCall } from "~/app/@caller/_components/sync-call";
 import { useCallTimer } from "~/app/@caller/_components/use-call-timer";
 import { api } from "~/trpc/react";
 
@@ -49,46 +50,7 @@ export function Caller() {
     [currentSessionId, updatePhoneCall],
   );
 
-  const { hangupAt, answeredAt } = phoneCall ?? {};
-
-  const callIsUpdating =
-    useIsMutating({
-      mutationKey: getMutationKey(api.phoneCall.update),
-      status: "pending",
-    }) > 0;
-
-  useEffect(() => {
-    if (!timer || callIsUpdating) {
-      return;
-    }
-
-    const newHangupAt =
-      timer.hangupAt &&
-      (!hangupAt ||
-        DateTime.fromJSDate(timer.hangupAt).toSeconds() !==
-          DateTime.fromSQL(hangupAt).toSeconds())
-        ? DateTime.fromJSDate(timer.hangupAt).toSQL({ includeOffset: true })
-        : undefined;
-
-    const newAnsweredAt =
-      timer.answeredAt &&
-      (!answeredAt ||
-        DateTime.fromJSDate(timer.answeredAt).toSeconds() !==
-          DateTime.fromSQL(answeredAt).toSeconds())
-        ? DateTime.fromJSDate(timer.answeredAt).toSQL({ includeOffset: true })
-        : undefined;
-
-    if (newHangupAt || newAnsweredAt) {
-      handleUpdatePhoneCall({
-        hangupAt: newHangupAt ?? null,
-        answeredAt: newAnsweredAt ?? null,
-      });
-    }
-
-    if (timer.answeredAt) {
-      return;
-    }
-  }, [answeredAt, hangupAt, handleUpdatePhoneCall, timer, callIsUpdating]);
+  useSyncCall({ phoneCall, timer, updatePhoneCall: handleUpdatePhoneCall });
 
   const { duration } = useCallTimer({ timer });
 
