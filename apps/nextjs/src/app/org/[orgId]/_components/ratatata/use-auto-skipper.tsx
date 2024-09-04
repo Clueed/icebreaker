@@ -1,7 +1,8 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
   useSelectedGuessIdSetQuery,
+  useSelectedGuessIsPending,
   useSelectedGuessQuery,
 } from "~/app/_api-hooks/use-selected-guess";
 import { useCurrentSessionCall } from "~/app/_components/call-handler/use-current-session-call";
@@ -15,15 +16,14 @@ export const useAutoSkipper = ({
   nextGuessId: string | undefined;
   enabled: boolean;
 }) => {
-  const { hasActive } = useCurrentSessionCall();
   const { data: selectedGuess } = useSelectedGuessQuery({ id: orgId });
+  const { id: selectedGuessId } = selectedGuess ?? {};
 
-  const { mutate: setSelectedGuessIdMutate } = useSelectedGuessIdSetQuery();
-
-  const setSelectedGuessId = useCallback(() => {
+  const { mutate: setSelectedGuessId } = useSelectedGuessIdSetQuery();
+  const setNextAsCurrentGuess = useCallback(() => {
     console.debug("[AS] setSelectedGuessId called");
 
-    if (!selectedGuess?.id) {
+    if (!selectedGuessId) {
       throw new Error("[AS]selectedGuess not found while setting selected");
     }
 
@@ -32,35 +32,46 @@ export const useAutoSkipper = ({
     }
 
     console.debug("[AS] Updating org with selectedGuessId:", nextGuessId);
-    setSelectedGuessIdMutate({
-      orgId: selectedGuess.orgId,
+    setSelectedGuessId({
+      orgId: orgId,
       data: { selectedGuessId: nextGuessId },
     });
+  }, [nextGuessId, orgId, selectedGuessId, setSelectedGuessId]);
+
+  const { hasActive } = useCurrentSessionCall();
+  const selectedGuessHasCalls = Boolean(selectedGuess?.phoneCallCount);
+  const selectedGuessIsPending = useSelectedGuessIsPending({ orgId });
+
+  const [status, setStatus] = useState<string>("disabled");
+
+  const canProceedToNextGuess = useMemo(() => {
+    if (!enabled) return "disabled";
+    if (selectedGuessIsPending) return "network pending";
+    if (!selectedGuessId) return "selectedGuessId not found";
+    if (!nextGuessId) return "nextGuessId not found";
+    if (hasActive) return "waiting for current call to end";
+    if (!selectedGuessHasCalls)
+      return "waiting for selected guess to have calls";
+
+    return true;
   }, [
-    selectedGuess?.id,
-    selectedGuess?.orgId,
+    enabled,
+    selectedGuessIsPending,
+    selectedGuessId,
     nextGuessId,
-    setSelectedGuessIdMutate,
+    hasActive,
+    selectedGuessHasCalls,
   ]);
 
-  const selectedGuessHasCalls = Boolean(selectedGuess?.phoneCallCount);
-
   useEffect(() => {
-    if (!enabled) {
-      console.debug("[AS] Auto Skipper is disabled, returning");
+    if (canProceedToNextGuess === true) {
+      setStatus("going to next guess");
+      setNextAsCurrentGuess();
       return;
     }
 
-    if (hasActive) {
-      console.debug("[AS] Active calls found, returning");
-      return;
-    }
+    setStatus(canProceedToNextGuess);
+  }, [canProceedToNextGuess, setNextAsCurrentGuess]);
 
-    if (selectedGuessHasCalls) {
-      console.debug(
-        "[AS] No active calls, but calls present. Setting selected guess ID.",
-      );
-      setSelectedGuessId();
-    }
-  }, [enabled, hasActive, selectedGuessHasCalls, setSelectedGuessId]);
+  return { status };
 };

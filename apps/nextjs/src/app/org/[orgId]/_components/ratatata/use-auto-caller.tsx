@@ -1,6 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useSelectedGuessQuery } from "~/app/_api-hooks/use-selected-guess";
+import {
+  useSelectedGuessIsPending,
+  useSelectedGuessQuery,
+} from "~/app/_api-hooks/use-selected-guess";
+import { useCurrentSessionCall } from "~/app/_components/call-handler/use-current-session-call";
 import useStartCall from "~/app/_components/call-handler/use-start-call";
 
 export const useAutoCaller = ({
@@ -11,55 +15,56 @@ export const useAutoCaller = ({
   enabled: boolean;
 }) => {
   const { data: selectedGuess } = useSelectedGuessQuery({ id: orgId });
+  const { id: selectedGuessId } = selectedGuess ?? {};
+  const selectedGuessIsPending = useSelectedGuessIsPending({ orgId });
 
-  const [startCall, { disabled }] = useStartCall({
-    guessId: selectedGuess?.id,
-  });
+  const { hasActive } = useCurrentSessionCall();
 
   const selectedGuessExists = !!selectedGuess;
   const selectedGuessHasCalls =
     selectedGuessExists && selectedGuess.phoneCallCount !== 0;
 
-  const [lock, setLock] = useState(false);
+  const [callStratedOnGuessId, setCallStratedOnGuessId] = useState<string>();
 
-  useEffect(() => {
-    setLock(false);
-  }, [selectedGuess?.id]);
+  const shouldStartNextCall = useMemo(() => {
+    if (!enabled) return "disabled";
+    if (selectedGuessIsPending) return "network pending";
+    if (hasActive) return "waiting for current call to end";
+    if (!selectedGuessExists) return "no selected guess";
+    if (selectedGuessHasCalls) return "selected guess already has calls";
+    if (callStratedOnGuessId === selectedGuessId) return "call started";
 
-  useEffect(() => {
-    console.log("[AC] triggered");
-
-    if (!enabled || !selectedGuessExists) {
-      console.log(
-        "[AC] AutoCaller is not enabled or selectedGuess is undefined, returning early",
-      );
-      return;
-    }
-
-    if (disabled) {
-      console.log("[AC] Current phone call is active, unlocking and returning");
-      return;
-    }
-
-    if (!selectedGuessHasCalls && !lock) {
-      console.log("[AC] No calls found for selectedGuess, starting a new call");
-      void startCall();
-      console.log("[AC] Call started and locked set to true");
-      setLock(true);
-    }
-
-    if (selectedGuessHasCalls && lock) {
-      console.log(
-        "[AC] Calls found for selectedGuess, unlocking and returning",
-      );
-      setLock(false);
-    }
+    return true;
   }, [
+    callStratedOnGuessId,
     enabled,
-    selectedGuessHasCalls,
-    disabled,
+    hasActive,
     selectedGuessExists,
-    startCall,
-    lock,
+    selectedGuessHasCalls,
+    selectedGuessId,
+    selectedGuessIsPending,
   ]);
+
+  const [startCall] = useStartCall({
+    guessId: selectedGuess?.id,
+  });
+
+  const handleStartCall = useCallback(() => {
+    void startCall();
+    setCallStratedOnGuessId(selectedGuessId);
+  }, [selectedGuessId, startCall]);
+
+  const [status, setStatus] = useState<string>("disabled");
+
+  useEffect(() => {
+    if (shouldStartNextCall === true) {
+      setStatus("starting call");
+      handleStartCall();
+      return;
+    }
+
+    setStatus(shouldStartNextCall);
+  }, [handleStartCall, shouldStartNextCall]);
+
+  return { status };
 };

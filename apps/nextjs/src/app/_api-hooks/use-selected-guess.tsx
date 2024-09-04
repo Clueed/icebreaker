@@ -1,9 +1,19 @@
 import type { AppRouterInputs } from "node_modules/@icebreaker/api/dist/root";
-import { skipToken } from "@tanstack/react-query";
+import { useCallback } from "react";
+import { skipToken, useIsFetching } from "@tanstack/react-query";
+import { getQueryKey } from "@trpc/react-query";
 
 import { toast } from "@icebreaker/ui/toast";
 
 import { api } from "~/trpc/react";
+
+export const useSelectedGuessId = (
+  input: AppRouterInputs["org"]["byId"] | typeof skipToken,
+) => {
+  return api.org.byId.useQuery(input, {
+    select: (org) => org.selectedGuessId,
+  });
+};
 
 export const useSelectedGuessQuery = (
   input: AppRouterInputs["org"]["byId"],
@@ -17,12 +27,25 @@ export const useSelectedGuessQuery = (
   );
 };
 
-export const useSelectedGuessId = (
-  input: AppRouterInputs["org"]["byId"] | typeof skipToken,
-) => {
-  return api.org.byId.useQuery(input, {
-    select: (org) => org.selectedGuessId,
-  });
+export const useSelectedGuessIsPending = (props: { orgId: string }) => {
+  const orgIsPending =
+    useIsFetching({
+      queryKey: getQueryKey(api.org.byId, { id: props.orgId }),
+      fetchStatus: "fetching",
+    }) > 0;
+
+  const { data: selectedGuessId } = useSelectedGuessId({ id: props.orgId });
+
+  const guessByIdIsPending =
+    useIsFetching({
+      queryKey: getQueryKey(
+        api.guess.byId,
+        selectedGuessId ? { id: selectedGuessId } : undefined,
+      ),
+      fetchStatus: "fetching",
+    }) > 0;
+
+  return orgIsPending || guessByIdIsPending;
 };
 
 export const useSelectedGuessIdSetQuery = () => {
@@ -64,28 +87,37 @@ export const useSelectedGuessIdSetQuery = () => {
 
   return {
     ...rest,
-    mutate: (
-      input: {
-        orgId: string;
-        data: {
-          selectedGuessId: string;
-        };
+    mutate: useCallback(
+      (
+        input: {
+          orgId: string;
+          data: {
+            selectedGuessId: string;
+          };
+        },
+        ...args: RemoveFirst<Parameters<typeof mutate>>
+      ) => {
+        return mutate({ id: input.orgId, data: input.data }, ...args);
       },
-      ...args: RemoveFirst<Parameters<typeof mutate>>
-    ) => {
-      return mutate({ id: input.orgId, data: input.data }, ...args);
-    },
-    mutateAsync: async (
-      input: {
-        orgId: string;
-        data: {
-          selectedGuessId: string;
-        };
+      [mutate],
+    ),
+    mutateAsync: useCallback(
+      async (
+        input: {
+          orgId: string;
+          data: {
+            selectedGuessId: string;
+          };
+        },
+        ...args: RemoveFirst<Parameters<typeof mutateAsync>>
+      ) => {
+        return await mutateAsync(
+          { id: input.orgId, data: input.data },
+          ...args,
+        );
       },
-      ...args: RemoveFirst<Parameters<typeof mutateAsync>>
-    ) => {
-      return await mutateAsync({ id: input.orgId, data: input.data }, ...args);
-    },
+      [mutateAsync],
+    ),
   };
 };
 

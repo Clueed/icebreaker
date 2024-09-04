@@ -1,6 +1,4 @@
-import { useEffect, useId, useState } from "react";
-import { useIsFetching } from "@tanstack/react-query";
-import { getQueryKey } from "@trpc/react-query";
+import { useId, useState } from "react";
 
 import { cn } from "@icebreaker/ui";
 import { Button } from "@icebreaker/ui/button";
@@ -15,22 +13,8 @@ import { Switch } from "@icebreaker/ui/switch";
 
 import { useAutoCaller } from "~/app/org/[orgId]/_components/ratatata/use-auto-caller";
 import { useAutoSkipper } from "~/app/org/[orgId]/_components/ratatata/use-auto-skipper";
-import { api } from "~/trpc/react";
 
 export const Ratatatata = (props: { orgId: string; nextGuessId?: string }) => {
-  const orgIsPending =
-    useIsFetching({
-      queryKey: getQueryKey(api.org.byId),
-      fetchStatus: "fetching",
-    }) > 0;
-  const nextGuessessPending =
-    useIsFetching({
-      queryKey: getQueryKey(api.guess.next),
-      fetchStatus: "fetching",
-    }) > 0;
-
-  const requisitesArePending = orgIsPending || nextGuessessPending;
-
   const autoSkipperId = useId();
   const [autoSkipperEnabled, setAutoSkipperEnabled] = useState(false);
 
@@ -38,42 +22,30 @@ export const Ratatatata = (props: { orgId: string; nextGuessId?: string }) => {
   const [autoCallerEnabled, setAutoCallerEnabled] = useState(false);
 
   const ratatatataId = useId();
-  const enabled =
-    !requisitesArePending && (autoSkipperEnabled || autoCallerEnabled);
+  const enabled = autoSkipperEnabled || autoCallerEnabled;
+
   const setEnabled = (enabled: boolean) => {
     setAutoSkipperEnabled(enabled);
     setAutoCallerEnabled(enabled);
   };
 
-  useEffect(() => {
-    if (!props.nextGuessId) {
-      setEnabled(false);
-    }
-  }, [props.nextGuessId]);
-
-  useAutoSkipper({
+  const { status: autoSkipperStatus } = useAutoSkipper({
     orgId: props.orgId,
-    enabled: !requisitesArePending && autoSkipperEnabled,
+    enabled: autoSkipperEnabled,
     nextGuessId: props.nextGuessId,
   });
-  useAutoCaller({
+  const { status: autoCallerStatus } = useAutoCaller({
     orgId: props.orgId,
-    enabled: !requisitesArePending && autoCallerEnabled,
+    enabled: autoCallerEnabled,
   });
 
   return (
     <div className="flex items-center justify-between gap-2 px-4 py-2">
-      <div
-        className={cn(
-          "flex items-center space-x-4",
-          requisitesArePending && "animate-pulse",
-        )}
-      >
+      <div className={cn("flex items-center space-x-4")}>
         <Switch
           id={ratatatataId}
           checked={enabled}
           onCheckedChange={setEnabled}
-          disabled={requisitesArePending}
         />
         <Label htmlFor={autoSkipperId} className="truncate">
           {/* <ListStartIcon className="inline size-[1.65cap] uppercase text-muted-foreground" />{" "} */}
@@ -89,21 +61,29 @@ export const Ratatatata = (props: { orgId: string; nextGuessId?: string }) => {
         </PopoverTrigger>
         <PopoverContent>
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
+            <div className="grid grid-cols-[auto_1fr] items-center space-x-2">
               <Switch
                 id={autoCallerId}
                 checked={autoCallerEnabled}
                 onCheckedChange={setAutoCallerEnabled}
               />
+
               <Label htmlFor={autoCallerId}>auto caller</Label>
+              <p className="col-start-2 row-start-2 text-xs text-muted-foreground">
+                {autoCallerStatus}
+              </p>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="grid grid-cols-[auto_1fr] items-center space-x-2">
               <Switch
                 id={autoSkipperId}
                 checked={autoSkipperEnabled}
                 onCheckedChange={setAutoSkipperEnabled}
               />
+
               <Label htmlFor={autoSkipperId}>auto guess skipper</Label>
+              <p className="col-start-2 row-start-2 text-xs text-muted-foreground">
+                {autoSkipperStatus}
+              </p>
             </div>
           </div>
         </PopoverContent>

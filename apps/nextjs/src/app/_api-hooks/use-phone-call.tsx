@@ -1,5 +1,7 @@
 import type { skipToken } from "@tanstack/react-query";
 import type { AppRouterInputs } from "node_modules/@icebreaker/api/dist/root";
+import { useIsMutating } from "@tanstack/react-query";
+import { getMutationKey } from "@trpc/react-query";
 
 import { toast } from "@icebreaker/ui/toast";
 
@@ -85,6 +87,15 @@ export const usePhoneCallUpdateMutation = () => {
   });
 };
 
+export const useUpdateCallIsPending = () => {
+  return (
+    useIsMutating({
+      mutationKey: getMutationKey(api.phoneCall.update),
+      status: "pending",
+    }) > 0
+  );
+};
+
 export const usePhoneCallCreateMutation = () => {
   const utils = api.useUtils();
   return api.phoneCall.create.useMutation({
@@ -108,11 +119,22 @@ export const usePhoneCallCreateMutation = () => {
         );
       }
 
-      toast.success(`Call created`);
+      toast.success(`Call created`, {
+        // description: variables.phoneNumber,
+      });
       void utils.phoneCall.history.invalidate();
       void utils.phoneCall.bySessionId.invalidate({
         sessionId: variables.sessionId,
       });
     },
   });
+};
+
+export const useCreateCallIsPending = () => {
+  return (
+    useIsMutating({
+      mutationKey: getMutationKey(api.phoneCall.create),
+      status: "pending",
+    }) > 0
+  );
 };
