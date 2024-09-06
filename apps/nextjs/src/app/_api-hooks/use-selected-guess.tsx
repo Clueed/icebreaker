@@ -48,7 +48,7 @@ export const useSelectedGuessIsPending = (props: { orgId: string }) => {
   return orgIsPending || guessByIdIsPending;
 };
 
-export const useSelectedGuessIdSetQuery = () => {
+export const useSetSelectedGuessId = () => {
   const utils = api.useUtils();
   const mutation = api.org.update.useMutation({
     async onMutate(payload) {

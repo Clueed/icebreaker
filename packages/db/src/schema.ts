@@ -36,6 +36,10 @@ export const Org = pgTable("org", {
   name: varchar("name", { length: 256 }).notNull().unique(),
   selectedGuessId: uuid("selected_guess_id"),
   currentStrategy: jsonb("current_strategy").$type<Strategy>(),
+  notes: text("notes")
+    .array()
+    .notNull()
+    .default(sql`'{}'::text[]`),
   ...timeStampColumns,
 });
 
@@ -51,6 +55,7 @@ export const CreateOrgSchema = createInsertSchema(Org, {
   name: z.string().max(256),
   currentStrategy: strategySchema,
   selectedGuessId: z.string().uuid(),
+  notes: z.string().array().optional(),
 }).omit({
   id: true,
   createdAt: true,

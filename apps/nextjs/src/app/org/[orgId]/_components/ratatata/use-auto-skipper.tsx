@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
-  useSelectedGuessIdSetQuery,
   useSelectedGuessIsPending,
   useSelectedGuessQuery,
+  useSetSelectedGuessId,
 } from "~/app/_api-hooks/use-selected-guess";
 import { useCurrentSessionCall } from "~/app/_components/call-handler/use-current-session-call";
 
@@ -19,7 +19,7 @@ export const useAutoSkipper = ({
   const { data: selectedGuess } = useSelectedGuessQuery({ id: orgId });
   const { id: selectedGuessId } = selectedGuess ?? {};
 
-  const { mutate: setSelectedGuessId } = useSelectedGuessIdSetQuery();
+  const { mutate: setSelectedGuessId } = useSetSelectedGuessId();
   const setNextAsCurrentGuess = useCallback(() => {
     console.debug("[AS] setSelectedGuessId called");
 

@@ -1,10 +1,8 @@
 "use client";
 
 import type { AppRouterInputs } from "node_modules/@icebreaker/api/dist/root";
-import { useCallback, useEffect } from "react";
-import { skipToken, useIsMutating } from "@tanstack/react-query";
-import { getMutationKey } from "@trpc/react-query";
-import { DateTime } from "luxon";
+import { useCallback } from "react";
+import { skipToken } from "@tanstack/react-query";
 
 import { cn } from "@icebreaker/ui";
 import { Button } from "@icebreaker/ui/button";
@@ -23,7 +21,6 @@ import { useCurrentSessionIdQuery } from "~/app/_components/use-current-session-
 import { CallRatingCluster } from "~/app/@caller/_components/current-call-rating-cluster";
 import { useSyncCall } from "~/app/@caller/_components/sync-call";
 import { useCallTimer } from "~/app/@caller/_components/use-call-timer";
-import { api } from "~/trpc/react";
 
 export function Caller() {
   const { data: currentSessionId } = useCurrentSessionIdQuery();

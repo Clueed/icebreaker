@@ -57,7 +57,7 @@ const GuesserStrategySelector = (props: {
   return (
     <div className="max-w-40">
       <fieldset>
-        <Legend className={"mb-4 text-muted-foreground"}>
+        <Legend className={"mb-4 text-nowrap text-muted-foreground"}>
           <CpuIcon className="inline size-[1.65cap]" /> guessing tactics
         </Legend>
         <div className="grid grid-cols-[1fr_auto] items-center gap-x-6 gap-y-2">
@@ -83,7 +83,10 @@ const GuesserStrategySelector = (props: {
               )}
             </LongPressButton>
           ))}
-          <Label className={"mt-2 text-muted-foreground"} htmlFor={strategyId}>
+          <Label
+            className={"mt-2 text-nowrap text-muted-foreground"}
+            htmlFor={strategyId}
+          >
             strategy
           </Label>
 
@@ -101,7 +104,7 @@ const GuesserStrategySelector = (props: {
             />
           </div>
           <Label
-            className={"mt-2 text-muted-foreground"}
+            className={"mt-2 text-nowrap text-muted-foreground"}
             htmlFor={loopAtPowerId}
           >
             loop at

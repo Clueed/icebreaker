@@ -11,21 +11,20 @@ import { protectedProcedure } from "../trpc";
 
 export const orgRouter = {
   all: protectedProcedure.query(({ ctx }) => {
-    // return ctx.db.select().from(schema.Org).orderBy(desc(schema.Org.id));
     return ctx.db.query.Org.findMany({
       orderBy: desc(Org.updatedAt),
-      //   limit: 10,
+      columns: {
+        createdAt: true,
+        updatedAt: true,
+        name: true,
+        id: true,
+      },
     });
   }),
 
   byId: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
-      // return ctx.db
-      //   .select()
-      //   .from(schema.Org)
-      //   .where(eq(schema.Org.id, input.id));
-
       return ctx.db.query.Org.findFirst({
         where: eq(Org.id, input.id),
       }).then(findFirstOrThrow("Org byId"));

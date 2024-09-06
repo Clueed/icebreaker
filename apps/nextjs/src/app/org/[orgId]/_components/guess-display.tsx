@@ -6,7 +6,7 @@ import { Button } from "@icebreaker/ui/button";
 import { PhoneCallIcon } from "@icebreaker/ui/icons";
 import { getHighestRated } from "@icebreaker/validators/phone-call-rating";
 
-import { useSelectedGuessIdSetQuery } from "~/app/_api-hooks/use-selected-guess";
+import { useSetSelectedGuessId } from "~/app/_api-hooks/use-selected-guess";
 import useStartCall from "~/app/_components/call-handler/use-start-call";
 import { RatingEffect } from "~/app/@caller/_components/rating-effect";
 import { RatingIcon } from "~/app/@caller/_components/rating-icon";
@@ -15,7 +15,7 @@ export const GuessDisplay = forwardRef<
   HTMLDivElement,
   { guess: RouterOutputs["guess"]["byId"]; selected: boolean }
 >(({ guess, selected }, ref) => {
-  const setSelectedGuessIdMutation = useSelectedGuessIdSetQuery();
+  const setSelectedGuessIdMutation = useSetSelectedGuessId();
   function handleOnClick(): void {
     setSelectedGuessIdMutation.mutate({
       orgId: guess.orgId,

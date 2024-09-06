@@ -19,10 +19,10 @@ const getSomethingIsDifferent = ({
     return {};
   }
 
-  const phoneCallHungupAt = phoneCall?.hangupAt
+  const phoneCallHungupAt = phoneCall.hangupAt
     ? DateTime.fromSQL(phoneCall.hangupAt)
     : null;
-  const phoneCallAnsweredAt = phoneCall?.answeredAt
+  const phoneCallAnsweredAt = phoneCall.answeredAt
     ? DateTime.fromSQL(phoneCall.answeredAt)
     : null;
 

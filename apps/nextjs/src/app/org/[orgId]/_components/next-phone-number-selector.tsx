@@ -1,3 +1,5 @@
+"use client";
+
 import type { AppRouterOutputs } from "node_modules/@icebreaker/api/dist/root";
 import { useEffect, useMemo, useRef, useState } from "react";
 

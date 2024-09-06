@@ -1,9 +1,9 @@
-import type { AppRouterInputs } from "node_modules/@icebreaker/api/dist/root";
+import type { RouterInputs } from "@icebreaker/api";
 
 import { api } from "~/trpc/react";
 
 export const useCurrentStrategyQuery = (
-  input: AppRouterInputs["org"]["extensionStrategyById"],
+  input: RouterInputs["org"]["extensionStrategyById"],
 ) => {
   return api.org.extensionStrategyById.useQuery(input);
 };
