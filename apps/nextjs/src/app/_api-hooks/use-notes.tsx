@@ -1,7 +1,3 @@
- 
- 
- 
- 
 import type { RouterInputs } from "@icebreaker/api";
 
 import { api } from "~/trpc/react";
