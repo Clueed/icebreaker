@@ -69,6 +69,9 @@ export const authConfig = {
       return true;
     },
   },
+  pages: {
+    signIn: "/api/auth/signin/google",
+  },
 } satisfies NextAuthConfig;
 
 export const validateToken = async (
