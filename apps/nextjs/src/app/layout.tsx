@@ -8,10 +8,11 @@ import { TRPCReactProvider } from "~/trpc/react";
 
 import "~/app/globals.css";
 
-import { Suspense } from "react";
 import { Urbanist, Victor_Mono } from "next/font/google";
 
+import { AnimatedMain } from "~/app/_components/animated-main";
 import NavBar from "~/app/_components/nav";
+import { PersistGate } from "~/app/_components/perists-gate";
 import SipProviderConfigured from "~/app/_components/sip-provider";
 import { CurrentSessionIdProvider } from "~/app/_components/use-current-session-id";
 import { env } from "~/env";
@@ -68,16 +69,12 @@ export default function RootLayout(props: {
             <SipProviderConfigured>
               <CurrentSessionIdProvider>
                 <NavBar />
-                <main className="container flex gap-16">
-                  <div className="flex-grow">
-                    <Suspense fallback={<div>loading...</div>}>
-                      {props.children}
-                    </Suspense>
-                  </div>
-                  <Suspense fallback={<div>loading...</div>}>
+                <AnimatedMain className="container flex gap-16">
+                  <PersistGate>
+                    <div className="flex-grow">{props.children}</div>
                     {props.caller}
-                  </Suspense>
-                </main>
+                  </PersistGate>
+                </AnimatedMain>
               </CurrentSessionIdProvider>
             </SipProviderConfigured>
           </TRPCReactProvider>

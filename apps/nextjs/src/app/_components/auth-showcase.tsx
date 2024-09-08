@@ -7,6 +7,8 @@ import {
   PopoverTrigger,
 } from "@icebreaker/ui/popover";
 
+import { NavClearClientButton } from "~/app/_components/nav-clear-client-button";
+
 export async function AuthShowcase() {
   const session = await auth();
 
@@ -46,7 +48,8 @@ export async function AuthShowcase() {
           </Avatar>
         </div>
       </PopoverTrigger>
-      <PopoverContent>
+      <PopoverContent className="space-y-4">
+        <NavClearClientButton />
         <form>
           <Button
             size="lg"

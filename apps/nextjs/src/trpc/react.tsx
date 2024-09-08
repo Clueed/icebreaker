@@ -2,8 +2,8 @@
 
 import type { QueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { loggerLink, unstable_httpBatchStreamLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import SuperJSON from "superjson";
@@ -11,6 +11,7 @@ import SuperJSON from "superjson";
 import type { AppRouter } from "@icebreaker/api";
 
 import { env } from "~/env";
+import { createIDBPersister } from "~/trpc/persister";
 import { createQueryClient } from "./query-client";
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined;
@@ -25,6 +26,8 @@ const getQueryClient = () => {
 };
 
 export const api = createTRPCReact<AppRouter>();
+
+const persister = createIDBPersister();
 
 export function TRPCReactProvider(props: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
@@ -51,12 +54,19 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{
+        persister,
+        maxAge: 1000 * 60 * 60 * 4,
+        buster: env.BUILD_ID,
+      }}
+    >
       <api.Provider client={trpcClient} queryClient={queryClient}>
         {props.children}
         <ReactQueryDevtools initialIsOpen={false} />
       </api.Provider>
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   );
 }
 

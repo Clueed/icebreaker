@@ -57,6 +57,7 @@
   ],
   "globalPassThroughEnv": [
     "NODE_ENV",
+    "BUILD_ID",
     "CI",
     "VERCEL",
     "VERCEL_ENV",
