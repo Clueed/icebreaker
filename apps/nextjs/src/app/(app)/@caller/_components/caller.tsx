@@ -18,9 +18,9 @@ import {
 } from "~/app/_api-hooks/use-phone-call";
 import { useCurrentSessionCall } from "~/app/_components/call-handler/use-current-session-call";
 import { useCurrentSessionIdQuery } from "~/app/_components/use-current-session-id";
-import { CallRatingCluster } from "~/app/@caller/_components/current-call-rating-cluster";
-import { useSyncCall } from "~/app/@caller/_components/sync-call";
-import { useCallTimer } from "~/app/@caller/_components/use-call-timer";
+import { CallRatingCluster } from "~/app/(app)/@caller/_components/current-call-rating-cluster";
+import { useSyncCall } from "~/app/(app)/@caller/_components/sync-call";
+import { useCallTimer } from "~/app/(app)/@caller/_components/use-call-timer";
 
 export function Caller() {
   const { data: currentSessionId } = useCurrentSessionIdQuery();

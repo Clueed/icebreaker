@@ -11,8 +11,8 @@ import {
 } from "@icebreaker/ui/popover";
 import { Switch } from "@icebreaker/ui/switch";
 
-import { useAutoCaller } from "~/app/org/[orgId]/_components/ratatata/use-auto-caller";
-import { useAutoSkipper } from "~/app/org/[orgId]/_components/ratatata/use-auto-skipper";
+import { useAutoCaller } from "~/app/(app)/[orgId]/_components/ratatata/use-auto-caller";
+import { useAutoSkipper } from "~/app/(app)/[orgId]/_components/ratatata/use-auto-skipper";
 
 export const Ratatatata = (props: { orgId: string; nextGuessId?: string }) => {
   const autoSkipperId = useId();

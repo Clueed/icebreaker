@@ -11,7 +11,7 @@ import {
 } from "@icebreaker/ui/popover";
 import { toast } from "@icebreaker/ui/toast";
 
-import { RegisterSipForm } from "~/app/@caller/_components/sip-cluster/register-sip-form";
+import { RegisterSipForm } from "~/app/(app)/@caller/_components/sip-cluster/register-sip-form";
 import { api } from "~/trpc/react";
 
 export const SipCluster = () => {

@@ -11,9 +11,9 @@ import {
 } from "@icebreaker/validators/phone-call-rating";
 
 import { usePhoneCallUpdateMutation } from "~/app/_api-hooks/use-phone-call";
-import { CallRatingCluster } from "~/app/@caller/_components/current-call-rating-cluster";
-import { RatingEffect } from "~/app/@caller/_components/rating-effect";
-import { RatingIcon } from "~/app/@caller/_components/rating-icon";
+import { CallRatingCluster } from "~/app/(app)/@caller/_components/current-call-rating-cluster";
+import { RatingEffect } from "~/app/(app)/@caller/_components/rating-effect";
+import { RatingIcon } from "~/app/(app)/@caller/_components/rating-icon";
 
 export const HistoryCall = ({
   call,

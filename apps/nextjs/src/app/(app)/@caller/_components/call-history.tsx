@@ -6,7 +6,7 @@ import { useIntersectionObserver } from "usehooks-ts";
 import { cn } from "@icebreaker/ui";
 import { ArrowDownIcon, Loader2Icon } from "@icebreaker/ui/icons";
 
-import { HistoryCall } from "~/app/@caller/_components/history-call-item";
+import { HistoryCall } from "~/app/(app)/@caller/_components/history-call-item";
 import { api } from "~/trpc/react";
 
 export const CallHistory = () => {

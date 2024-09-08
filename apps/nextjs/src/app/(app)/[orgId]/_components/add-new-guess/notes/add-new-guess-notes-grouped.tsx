@@ -6,7 +6,7 @@ import { Button } from "@icebreaker/ui/button";
 import { CardDescription } from "@icebreaker/ui/card";
 
 import { useCreateSelectedGuess } from "~/app/_api-hooks/use-create-guess";
-import { getSimilarNotes } from "~/app/org/[orgId]/_components/add-new-guess/notes/add-new-guess-notes-helpers";
+import { getSimilarNotes } from "~/app/(app)/[orgId]/_components/add-new-guess/notes/add-new-guess-notes-helpers";
 
 export const AddNewGuessNotesGrouped = (props: {
   orgId: string;

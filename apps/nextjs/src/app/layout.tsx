@@ -10,6 +10,8 @@ import "~/app/globals.css";
 
 import { Urbanist, Victor_Mono } from "next/font/google";
 
+import { auth } from "@icebreaker/auth";
+
 import { AnimatedMain } from "~/app/_components/animated-main";
 import NavBar from "~/app/_components/nav";
 import { PersistGate } from "~/app/_components/perists-gate";
@@ -51,10 +53,7 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout(props: {
-  children: React.ReactNode;
-  caller: React.ReactNode;
-}) {
+export default function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -68,12 +67,8 @@ export default function RootLayout(props: {
           <TRPCReactProvider>
             <SipProviderConfigured>
               <CurrentSessionIdProvider>
-                <NavBar />
-                <AnimatedMain className="container flex gap-16">
-                  <PersistGate>
-                    <div className="flex-grow">{props.children}</div>
-                    {props.caller}
-                  </PersistGate>
+                <AnimatedMain>
+                  <PersistGate>{props.children}</PersistGate>
                 </AnimatedMain>
               </CurrentSessionIdProvider>
             </SipProviderConfigured>

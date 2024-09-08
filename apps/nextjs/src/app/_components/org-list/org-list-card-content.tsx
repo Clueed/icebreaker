@@ -4,8 +4,8 @@ import { Fragment } from "react";
 import { PhoneCallIcon } from "@icebreaker/ui/icons";
 import { Skeleton } from "@icebreaker/ui/skeleton";
 
-import { RatingEffect } from "~/app/@caller/_components/rating-effect";
-import { RatingIcon } from "~/app/@caller/_components/rating-icon";
+import { RatingEffect } from "~/app/(app)/@caller/_components/rating-effect";
+import { RatingIcon } from "~/app/(app)/@caller/_components/rating-icon";
 import { api } from "~/trpc/react";
 
 export const OrgCardContent = ({

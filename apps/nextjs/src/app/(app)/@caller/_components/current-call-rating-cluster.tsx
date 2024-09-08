@@ -6,7 +6,7 @@ import {
   phoneCallRatingSchema,
 } from "@icebreaker/validators/phone-call-rating";
 
-import { RatingIcon } from "~/app/@caller/_components/rating-icon";
+import { RatingIcon } from "~/app/(app)/@caller/_components/rating-icon";
 
 export const CallRatingCluster = (props: {
   rating: PhoneCallRating;

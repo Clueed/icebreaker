@@ -11,8 +11,8 @@ import {
   useNotesQuery,
   useResetNotesMutation,
 } from "~/app/_api-hooks/use-notes";
-import { AddNewGuessNotesForm } from "~/app/org/[orgId]/_components/add-new-guess/notes/add-new-guess-notes-form";
-import { AddNewGuessNotesGrouped } from "~/app/org/[orgId]/_components/add-new-guess/notes/add-new-guess-notes-grouped";
+import { AddNewGuessNotesForm } from "~/app/(app)/[orgId]/_components/add-new-guess/notes/add-new-guess-notes-form";
+import { AddNewGuessNotesGrouped } from "~/app/(app)/[orgId]/_components/add-new-guess/notes/add-new-guess-notes-grouped";
 
 export const AddNewGuessNotes = (props: {
   orgId: string;

@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader } from "@icebreaker/ui/card";
 
-import { CallHistory } from "~/app/@caller/_components/call-history";
-import { Caller } from "~/app/@caller/_components/caller";
-import { SipCluster } from "~/app/@caller/_components/sip-cluster/sip-cluster";
+import { CallHistory } from "~/app/(app)/@caller/_components/call-history";
+import { Caller } from "~/app/(app)/@caller/_components/caller";
+import { SipCluster } from "~/app/(app)/@caller/_components/sip-cluster/sip-cluster";
 
 const CallerPage = () => {
   return (

@@ -20,7 +20,7 @@ import {
   useCurrentStrategySetMutation,
 } from "~/app/_api-hooks/use-current-strategy";
 import { useSelectedGuessQuery } from "~/app/_api-hooks/use-selected-guess";
-import { LoopAtValueSlider } from "~/app/org/[orgId]/_components/strategy-selector.tsx/strategy-selector-loop-at-value-silder";
+import { LoopAtValueSlider } from "~/app/(app)/[orgId]/_components/strategy-selector.tsx/strategy-selector-loop-at-value-silder";
 
 const GuesserStrategySelector = (props: {
   orgId: string;
