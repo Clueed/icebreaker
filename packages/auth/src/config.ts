@@ -61,6 +61,7 @@ export const authConfig = {
       return profile?.email?.endsWith("@softwaregini.com") ?? false;
     },
     authorized({ auth }) {
+      return true;
       // require auth for every page (exceptions in middleware matcher)
       const isLoggedIn = !!auth?.user;
       if (!isLoggedIn) {

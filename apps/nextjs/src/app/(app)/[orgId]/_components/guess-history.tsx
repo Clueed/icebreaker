@@ -1,11 +1,13 @@
 "use client";
 
 import { useId, useRef, useState } from "react";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useIntersectionObserver } from "usehooks-ts";
 
 import { cn } from "@icebreaker/ui";
 import { ArrowDownIcon, Loader2Icon } from "@icebreaker/ui/icons";
 import { Label } from "@icebreaker/ui/label";
+import { Skeleton } from "@icebreaker/ui/skeleton";
 import { Switch } from "@icebreaker/ui/switch";
 
 import { useSelectedGuessId } from "~/app/_api-hooks/use-selected-guess";
@@ -54,51 +56,57 @@ export const GuessHistory = ({ orgId }: { orgId: string }) => {
 
   const onlyWithCallsId = useId();
 
+  const [animateRef] = useAutoAnimate();
+
   return (
     <div>
-      <div
-        className="flex h-96 flex-wrap rounded-md border-y-[1px] p-4"
-        ref={container}
-        style={{
-          scrollbarWidth: "thin",
-          scrollbarGutter: "stable",
-        }}
-      >
-        {isPending && (
-          <div className="flex h-full items-center justify-center">
-            <Loader2Icon className="animate-spin" />
-          </div>
-        )}
-        {isError && <div>Error! {error.message}</div>}
-        {isSuccess && (
-          <>
-            {guesses.map((guess) => (
-              <div key={guess.id} className="flex-grow basis-0">
-                <GuessDisplay key={guess.id} guess={guess} />
-              </div>
-            ))}
-
-            <div
-              className="flex h-20 w-full items-center justify-center"
-              ref={nextPageTriggerRef}
-            >
-              <ArrowDownIcon
-                className={cn(isFetchingNextPage && "animate-bounce")}
-              />
-              {!hasNextPage && "the end"}
+      <div ref={container}>
+        <div
+          className="flex h-52 flex-wrap justify-between gap-x-4 gap-y-6 overflow-y-auto rounded-md border-y-[1px] p-4"
+          ref={animateRef}
+          style={{
+            scrollbarWidth: "thin",
+            scrollbarGutter: "stable",
+          }}
+        >
+          {isPending && (
+            <div className="flex h-full items-center justify-center">
+              <Loader2Icon className="animate-spin" />
             </div>
-          </>
-        )}
-      </div>
-      <div>
-        <div className="flex items-center space-x-2">
-          <Switch
-            id={onlyWithCallsId}
-            checked={onlyWithCalls}
-            onCheckedChange={setOnlyWithCalls}
-          />
-          <Label htmlFor={onlyWithCallsId}>only with calls</Label>
+          )}
+          {isError && <div>Error! {error.message}</div>}
+          {isSuccess && (
+            <>
+              {guesses.map((guess) => (
+                <div key={guess.id} className="basis-0">
+                  <GuessDisplay
+                    key={guess.id}
+                    guess={guess}
+                    className="w-full"
+                  />
+                </div>
+              ))}
+
+              {isFetchingNextPage &&
+                Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton className="flex-grow basis-0"></Skeleton>
+                ))}
+
+              <div className="" ref={nextPageTriggerRef}>
+                {!hasNextPage && "the end"}
+              </div>
+            </>
+          )}
         </div>
+      </div>
+
+      <div className="mt-4 flex items-center space-x-2">
+        <Switch
+          id={onlyWithCallsId}
+          checked={onlyWithCalls}
+          onCheckedChange={setOnlyWithCalls}
+        />
+        <Label htmlFor={onlyWithCallsId}>only with calls</Label>
       </div>
     </div>
   );

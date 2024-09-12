@@ -25,10 +25,8 @@ const buttonVariants = cva(
         sm: "h-8 rounded-md px-3 text-xs",
         md: "h-9 px-4 py-2 [&>svg]:h-5 [&>svg]:w-5",
         lg: "h-10 rounded-md px-8 [&>svg]:h-6 [&>svg]:w-6",
-        icon: "size-9 [&>svg]:h-5 [&>svg]:w-5",
-        "icon-lg": "size-11 [&>svg]:h-6 [&>svg]:w-6",
-        "icon-full":
-          "flex aspect-square w-full [&>svg]:h-[75%] [&>svg]:w-[75%] [&>svg]:stroke-[1%]",
+        icon: "size-9 [&>svg]:h-5 [&>svg]:w-5 [&>svg]:stroke-[5%]",
+        "icon-lg": "size-11 [&>svg]:h-6 [&>svg]:w-6 [&>svg]:stroke-[5%]",
       },
     },
     defaultVariants: {

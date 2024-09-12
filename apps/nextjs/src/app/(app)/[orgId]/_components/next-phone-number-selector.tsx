@@ -159,9 +159,9 @@ const GuessDisplayWrapper = ({
         ref={ref}
         onClick={handleOnClick}
         className={cn(
-          "block rounded-md transition-all duration-500",
+          "block rounded-md px-8 transition-all duration-500",
           !selected && "hover:bg-muted/50",
-          selected && "h-16 bg-primary text-primary-foreground",
+          selected && "h-16 bg-primary text-xl text-primary-foreground",
         )}
       >
         <GuessDisplay guess={guess} />

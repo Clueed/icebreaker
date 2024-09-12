@@ -28,7 +28,7 @@ export function OrgList() {
     >
       {isSuccess &&
         orgs.map((org) => (
-          <Link href={`/org/${org.id}`} key={org.id}>
+          <Link href={`/${org.id}`} key={org.id}>
             <OrgCard org={org} />
           </Link>
         ))}

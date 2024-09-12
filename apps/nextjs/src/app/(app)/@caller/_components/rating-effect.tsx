@@ -10,7 +10,6 @@ export const RatingEffect = ({
 }) => {
   return (
     <div className={cn("relative", rating === null && "text-muted-foreground")}>
-      {" "}
       <div
         className={cn(
           "absolute inset-0 -z-50",
@@ -19,7 +18,7 @@ export const RatingEffect = ({
           rating === "person" && "bg-sky-500",
           rating === "jackpot" && "bg-cyan-600",
         )}
-      />{" "}
+      />
       {children}
     </div>
   );

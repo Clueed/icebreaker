@@ -9,30 +9,49 @@ import { RatingIcon } from "~/app/(app)/@caller/_components/rating-icon";
 
 export const GuessDisplay = ({
   guess,
+  className,
 }: {
   guess: RouterOutputs["guess"]["byId"];
+  className?: string;
 }) => {
   const highestRating = getHighestRated(guess.phoneCallRating);
 
   const hasCalls = guess.phoneCallCount > 0;
 
   return (
-    <div className="grid grid-cols-[repeat(3,auto)] items-center justify-start gap-x-4 px-8 py-2">
+    <div
+      className={cn("flex items-center justify-start gap-x-3 p-2", className)}
+    >
       <div
-        className={cn("w-[4ch] transition-opacity", !hasCalls && "opacity-0")}
+        className={cn(
+          "flex items-center justify-start gap-1 transition-opacity",
+          !hasCalls && "opacity-0",
+        )}
       >
-        {guess.phoneCallCount}x
+        <div
+          className={cn(
+            "text-[0.9em] font-medium leading-none",
+            guess.phoneCallCount <= 1 && "opacity-0",
+          )}
+        >
+          {guess.phoneCallCount}
+          <span className="text-[0.9em] font-medium leading-none opacity-50">
+            x
+          </span>
+        </div>
+
+        <div>
+          <RatingEffect rating={highestRating}>
+            <RatingIcon
+              rating={highestRating}
+              className={cn("size-[1.5cap]")}
+            />
+          </RatingEffect>
+        </div>
       </div>
-      <div
-        className={cn("text-xl transition-opacity", !hasCalls && "opacity-0")}
-      >
-        <RatingEffect rating={highestRating}>
-          <RatingIcon rating={highestRating} className={cn("size-[1.25cap]")} />
-        </RatingEffect>
-      </div>
-      <div className="flex h-full items-center justify-between gap-3">
+      <div className="flex h-full flex-grow items-center justify-between gap-3">
         {" "}
-        <div className="text-xl">
+        <div className="text-nowrap font-mono font-light">
           <span className={"opacity-50"}>{guess.phoneNumber.base} - </span>
           {guess.phoneNumber.extension}
         </div>
