@@ -1,5 +1,3 @@
-import { forwardRef } from "react";
-
 import type { RouterOutputs } from "@icebreaker/api";
 import { cn } from "@icebreaker/ui";
 import { getHighestRated } from "@icebreaker/validators/phone-call-rating";

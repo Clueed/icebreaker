@@ -1,8 +1,6 @@
 import "~/app/globals.css";
 
-import { AnimatedMain } from "~/app/_components/animated-main";
 import NavBar from "~/app/_components/nav";
-import { PersistGate } from "~/app/_components/perists-gate";
 
 export default function AppLayout(props: {
   children: React.ReactNode;

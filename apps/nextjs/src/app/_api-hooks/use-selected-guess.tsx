@@ -22,7 +22,7 @@ export const useSelectedGuessQuery = (
   return api.guess.byId.useQuery(
     selectedGuessId ? { id: selectedGuessId } : skipToken,
     {
-      placeholderData: (prev) => prev,
+      //   placeholderData: (prev) => prev,
     },
   );
 };

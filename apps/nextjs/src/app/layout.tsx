@@ -10,10 +10,7 @@ import "~/app/globals.css";
 
 import { Urbanist, Victor_Mono } from "next/font/google";
 
-import { auth } from "@icebreaker/auth";
-
 import { AnimatedMain } from "~/app/_components/animated-main";
-import NavBar from "~/app/_components/nav";
 import { PersistGate } from "~/app/_components/perists-gate";
 import SipProviderConfigured from "~/app/_components/sip-provider";
 import { CurrentSessionIdProvider } from "~/app/_components/use-current-session-id";

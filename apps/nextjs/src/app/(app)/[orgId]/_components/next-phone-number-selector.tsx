@@ -1,7 +1,7 @@
 "use client";
 
 import type { AppRouterOutputs } from "node_modules/@icebreaker/api/dist/root";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import type { Strategy } from "@icebreaker/validators/guessing-strategies";
 import { cn } from "@icebreaker/ui";
@@ -9,10 +9,7 @@ import { Button } from "@icebreaker/ui/button";
 import { Loader2Icon, PhoneCallIcon } from "@icebreaker/ui/icons";
 
 import { useCurrentStrategyQuery } from "~/app/_api-hooks/use-current-strategy";
-import {
-  useGuessNextQuery,
-  useGuessNextQueryStableGuessId,
-} from "~/app/_api-hooks/use-guess-next";
+import { useGuessNextQueryStableGuessId } from "~/app/_api-hooks/use-guess-next";
 import {
   useSelectedGuessQuery,
   useSetSelectedGuessId,
@@ -42,18 +39,20 @@ const NextPhoneNumberSelectorWrapper = ({ orgId }: { orgId: string }) => {
     <div>
       {isSuccess && (
         <>
-          {!selectedGuess && (
-            <div className="flex size-full items-center justify-center">
-              Create an initial guess to get started
-            </div>
-          )}
-          {selectedGuess && (
-            <NextPhoneNumberSelector
-              orgId={orgId}
-              selectedGuess={selectedGuess}
-              currentStrategy={currentStrategy}
-            />
-          )}
+          {
+            // TODO: fix
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            !selectedGuess && (
+              <div className="flex size-full items-center justify-center">
+                Create an initial guess to get started
+              </div>
+            )
+          }
+          <NextPhoneNumberSelector
+            orgId={orgId}
+            selectedGuess={selectedGuess}
+            currentStrategy={currentStrategy}
+          />
         </>
       )}
       {isLoading && (
@@ -93,7 +92,7 @@ const NextPhoneNumberSelector = (props: {
     if (nextGuessesLeft < 10 && !isFetching) {
       void fetchNextPage();
     }
-  }, [nextGuessesLeft, isFetching]);
+  }, [nextGuessesLeft, isFetching, fetchNextPage]);
 
   const nextGuessId = nextGuesses[indexOfSelectedGuess + 1]?.id;
 

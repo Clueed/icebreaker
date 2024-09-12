@@ -35,7 +35,7 @@ export const useGuessNextQueryStableGuessId = (
   });
 
   const inputGuessInData = useMemo(
-    () => Boolean(data?.find((g) => g.id === inputGuessId)),
+    () => Boolean(data.find((g) => g.id === inputGuessId)),
     [data, inputGuessId],
   );
 

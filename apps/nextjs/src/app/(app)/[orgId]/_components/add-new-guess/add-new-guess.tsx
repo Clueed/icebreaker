@@ -1,7 +1,6 @@
 import { useState } from "react";
 
 import { Button } from "@icebreaker/ui/button";
-import { DiamondPlusIcon } from "@icebreaker/ui/icons";
 import {
   Sheet,
   SheetContent,

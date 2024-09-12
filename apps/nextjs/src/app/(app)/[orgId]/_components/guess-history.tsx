@@ -4,8 +4,7 @@ import { useId, useRef, useState } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useIntersectionObserver } from "usehooks-ts";
 
-import { cn } from "@icebreaker/ui";
-import { ArrowDownIcon, Loader2Icon } from "@icebreaker/ui/icons";
+import { Loader2Icon } from "@icebreaker/ui/icons";
 import { Label } from "@icebreaker/ui/label";
 import { Skeleton } from "@icebreaker/ui/skeleton";
 import { Switch } from "@icebreaker/ui/switch";
@@ -88,7 +87,7 @@ export const GuessHistory = ({ orgId }: { orgId: string }) => {
               ))}
 
               {isFetchingNextPage &&
-                Array.from({ length: 3 }).map((_, i) => (
+                Array.from({ length: 3 }).map(() => (
                   <Skeleton className="flex-grow basis-0"></Skeleton>
                 ))}
 
