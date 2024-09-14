@@ -70,7 +70,7 @@ export const authConfig = {
     },
   },
   pages: {
-    signIn: "/api/auth/signin/google",
+    // signIn: "/api/auth/signin/google",
   },
 } satisfies NextAuthConfig;
 
