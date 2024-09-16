@@ -4,7 +4,7 @@ import { useId, useRef, useState } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useIntersectionObserver } from "usehooks-ts";
 
-import { Loader2Icon } from "@icebreaker/ui/icons";
+import { HistoryIcon, Loader2Icon } from "@icebreaker/ui/icons";
 import { Label } from "@icebreaker/ui/label";
 import { Skeleton } from "@icebreaker/ui/skeleton";
 import { Switch } from "@icebreaker/ui/switch";
@@ -59,6 +59,9 @@ export const GuessHistory = ({ orgId }: { orgId: string }) => {
 
   return (
     <div>
+      <h2 className={"mb-4 text-nowrap px-8 text-xs text-muted-foreground"}>
+        <HistoryIcon className="inline size-[1.65cap]" /> guess history
+      </h2>
       <div ref={container}>
         <div
           className="flex h-52 flex-wrap justify-between gap-x-4 gap-y-6 overflow-y-auto rounded-md border-y-[1px] p-4"
@@ -99,7 +102,7 @@ export const GuessHistory = ({ orgId }: { orgId: string }) => {
         </div>
       </div>
 
-      <div className="mt-4 flex items-center space-x-2">
+      <div className="mt-4 flex items-center justify-end space-x-2 px-8">
         <Switch
           id={onlyWithCallsId}
           checked={onlyWithCalls}

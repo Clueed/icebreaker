@@ -13,6 +13,8 @@ export const createQueryClient = () =>
         staleTime: 30 * 1000,
         throwOnError: true,
         gcTime: 1000 * 60 * 60 * 4, // >= maxAge of persister
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
       },
       dehydrate: {
         serializeData: SuperJSON.serialize,

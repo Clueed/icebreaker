@@ -57,6 +57,11 @@ export function Caller() {
     phoneNumber
   );
 
+  const rating = getRating({
+    rating: phoneCall?.rating ?? null,
+    answeredAt: phoneCall?.answeredAt !== null,
+  });
+
   return (
     <div className="space-y-6">
       <div className="text-center text-2xl font-medium">
@@ -77,7 +82,7 @@ export function Caller() {
         </div>
       </div>
       <CallRatingCluster
-        rating={getRating(phoneCall)}
+        rating={rating}
         disabled={!isActive}
         setRating={(rating) =>
           handleUpdatePhoneCall({ rating: ratingToDbValue(rating) })

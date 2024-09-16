@@ -1,3 +1,5 @@
+import { useAutoAnimate } from "@formkit/auto-animate/react";
+
 import type { PhoneCallRating } from "@icebreaker/validators/phone-call-rating";
 import { cn } from "@icebreaker/ui";
 
@@ -8,8 +10,12 @@ export const RatingEffect = ({
   rating: PhoneCallRating;
   children: React.ReactNode;
 }) => {
+  const [animateRef] = useAutoAnimate();
   return (
-    <div className={cn("relative", rating === null && "text-muted-foreground")}>
+    <div
+      className={cn("relative", rating === null && "text-muted-foreground")}
+      ref={animateRef}
+    >
       <div
         className={cn(
           "absolute inset-0 -z-50",

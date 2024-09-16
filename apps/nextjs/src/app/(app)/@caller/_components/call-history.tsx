@@ -4,7 +4,7 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useIntersectionObserver } from "usehooks-ts";
 
 import { cn } from "@icebreaker/ui";
-import { ArrowDownIcon, Loader2Icon } from "@icebreaker/ui/icons";
+import { ArrowDownIcon, HistoryIcon, Loader2Icon } from "@icebreaker/ui/icons";
 
 import { HistoryCall } from "~/app/(app)/@caller/_components/history-call-item";
 import { api } from "~/trpc/react";
@@ -39,6 +39,9 @@ export const CallHistory = () => {
 
   return (
     <div>
+      <h2 className={"mb-4 text-nowrap px-4 text-xs text-muted-foreground"}>
+        <HistoryIcon className="inline size-[1.65cap]" /> call history
+      </h2>
       <div
         ref={animateRef}
         className="h-96 space-y-2 overflow-y-auto rounded-md border-y-[1px] p-4"

@@ -8,13 +8,13 @@ export const dbPhoneCallRatingList = [
 
 export const getRating = (phoneCall?: {
   rating: (typeof dbPhoneCallRatingList)[number] | null;
-  answeredAt: string | null;
+  answeredAt: boolean;
 }) => {
   if (!phoneCall) {
     return null;
   }
 
-  if (phoneCall.answeredAt === null) {
+  if (!phoneCall.answeredAt) {
     return null;
   }
 

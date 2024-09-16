@@ -6,7 +6,7 @@ import { SipCluster } from "~/app/(app)/@caller/_components/sip-cluster/sip-clus
 
 const CallerPage = () => {
   return (
-    <div className="space-y-8">
+    <div className="space-y-16">
       <Card>
         <CardHeader>
           <SipCluster />

@@ -9,7 +9,7 @@ export default function AppLayout(props: {
   return (
     <div>
       <NavBar />
-      <div className="container flex gap-16">
+      <div className="container flex gap-16 pb-32">
         <div className="flex-grow">{props.children}</div>
         {props.caller}
       </div>

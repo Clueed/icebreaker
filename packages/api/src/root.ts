@@ -1,7 +1,7 @@
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 import { authRouter } from "./router/auth";
-import { guessRouter } from "./router/guess";
+import { guessRouter } from "./router/guess/guess";
 import { notesRouter } from "./router/notes";
 import { orgRouter } from "./router/org";
 import { phoneCallRouter } from "./router/phone-call";
