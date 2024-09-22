@@ -159,8 +159,8 @@ const GuessDisplayWrapper = ({
         onClick={handleOnClick}
         className={cn(
           "block rounded-md px-8 transition-all duration-500",
-          !selected && "hover:bg-muted/50",
-          selected && "h-16 bg-primary text-xl text-primary-foreground",
+          !selected && "hover:bg-secondary/50",
+          selected && "h-16 bg-secondary text-xl text-secondary-foreground",
         )}
       >
         <GuessDisplay guess={guess} />
@@ -171,7 +171,7 @@ const GuessDisplayWrapper = ({
           !selected && "opacity-0",
         )}
       >
-        <Button onClick={startCall} variant={"primary"} size={"icon-lg"}>
+        <Button onClick={startCall} variant={"secondary"} size={"icon-lg"}>
           <PhoneCallIcon />
         </Button>
       </div>

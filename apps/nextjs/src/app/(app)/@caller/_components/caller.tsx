@@ -5,7 +5,6 @@ import { useCallback } from "react";
 import { skipToken } from "@tanstack/react-query";
 
 import { cn } from "@icebreaker/ui";
-import { Button } from "@icebreaker/ui/button";
 import { PhoneNumberDisplay } from "@icebreaker/ui/custom/phone-number-display";
 import {
   getRating,
@@ -26,7 +25,7 @@ export function Caller() {
   const { data: currentSessionId } = useCurrentSessionIdQuery();
 
   const sessionCall = useCurrentSessionCall();
-  const { timer, isActive, phoneNumber, hangup } = sessionCall;
+  const { timer, isActive, phoneNumber } = sessionCall;
 
   const { data: phoneCall } = usePhoneCallBySessionIdQuery(
     currentSessionId ? { sessionId: currentSessionId } : skipToken,
@@ -88,15 +87,6 @@ export function Caller() {
           handleUpdatePhoneCall({ rating: ratingToDbValue(rating) })
         }
       />
-      <Button
-        className="w-full"
-        size={"lg"}
-        variant={"destructive"}
-        onClick={hangup}
-        disabled={!isActive}
-      >
-        Hangup
-      </Button>
     </div>
   );
 }
