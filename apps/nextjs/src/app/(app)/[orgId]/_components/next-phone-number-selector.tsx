@@ -23,11 +23,13 @@ const NextPhoneNumberSelectorWrapper = ({ orgId }: { orgId: string }) => {
     data: selectedGuess,
     isLoading: isLoadingSelectedGuess,
     isSuccess: isSuccessSelectedGuess,
+    error: errorSelectedGuess,
   } = useSelectedGuessQuery({ id: orgId });
   const {
     data: currentStrategy,
     isLoading: isLoadingCurrentStrategy,
     isSuccess: isSuccessCurrentStrategy,
+    error: errorCurrentStrategy,
   } = useCurrentStrategyQuery({
     id: orgId,
   });
@@ -58,8 +60,11 @@ const NextPhoneNumberSelectorWrapper = ({ orgId }: { orgId: string }) => {
       {isLoading && (
         <div className="flex size-full items-center justify-center">
           <Loader2Icon className="animate-spin" />
+          conaitenr
         </div>
       )}
+      {errorSelectedGuess && <div>Error: {errorSelectedGuess.message}</div>}
+      {errorCurrentStrategy && <div>Error: {errorCurrentStrategy.message}</div>}
     </div>
   );
 };
@@ -98,11 +103,9 @@ const NextPhoneNumberSelector = (props: {
 
   return (
     <div>
-      <div
-        className="h-96 space-y-4 overflow-y-hidden"
-        style={{ overflowAnchor: "auto" }}
-      >
-        {isLoading && <div>Loading...</div>}
+      <div className="h-96 min-w-96 space-y-4 overflow-y-scroll">
+        <div className="h-1/2" /> {/* spacer */}
+        {isLoading && <div>Loading inner...</div>}
         {isSuccess &&
           [...nextGuesses].reverse().map((guess, index) => (
             <GuessDisplayWrapper
