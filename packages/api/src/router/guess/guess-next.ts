@@ -15,7 +15,7 @@ export const guessNextProcedure = protectedProcedure
       guessId: z.string(),
       strategy: strategySchema,
       cursor: z.string().uuid().nullish(),
-      limit: z.number().min(1).max(50).default(5),
+      limit: z.number().min(1).max(50).default(10),
     }),
   )
   .query(async ({ ctx, input }) => {
