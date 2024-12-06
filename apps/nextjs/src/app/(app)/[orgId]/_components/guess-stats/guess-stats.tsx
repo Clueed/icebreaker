@@ -11,9 +11,14 @@ export const GuessStats = ({ orgId }: { orgId: string }) => {
     data: stats,
     isSuccess,
     isLoading,
-  } = api.guess.stats.useQuery({
-    orgId,
-  });
+  } = api.guess.stats.useQuery(
+    {
+      orgId,
+    },
+    {
+      refetchInterval: 30000,
+    },
+  );
 
   return (
     <div>

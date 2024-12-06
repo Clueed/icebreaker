@@ -32,6 +32,7 @@ export const GuessHistory = ({ orgId }: { orgId: string }) => {
     },
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
+      refetchInterval: 30000,
     },
   );
 
