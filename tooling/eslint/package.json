@@ -18,7 +18,7 @@
     "@eslint/compat": "^1.1.1",
     "@icebreaker/prettier-config": "workspace:*",
     "@icebreaker/tsconfig": "workspace:*",
-    "@next/eslint-plugin-next": "^14.2.6",
+    "@next/eslint-plugin-next": "^15.0.4",
     "eslint": "catalog:",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jsx-a11y": "^6.9.0",
