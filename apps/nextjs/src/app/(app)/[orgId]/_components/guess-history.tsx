@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useId, useState } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useIntersectionObserver } from "usehooks-ts";
 
@@ -42,11 +42,12 @@ export const GuessHistory = ({ orgId }: { orgId: string }) => {
         .filter((guess) => selectedGuessId && guess.id !== selectedGuessId)
     : [];
 
-  const container = useRef(null);
+  const [containerElement, setContainerElement] =
+    useState<HTMLDivElement | null>(null);
 
   const { ref: nextPageTriggerRef } = useIntersectionObserver({
     threshold: 0.5,
-    root: container.current,
+    root: containerElement,
     onChange: (isIntersecting) => {
       if (isIntersecting && !isFetchingNextPage) {
         void fetchNextPage();
@@ -63,7 +64,7 @@ export const GuessHistory = ({ orgId }: { orgId: string }) => {
       <h2 className={"mb-4 text-nowrap px-8 text-xs text-muted-foreground"}>
         <HistoryIcon className="inline size-[1.65cap]" /> guess history
       </h2>
-      <div ref={container}>
+      <div ref={(el) => setContainerElement(el)}>
         <div
           className="flex h-52 flex-wrap justify-between gap-x-4 gap-y-6 overflow-y-auto rounded-md border-y-[1px] p-4"
           ref={animateRef}
