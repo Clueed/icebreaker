@@ -4,7 +4,6 @@ import * as path from "node:path";
 import { includeIgnoreFile } from "@eslint/compat";
 import eslint from "@eslint/js";
 import importPlugin from "eslint-plugin-import";
-import reactCompiler from "eslint-plugin-react-compiler";
 import turboPlugin from "eslint-plugin-turbo";
 import unusedImports from "eslint-plugin-unused-imports";
 import tseslint from "typescript-eslint";
@@ -46,7 +45,6 @@ export default tseslint.config(
       import: importPlugin,
       "unused-imports": unusedImports,
       turbo: turboPlugin,
-      "react-compiler": reactCompiler,
     },
     extends: [
       eslint.configs.recommended,
@@ -77,7 +75,6 @@ export default tseslint.config(
       "@typescript-eslint/no-non-null-assertion": "error",
       "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
       "unused-imports/no-unused-imports": "error",
-      "react-compiler/react-compiler": "warn",
     },
   },
   {
