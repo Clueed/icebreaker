@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 
 import type { RouterOutputs } from "@icebreaker/api";
 import type { PhoneCallRating } from "@icebreaker/validators/phone-call-rating";

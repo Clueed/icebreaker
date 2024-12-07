@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 
 import { Button } from "@icebreaker/ui/button";
 import { Skeleton } from "@icebreaker/ui/skeleton";

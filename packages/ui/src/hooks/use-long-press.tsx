@@ -13,8 +13,8 @@ export const useLongPress = (
   onTouchEnd: TouchEventHandler<HTMLButtonElement>;
 } => {
   const [longPressTriggered, setLongPressTriggered] = useState(false);
-  const timeout = useRef<NodeJS.Timeout>();
-  const target = useRef<EventTarget>();
+  const timeout = useRef<NodeJS.Timeout>(null);
+  const target = useRef<EventTarget>(null);
 
   const start = useCallback(
     (event: MouseEvent | TouchEvent) => {

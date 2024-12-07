@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 
 import type { RouterOutputs } from "@icebreaker/api";
 
@@ -22,7 +22,11 @@ export const GuessStatsBaseGroup = (props: {
 
       <AnimatePresence>
         {extensionLengthGroups.map((extensionLengthGroup) => (
-          <motion.div layout="preserve-aspect" className="flex gap-4">
+          <motion.div
+            layout="preserve-aspect"
+            className="flex gap-4"
+            key={extensionLengthGroup.extensionLength}
+          >
             <h3 className="flex flex-col items-center gap-1 py-2 text-xs">
               <div>{extensionLengthGroup.extensionLength}</div>
               <div

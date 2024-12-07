@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { use } from "react";
 
 import { AddNewGuess } from "~/app/(app)/[orgId]/_components/add-new-guess/add-new-guess";
 import { GuessHistory } from "~/app/(app)/[orgId]/_components/guess-history";
@@ -8,7 +8,10 @@ import { GuessStats } from "~/app/(app)/[orgId]/_components/guess-stats/guess-st
 import NextPhoneNumberSelector from "~/app/(app)/[orgId]/_components/next-phone-number-selector";
 import GuesserStrategySelector from "~/app/(app)/[orgId]/_components/strategy-selector.tsx/strategy-selector";
 
-export default function GuesserPage({ params }: { params: { orgId: string } }) {
+export default function GuesserPage(props: {
+  params: Promise<{ orgId: string }>;
+}) {
+  const params = use(props.params);
   return (
     <div className="space-y-16">
       <div className="mx-auto flex justify-center gap-16">

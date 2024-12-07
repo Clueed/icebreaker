@@ -1,4 +1,4 @@
-import type { Variants } from "framer-motion";
+import type { Variants } from "motion/react";
 import type { ReactNode } from "react";
 
 import { cn } from "@icebreaker/ui";

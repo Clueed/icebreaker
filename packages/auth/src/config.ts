@@ -3,7 +3,6 @@ import type {
   NextAuthConfig,
   Session as NextAuthSession,
 } from "next-auth";
-import { skipCSRFCheck } from "@auth/core";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import google from "next-auth/providers/google";
 
@@ -26,17 +25,8 @@ const adapter = DrizzleAdapter(db, {
   sessionsTable: Session,
 });
 
-export const isSecureContext = env.NODE_ENV !== "development";
-
 export const authConfig = {
   adapter,
-  // In development, we need to skip checks to allow Expo to work
-  ...(!isSecureContext
-    ? {
-        skipCSRFCheck: skipCSRFCheck,
-        trustHost: true,
-      }
-    : {}),
   secret: env.AUTH_SECRET,
   providers: [
     google({

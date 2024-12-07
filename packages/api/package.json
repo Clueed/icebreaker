@@ -23,7 +23,7 @@
     "@icebreaker/db": "workspace:*",
     "@icebreaker/validators": "workspace:*",
     "@trpc/server": "catalog:",
-    "superjson": "2.2.1",
+    "superjson": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
