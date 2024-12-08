@@ -7,7 +7,7 @@ import type { RouterOutputs } from "@icebreaker/api";
 import { cn } from "@icebreaker/ui";
 
 import { usePhoneCallUpdateMutation } from "~/app/_api-hooks/use-phone-call";
-import { CallRatingCluster } from "~/app/(app)/@caller/_components/current-call-rating-cluster";
+import { CallRatingCluster } from "~/app/(app)/@caller/_components/rating-cluster";
 import { RatingEffect } from "~/app/(app)/@caller/_components/rating-effect";
 import { RatingIcon } from "~/app/(app)/@caller/_components/rating-icon";
 
@@ -85,18 +85,7 @@ export const HistoryCall = ({
           </div>
 
           <div>
-            <CallRatingCluster
-              rating={call.rating}
-              disabled={false}
-              setRating={(newRating) =>
-                updatePhoneCall({
-                  sessionId: call.sessionId,
-                  data: {
-                    rating: newRating,
-                  },
-                })
-              }
-            />
+            <CallRatingCluster rating={call.rating} disabled={false} />
           </div>
         </>
       )}

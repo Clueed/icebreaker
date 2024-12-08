@@ -13,7 +13,7 @@ import {
 } from "~/app/_api-hooks/use-phone-call";
 import { useCurrentSessionCall } from "~/app/_components/call-handler/use-current-session-call";
 import { useCurrentSessionIdQuery } from "~/app/_components/use-current-session-id";
-import { CallRatingCluster } from "~/app/(app)/@caller/_components/current-call-rating-cluster";
+import { CallRatingCluster } from "~/app/(app)/@caller/_components/rating-cluster";
 import { useSyncCall } from "~/app/(app)/@caller/_components/sync-call";
 import { useCallTimer } from "~/app/(app)/@caller/_components/use-call-timer";
 
@@ -74,7 +74,6 @@ export function Caller() {
       <CallRatingCluster
         rating={phoneCall?.rating ?? null}
         disabled={!isActive}
-        setRating={(newRating) => handleUpdatePhoneCall({ rating: newRating })}
       />
     </div>
   );

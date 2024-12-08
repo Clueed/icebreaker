@@ -6,8 +6,7 @@ import { DateTime } from "luxon";
 import type { RouterOutputs } from "@icebreaker/api";
 import { cn } from "@icebreaker/ui";
 
-import { usePhoneCallUpdateMutation } from "~/app/_api-hooks/use-phone-call";
-import { CallRatingCluster } from "~/app/(app)/@caller/_components/current-call-rating-cluster";
+import { CallRatingCluster } from "~/app/(app)/@caller/_components/rating-cluster";
 import { RatingEffect } from "~/app/(app)/@caller/_components/rating-effect";
 import { RatingIcon } from "~/app/(app)/@caller/_components/rating-icon";
 
@@ -18,7 +17,6 @@ export const HistoryCallItem = ({
   call: RouterOutputs["phoneCall"]["history"]["data"][number];
   initialExpanded: boolean;
 }) => {
-  const { mutate: updatePhoneCall } = usePhoneCallUpdateMutation();
   const lastModified = DateTime.fromSQL(call.createdAt, {
     zone: "utc",
   });
@@ -85,18 +83,7 @@ export const HistoryCallItem = ({
 
           {call.rating !== null && (
             <div>
-              <CallRatingCluster
-                rating={call.rating}
-                disabled={false}
-                setRating={(newRating) =>
-                  updatePhoneCall({
-                    sessionId: call.sessionId,
-                    data: {
-                      rating: newRating,
-                    },
-                  })
-                }
-              />
+              <CallRatingCluster rating={call.rating} disabled={false} />
             </div>
           )}
         </>
