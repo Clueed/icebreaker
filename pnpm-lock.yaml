@@ -148,8 +148,8 @@ importers:
         specifier: catalog:react18
         version: 19.0.0(react@19.0.0)
       react-sipjs:
-        specifier: ^0.0.6
-        version: 0.0.6(react@19.0.0)
+        specifier: ^0.0.5
+        version: 0.0.5(react@19.0.0)
       sip.js:
         specifier: ^0.21.2
         version: 0.21.2
@@ -5010,8 +5010,8 @@ packages:
       '@types/react':
         optional: true
 
-  react-sipjs@0.0.6:
-    resolution: {integrity: sha512-vO4+PzpBsJlmXP97ZcY6v4NrNp0aXp/jTr2s6lnPDS/e8MbIRnEi26AVAIo+EnhuFtkv+T2WjZMXH9GattNnPg==}
+  react-sipjs@0.0.5:
+    resolution: {integrity: sha512-AOrZ9TxHHFWqyQgg1EF9JcIQhg0mL3RBzeZHjCx66L1zzdVtivpib0WPYLHqLqubQAsQF/ff061+4gsZYbY5qA==}
     peerDependencies:
       react: ^18.2.0
 
@@ -10791,7 +10791,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.1
 
-  react-sipjs@0.0.6(react@19.0.0):
+  react-sipjs@0.0.5(react@19.0.0):
     dependencies:
       react: 19.0.0
       sip.js: 0.21.2

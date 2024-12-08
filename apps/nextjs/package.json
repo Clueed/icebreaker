@@ -32,7 +32,7 @@
     "next": "catalog:",
     "react": "catalog:react18",
     "react-dom": "catalog:react18",
-    "react-sipjs": "^0.0.6",
+    "react-sipjs": "^0.0.5",
     "sip.js": "^0.21.2",
     "superjson": "catalog:",
     "usehooks-ts": "^3.1.0",
