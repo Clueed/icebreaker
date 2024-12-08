@@ -1,13 +1,13 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 
-import type { PhoneCallRating } from "@icebreaker/validators/phone-call-rating";
+import type { PhoneCallRatingNullable } from "@icebreaker/validators/phone-call-rating";
 import { cn } from "@icebreaker/ui";
 
 export const RatingEffect = ({
   rating,
   children,
 }: {
-  rating: PhoneCallRating;
+  rating: PhoneCallRatingNullable;
   children: React.ReactNode;
 }) => {
   const [animateRef] = useAutoAnimate();

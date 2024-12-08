@@ -5,10 +5,6 @@ import { DateTime } from "luxon";
 
 import type { RouterOutputs } from "@icebreaker/api";
 import { cn } from "@icebreaker/ui";
-import {
-  getRating,
-  ratingToDbValue,
-} from "@icebreaker/validators/phone-call-rating";
 
 import { usePhoneCallUpdateMutation } from "~/app/_api-hooks/use-phone-call";
 import { CallRatingCluster } from "~/app/(app)/@caller/_components/current-call-rating-cluster";
@@ -38,11 +34,6 @@ export const HistoryCall = ({
 
   const [expanded, setExpanded] = useState(initialExpanded);
 
-  const rating = getRating({
-    rating: call.rating,
-    answeredAt: call.answeredAt !== null,
-  });
-
   const [animateRef] = useAutoAnimate();
 
   return (
@@ -62,8 +53,11 @@ export const HistoryCall = ({
       >
         <div className="text-xl">
           <div>
-            <RatingEffect rating={rating}>
-              <RatingIcon rating={rating} className={cn("size-[1.25cap]")} />
+            <RatingEffect rating={call.rating}>
+              <RatingIcon
+                rating={call.rating}
+                className={cn("size-[1.25cap]")}
+              />
             </RatingEffect>
           </div>
         </div>
@@ -92,13 +86,13 @@ export const HistoryCall = ({
 
           <div>
             <CallRatingCluster
-              rating={rating}
+              rating={call.rating}
               disabled={false}
               setRating={(newRating) =>
                 updatePhoneCall({
                   sessionId: call.sessionId,
                   data: {
-                    rating: ratingToDbValue(newRating),
+                    rating: newRating,
                   },
                 })
               }

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
 import type { RouterOutputs } from "@icebreaker/api";
-import type { PhoneCallRating } from "@icebreaker/validators/phone-call-rating";
+import type { PhoneCallRatingNullable } from "@icebreaker/validators/phone-call-rating";
 import { cn } from "@icebreaker/ui";
 import { Button } from "@icebreaker/ui/button";
 import { ChevronDownIcon } from "@icebreaker/ui/icons";
@@ -90,7 +90,7 @@ const GuessStatsPartialExtensionGroupHeader = (props: {
   extensionLength: number;
   partialExtension: string;
   max: number;
-  allRatings: PhoneCallRating[];
+  allRatings: PhoneCallRatingNullable[];
   guessCount: number;
 }) => {
   const { allRatings, guessCount, max, partialExtension, extensionLength } =

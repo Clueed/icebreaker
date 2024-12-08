@@ -1,5 +1,6 @@
 import { relations, sql } from "drizzle-orm";
 import {
+  check,
   index,
   jsonb,
   pgEnum,
@@ -16,7 +17,7 @@ import { z } from "zod";
 
 import type { Strategy } from "@icebreaker/validators/guessing-strategies";
 import { strategySchema } from "@icebreaker/validators/guessing-strategies";
-import { dbPhoneCallRatingList } from "@icebreaker/validators/phone-call-rating";
+import { phoneCallRatingList } from "@icebreaker/validators/phone-call-rating";
 
 import { encryptedText } from "./helpers/encrypted-text";
 
@@ -100,7 +101,7 @@ export const CreateGuessSchema = createInsertSchema(Guess, {
 
 // PhoneCall
 
-export const phoneCallRatingEnum = pgEnum("rating_enum", dbPhoneCallRatingList);
+export const phoneCallRatingEnum = pgEnum("rating_enum", phoneCallRatingList);
 
 export const PhoneCall = pgTable(
   "phone_call",
@@ -121,11 +122,14 @@ export const PhoneCall = pgTable(
     }),
     ...timeStampColumns,
   },
-  (table) => ({
-    sessionIdIndex: uniqueIndex("session_id_index").on(table.sessionId),
-    guessIdIndex: index("guess_id_index").on(table.guessId),
-    ratingIndex: index("rating_index").on(table.rating),
-  }),
+  (table) => [
+    index("guess_id_index").on(table.guessId),
+    index("rating_index").on(table.rating),
+    check(
+      "answered_constraint",
+      sql`(${table.answeredAt} IS NULL AND ${table.rating} IS NULL) OR (${table.answeredAt} IS NOT NULL AND ${table.rating} IS NOT NULL)`,
+    ),
+  ],
 );
 
 export const phoneCallRelation = relations(PhoneCall, ({ one }) => ({

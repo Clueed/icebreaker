@@ -6,10 +6,6 @@ import { skipToken } from "@tanstack/react-query";
 
 import { cn } from "@icebreaker/ui";
 import { PhoneNumberDisplay } from "@icebreaker/ui/custom/phone-number-display";
-import {
-  getRating,
-  ratingToDbValue,
-} from "@icebreaker/validators/phone-call-rating";
 
 import {
   usePhoneCallBySessionIdQuery,
@@ -56,11 +52,6 @@ export function Caller() {
     phoneNumber
   );
 
-  const rating = getRating({
-    rating: phoneCall?.rating ?? null,
-    answeredAt: phoneCall?.answeredAt !== null,
-  });
-
   return (
     <div className="space-y-6">
       <div className="text-center text-2xl font-medium">
@@ -81,11 +72,9 @@ export function Caller() {
         </div>
       </div>
       <CallRatingCluster
-        rating={rating}
+        rating={phoneCall?.rating ?? null}
         disabled={!isActive}
-        setRating={(rating) =>
-          handleUpdatePhoneCall({ rating: ratingToDbValue(rating) })
-        }
+        setRating={(newRating) => handleUpdatePhoneCall({ rating: newRating })}
       />
     </div>
   );

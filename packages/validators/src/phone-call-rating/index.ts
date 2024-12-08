@@ -1,45 +1,23 @@
 import { z } from "zod";
 
-export const dbPhoneCallRatingList = [
-  "voicemail",
-  "person",
-  "jackpot",
-] as const;
-
-export const getRating = (phoneCall?: {
-  rating: (typeof dbPhoneCallRatingList)[number] | null;
-  answeredAt: boolean;
-}) => {
-  if (!phoneCall) {
-    return null;
-  }
-
-  if (!phoneCall.answeredAt) {
-    return null;
-  }
-
-  switch (phoneCall.rating) {
-    case null:
-      return "answered";
-    default:
-      return phoneCall.rating;
-  }
-};
-
-export type PhoneCallRating = ReturnType<typeof getRating>;
-
-export const phoneCallRatingList2 = [
+export const phoneCallRatingList = [
   "answered",
   "voicemail",
   "person",
   "jackpot",
 ] as const;
 
-export const phoneCallRatingSchema = z.enum(phoneCallRatingList2);
+export const phoneCallRatingSchema = z.enum(phoneCallRatingList);
+export type PhoneCallRating = z.infer<typeof phoneCallRatingSchema>;
+
+export const phoneCallRatingSchemaNullable = phoneCallRatingSchema.nullable();
+export type PhoneCallRatingNullable = z.infer<
+  typeof phoneCallRatingSchemaNullable
+>;
 
 export const getHighestRated = (
-  ratings: PhoneCallRating[],
-): PhoneCallRating => {
+  ratings: PhoneCallRatingNullable[],
+): PhoneCallRatingNullable => {
   return ratings.reduce((highest, rating) => {
     if (rating === null) {
       return highest;
@@ -49,19 +27,9 @@ export const getHighestRated = (
       return rating;
     }
 
-    return phoneCallRatingList2.indexOf(rating) >
-      phoneCallRatingList2.indexOf(highest)
+    return phoneCallRatingList.indexOf(rating) >
+      phoneCallRatingList.indexOf(highest)
       ? rating
       : highest;
   }, null);
-};
-
-export const ratingToDbValue = (
-  rating: PhoneCallRating,
-): (typeof dbPhoneCallRatingList)[number] | null => {
-  if (rating === "answered") {
-    return null;
-  }
-
-  return rating;
 };

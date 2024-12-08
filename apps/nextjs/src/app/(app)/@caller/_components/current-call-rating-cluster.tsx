@@ -1,22 +1,26 @@
-import type { PhoneCallRating } from "@icebreaker/validators/phone-call-rating";
+import type {
+  PhoneCallRating,
+  PhoneCallRatingNullable,
+} from "@icebreaker/validators/phone-call-rating";
 import { cn } from "@icebreaker/ui";
 import { ToggleGroup, ToggleGroupItem } from "@icebreaker/ui/toggle-group";
 import {
-  phoneCallRatingList2,
+  phoneCallRatingList,
   phoneCallRatingSchema,
 } from "@icebreaker/validators/phone-call-rating";
 
 import { RatingIcon } from "~/app/(app)/@caller/_components/rating-icon";
 
 export const CallRatingCluster = (props: {
-  rating: PhoneCallRating;
-  setRating: (newRating: NonNullable<PhoneCallRating>) => void;
+  rating: PhoneCallRatingNullable;
+  setRating: (newRating: PhoneCallRating) => void;
   disabled: boolean;
 }) => {
   const handleOnValueChange = (value: string) => {
-    const newValue = value === "null" ? null : value;
-    const parsedRating = phoneCallRatingSchema.parse(newValue);
-
+    if (value === "") {
+      return;
+    }
+    const parsedRating = phoneCallRatingSchema.parse(value);
     props.setRating(parsedRating);
   };
 
@@ -33,7 +37,7 @@ export const CallRatingCluster = (props: {
         className="w-full"
         size={"lg"}
       >
-        {phoneCallRatingList2.map((rating) => (
+        {phoneCallRatingList.map((rating) => (
           <ToggleGroupItem
             value={rating}
             key={rating}
