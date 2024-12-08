@@ -6,7 +6,7 @@ import { useIntersectionObserver } from "usehooks-ts";
 import { cn } from "@icebreaker/ui";
 import { ArrowDownIcon, HistoryIcon, Loader2Icon } from "@icebreaker/ui/icons";
 
-import { HistoryCall } from "~/app/(app)/@caller/_components/history-call-item";
+import { HistoryCallItem } from "~/app/(app)/@caller/_components/call-history/call-history-item";
 import { api } from "~/trpc/react";
 
 export const CallHistory = () => {
@@ -58,7 +58,7 @@ export const CallHistory = () => {
         {isError && <div>Error! {error.message}</div>}
         {isSuccess &&
           calls.map((call, index) => (
-            <HistoryCall
+            <HistoryCallItem
               initialExpanded={index === 0}
               key={call.id}
               call={call}

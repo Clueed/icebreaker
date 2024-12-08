@@ -8,7 +8,7 @@ import { Card, CardContent } from "@icebreaker/ui/card";
 import { useCurrentSessionCall } from "~/app/_components/call-handler/use-current-session-call";
 import { AutoEndCall } from "~/app/(app)/@caller/_components/auto-end-call/auto-end-call";
 import { useAutoEndCall } from "~/app/(app)/@caller/_components/auto-end-call/auto-end-call-b";
-import { CallHistory } from "~/app/(app)/@caller/_components/call-history";
+import { CallHistory } from "~/app/(app)/@caller/_components/call-history/call-history";
 import { Caller } from "~/app/(app)/@caller/_components/caller";
 import { EndCallButton } from "~/app/(app)/@caller/_components/end-call-button";
 import { useCallTimer } from "~/app/(app)/@caller/_components/use-call-timer";
