@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { CONNECT_STATUS, useSIPProvider } from "react-sipjs";
 
-import { Badge } from "@icebreaker/ui/badge";
+import { Button } from "@icebreaker/ui/button";
+import { DotIcon, WifiIcon, WifiOffIcon } from "@icebreaker/ui/icons";
 import {
   Popover,
   PopoverContent,
@@ -72,18 +73,27 @@ export const SipCluster = () => {
   return (
     <div>
       <Popover>
-        <PopoverTrigger className="w-full">
-          <Badge
-            variant={connected ? "secondary" : "destructive"}
-            className="block w-full text-center"
+        <PopoverTrigger className="ml-auto" asChild>
+          <Button
+            variant={connected ? "ghost" : "destructive"}
+            className="inline-flex items-center gap-x-2 [&>svg]:size-[1.65cap]"
           >
             SIP{" "}
-            {connected
-              ? "connected"
-              : disconnected
-                ? "disconnected"
-                : "not connected"}
-          </Badge>
+            <span className="sr-only">
+              {connected
+                ? "connected"
+                : disconnected
+                  ? "disconnected"
+                  : "not connected"}
+            </span>
+            {connected ? (
+              <WifiIcon />
+            ) : disconnected ? (
+              <WifiOffIcon />
+            ) : (
+              <DotIcon />
+            )}
+          </Button>
         </PopoverTrigger>
         <PopoverContent>
           <RegisterSipForm />

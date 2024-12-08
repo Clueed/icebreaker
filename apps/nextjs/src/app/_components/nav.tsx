@@ -4,6 +4,7 @@ import Link from "next/link";
 import { LogoIcon } from "@icebreaker/ui/icons";
 
 import { AuthShowcase } from "~/app/_components/auth-showcase";
+import { SipCluster } from "~/app/(app)/@caller/_components/sip-cluster/sip-cluster";
 
 function NavBar() {
   return (
@@ -14,8 +15,13 @@ function NavBar() {
         </div>
         <div>ICEBREAKER</div>
       </Link>
-      <div className="flex-shrink-0">
-        <AuthShowcase />
+      <div className="flex items-center gap-4">
+        <div>
+          <SipCluster />
+        </div>
+        <div className="flex-shrink-0">
+          <AuthShowcase />
+        </div>
       </div>
     </nav>
   );

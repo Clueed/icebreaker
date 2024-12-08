@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { DateTime, Duration } from "luxon";
 
-import { Card, CardContent, CardHeader } from "@icebreaker/ui/card";
+import { Card, CardContent } from "@icebreaker/ui/card";
 
 import { useCurrentSessionCall } from "~/app/_components/call-handler/use-current-session-call";
 import { AutoEndCall } from "~/app/(app)/@caller/_components/auto-end-call/auto-end-call";
@@ -11,7 +11,6 @@ import { useAutoEndCall } from "~/app/(app)/@caller/_components/auto-end-call/au
 import { CallHistory } from "~/app/(app)/@caller/_components/call-history";
 import { Caller } from "~/app/(app)/@caller/_components/caller";
 import { EndCallButton } from "~/app/(app)/@caller/_components/end-call-button";
-import { SipCluster } from "~/app/(app)/@caller/_components/sip-cluster/sip-cluster";
 import { useCallTimer } from "~/app/(app)/@caller/_components/use-call-timer";
 
 const useRecordTimeSpentOnMouse = (props: {
@@ -72,9 +71,6 @@ const CallerPage = () => {
     <div className="space-y-16">
       <div className="space-y-4">
         <Card className="overflow-hidden" {...register}>
-          <CardHeader>
-            <SipCluster />
-          </CardHeader>
           <CardContent>
             <Caller />
             <EndCallButton progressValue={progressValue} />
