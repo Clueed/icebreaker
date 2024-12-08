@@ -18,7 +18,6 @@ export const HistoryCall = ({
   call: RouterOutputs["phoneCall"]["history"]["data"][number];
   initialExpanded: boolean;
 }) => {
-  const { mutate: updatePhoneCall } = usePhoneCallUpdateMutation();
   const lastModified = DateTime.fromSQL(call.createdAt, {
     zone: "utc",
   });
