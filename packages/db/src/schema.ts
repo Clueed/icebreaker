@@ -1,7 +1,6 @@
 import { relations, sql } from "drizzle-orm";
 import {
   index,
-  integer,
   jsonb,
   pgEnum,
   pgTable,
@@ -168,41 +167,39 @@ export const CreateSipCredentialsSchema = createInsertSchema(SipCredentials, {
 
 // User
 
-export const User = pgTable("user", {
-  id: uuid("id").notNull().primaryKey().defaultRandom(),
-  name: varchar("name", { length: 255 }),
-  email: varchar("email", { length: 255 }).notNull(),
-  emailVerified: timestamp("emailVerified", {
-    mode: "date",
-    withTimezone: true,
-  }),
-  image: varchar("image", { length: 255 }),
-});
+export const User = pgTable("user", (t) => ({
+  id: t.uuid().notNull().primaryKey().defaultRandom(),
+  name: t.varchar({ length: 255 }),
+  email: t.varchar({ length: 255 }).notNull(),
+  emailVerified: t.timestamp({ mode: "date", withTimezone: true }),
+  image: t.varchar({ length: 255 }),
+}));
 
-export const UserRelations = relations(User, ({ many, one }) => ({
+export const UserRelations = relations(User, ({ many }) => ({
   accounts: many(Account),
-  SipCredentials: one(SipCredentials),
 }));
 
 export const Account = pgTable(
   "account",
-  {
-    userId: uuid("userId")
+  (t) => ({
+    userId: t
+      .uuid()
       .notNull()
       .references(() => User.id, { onDelete: "cascade" }),
-    type: varchar("type", { length: 255 })
+    type: t
+      .varchar({ length: 255 })
       .$type<"email" | "oauth" | "oidc" | "webauthn">()
       .notNull(),
-    provider: varchar("provider", { length: 255 }).notNull(),
-    providerAccountId: varchar("providerAccountId", { length: 255 }).notNull(),
-    refresh_token: varchar("refresh_token", { length: 255 }),
-    access_token: text("access_token"),
-    expires_at: integer("expires_at"),
-    token_type: varchar("token_type", { length: 255 }),
-    scope: varchar("scope", { length: 255 }),
-    id_token: text("id_token"),
-    session_state: varchar("session_state", { length: 255 }),
-  },
+    provider: t.varchar({ length: 255 }).notNull(),
+    providerAccountId: t.varchar({ length: 255 }).notNull(),
+    refresh_token: t.varchar({ length: 255 }),
+    access_token: t.text(),
+    expires_at: t.integer(),
+    token_type: t.varchar({ length: 255 }),
+    scope: t.varchar({ length: 255 }),
+    id_token: t.text(),
+    session_state: t.varchar({ length: 255 }),
+  }),
   (account) => ({
     compoundKey: primaryKey({
       columns: [account.provider, account.providerAccountId],
@@ -214,16 +211,14 @@ export const AccountRelations = relations(Account, ({ one }) => ({
   user: one(User, { fields: [Account.userId], references: [User.id] }),
 }));
 
-export const Session = pgTable("session", {
-  sessionToken: varchar("sessionToken", { length: 255 }).notNull().primaryKey(),
-  userId: uuid("userId")
+export const Session = pgTable("session", (t) => ({
+  sessionToken: t.varchar({ length: 255 }).notNull().primaryKey(),
+  userId: t
+    .uuid()
     .notNull()
     .references(() => User.id, { onDelete: "cascade" }),
-  expires: timestamp("expires", {
-    mode: "date",
-    withTimezone: true,
-  }).notNull(),
-});
+  expires: t.timestamp({ mode: "date", withTimezone: true }).notNull(),
+}));
 
 export const SessionRelations = relations(Session, ({ one }) => ({
   user: one(User, { fields: [Session.userId], references: [User.id] }),
