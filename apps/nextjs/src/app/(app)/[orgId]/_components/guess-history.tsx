@@ -92,8 +92,8 @@ export const GuessHistory = ({ orgId }: { orgId: string }) => {
               ))}
 
               {isFetchingNextPage &&
-                Array.from({ length: 3 }).map(() => (
-                  <Skeleton className="flex-grow basis-0"></Skeleton>
+                Array.from({ length: 3 }).map((_, index) => (
+                  <Skeleton className="flex-grow basis-0" key={index} />
                 ))}
 
               <div className="" ref={nextPageTriggerRef}>
