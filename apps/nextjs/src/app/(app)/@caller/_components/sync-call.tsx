@@ -4,7 +4,7 @@ import { useIsMutating } from "@tanstack/react-query";
 import { getMutationKey } from "@trpc/react-query";
 import { DateTime } from "luxon";
 
-import type { RouterInputs } from "@icebreaker/api";
+import type { RouterInputs, RouterOutputs } from "@icebreaker/api";
 
 import { api } from "~/trpc/react";
 
@@ -12,7 +12,7 @@ const getSomethingIsDifferent = ({
   phoneCall,
   timer,
 }: {
-  phoneCall?: { answeredAt: string | null; hangupAt: string | null };
+  phoneCall?: RouterOutputs["phoneCall"]["bySessionId"];
   timer?: Timer;
 }) => {
   if (!timer || !phoneCall) {
@@ -78,7 +78,7 @@ export const useSyncCall = ({
   timer,
   updatePhoneCall,
 }: {
-  phoneCall?: { answeredAt: string | null; hangupAt: string | null };
+  phoneCall?: RouterOutputs["phoneCall"]["bySessionId"];
   timer?: Timer;
   updatePhoneCall: (data: RouterInputs["phoneCall"]["update"]["data"]) => void;
 }) => {
@@ -111,6 +111,15 @@ export const useSyncCall = ({
       answeredAt: timerAnsweredAt
         ? timerAnsweredAt.toSQL({ includeOffset: true })
         : undefined,
+      rating:
+        !phoneCall?.rating && timerAnsweredAt ? "answered" : phoneCall?.rating,
     });
-  }, [timerAnsweredAt, timerHungupAt, updatePhoneCall, timer, callIsUpdating]);
+  }, [
+    timerAnsweredAt,
+    timerHungupAt,
+    updatePhoneCall,
+    timer,
+    callIsUpdating,
+    phoneCall?.rating,
+  ]);
 };
