@@ -6,7 +6,6 @@ import { DateTime } from "luxon";
 import type { RouterOutputs } from "@icebreaker/api";
 import { cn } from "@icebreaker/ui";
 
-import { usePhoneCallUpdateMutation } from "~/app/_api-hooks/use-phone-call";
 import { CallRatingCluster } from "~/app/(app)/@caller/_components/rating-cluster";
 import { RatingEffect } from "~/app/(app)/@caller/_components/rating-effect";
 import { RatingIcon } from "~/app/(app)/@caller/_components/rating-icon";
