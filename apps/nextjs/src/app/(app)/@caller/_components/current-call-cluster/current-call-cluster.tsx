@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { DateTime, Duration } from "luxon";
 
+import { cn } from "@icebreaker/ui";
 import { Card, CardContent } from "@icebreaker/ui/card";
+import { PauseIcon } from "@icebreaker/ui/icons";
 
-import { useCurrentSessionCall } from "~/app/_components/call-handler/use-current-session-call";
+import { useCall } from "~/app/_components/call-handler/use-current-call";
 import { AutoEndCall } from "~/app/(app)/@caller/_components/auto-end-call/auto-end-call";
 import { useAutoEndCall } from "~/app/(app)/@caller/_components/auto-end-call/auto-end-call-b";
 import { Caller } from "~/app/(app)/@caller/_components/caller";
@@ -25,7 +27,7 @@ export const CurrentCallCluster = () => {
       setBuffer((prev) => prev.plus(newBuffer)),
   });
 
-  const { hangup, timer } = useCurrentSessionCall();
+  const { hangup, timer } = useCall();
   const { duration: callDuration } = useCallTimer({ timer });
   const { diff: diffAutoEndCall } = useAutoEndCall({
     enabled: autoEndEnabled && !isHovering,
@@ -50,12 +52,23 @@ export const CurrentCallCluster = () => {
           <EndCallButton progressValue={progressValue} />
         </CardContent>
       </Card>
-      <AutoEndCall
-        maxDuration={maxDuration}
-        enabled={autoEndEnabled}
-        setEnabled={setAutoEndEnabled}
-        setMaxDuration={setMaxDuration}
-      />
+      <div className="relative px-6 py-2">
+        <div
+          className={cn(
+            "absolute inset-0 z-10 flex items-center justify-center backdrop-blur-sm transition-opacity duration-500 ease-in-out",
+            !isHovering && "pointer-events-none opacity-0",
+          )}
+        >
+          <PauseIcon />
+        </div>
+
+        <AutoEndCall
+          maxDuration={maxDuration}
+          enabled={autoEndEnabled}
+          setEnabled={setAutoEndEnabled}
+          setMaxDuration={setMaxDuration}
+        />
+      </div>
     </div>
   );
 };

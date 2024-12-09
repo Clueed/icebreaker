@@ -5,10 +5,10 @@ import { cn } from "@icebreaker/ui";
 import { Button } from "@icebreaker/ui/button";
 import { PhoneOffIcon } from "@icebreaker/ui/icons";
 
-import { useCurrentSessionCall } from "~/app/_components/call-handler/use-current-session-call";
+import { useCall } from "~/app/_components/call-handler/use-current-call";
 
 export const EndCallButton = (props: { progressValue: number }) => {
-  const { isActive, hangup } = useCurrentSessionCall();
+  const { isActive, hangup } = useCall();
 
   return (
     <Button

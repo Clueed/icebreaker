@@ -14,7 +14,7 @@ import {
   useSelectedGuessQuery,
   useSetSelectedGuessId,
 } from "~/app/_api-hooks/use-selected-guess";
-import useStartCall from "~/app/_components/call-handler/use-start-call";
+import { useCall } from "~/app/_components/call-handler/use-current-call";
 import { GuessDisplay } from "~/app/(app)/[orgId]/_components/guess-display";
 import { Ratatatata } from "~/app/(app)/[orgId]/_components/ratatata/ratatatata";
 
@@ -153,7 +153,7 @@ const GuessDisplayWrapper = ({
       block: "center",
     });
   };
-  const [startCall] = useStartCall({ guessId: guess.id });
+  const { startCall } = useCall({ selectedGuessId: guess.id });
 
   return (
     <div className="grid grid-cols-[auto_2.75rem] items-center gap-4">

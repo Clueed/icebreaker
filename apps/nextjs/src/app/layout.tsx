@@ -11,9 +11,9 @@ import "~/app/globals.css";
 import { Urbanist, Victor_Mono } from "next/font/google";
 
 import { AnimatedMain } from "~/app/_components/animated-main";
+import { CurrentSessionIdProvider } from "~/app/_components/call-handler/current-session-id-context";
 import { PersistGate } from "~/app/_components/perists-gate";
 import SipProviderConfigured from "~/app/_components/sip-provider";
-import { CurrentSessionIdProvider } from "~/app/_components/use-current-session-id";
 import { env } from "~/env";
 
 const fontMono = Victor_Mono({

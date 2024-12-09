@@ -29,7 +29,7 @@ export const AutoEndCall = (props: {
   };
 
   return (
-    <div className="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-4 px-6">
+    <div className="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-4">
       <div className="place-self-center self-center">
         <Switch
           id={enabledId}

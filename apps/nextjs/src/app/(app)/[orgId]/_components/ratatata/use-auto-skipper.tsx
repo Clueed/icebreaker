@@ -5,7 +5,7 @@ import {
   useSelectedGuessQuery,
   useSetSelectedGuessId,
 } from "~/app/_api-hooks/use-selected-guess";
-import { useCurrentSessionCall } from "~/app/_components/call-handler/use-current-session-call";
+import { useCall } from "~/app/_components/call-handler/use-current-call";
 
 export const useAutoSkipper = ({
   orgId,
@@ -38,7 +38,7 @@ export const useAutoSkipper = ({
     });
   }, [nextGuessId, orgId, selectedGuessId, setSelectedGuessId]);
 
-  const { hasActive } = useCurrentSessionCall();
+  const { hasActive } = useCall();
   const selectedGuessHasCalls = Boolean(selectedGuess?.phoneCallCount);
   const selectedGuessIsPending = useSelectedGuessIsPending({ orgId });
 

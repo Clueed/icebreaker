@@ -4,8 +4,7 @@ import {
   useSelectedGuessIsPending,
   useSelectedGuessQuery,
 } from "~/app/_api-hooks/use-selected-guess";
-import { useCurrentSessionCall } from "~/app/_components/call-handler/use-current-session-call";
-import useStartCall from "~/app/_components/call-handler/use-start-call";
+import { useCall } from "~/app/_components/call-handler/use-current-call";
 
 export const useAutoCaller = ({
   orgId,
@@ -18,7 +17,7 @@ export const useAutoCaller = ({
   const { id: selectedGuessId } = selectedGuess ?? {};
   const selectedGuessIsPending = useSelectedGuessIsPending({ orgId });
 
-  const { hasActive } = useCurrentSessionCall();
+  const { hasActive } = useCall();
 
   const selectedGuessExists = !!selectedGuess;
   const selectedGuessHasCalls =
@@ -45,8 +44,8 @@ export const useAutoCaller = ({
     selectedGuessIsPending,
   ]);
 
-  const [startCall] = useStartCall({
-    guessId: selectedGuess?.id,
+  const { startCall } = useCall({
+    selectedGuessId: selectedGuess?.id,
   });
 
   const handleStartCall = useCallback(() => {
