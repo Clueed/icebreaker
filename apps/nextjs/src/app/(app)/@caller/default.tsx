@@ -1,7 +1,5 @@
 "use client";
 
-
-
 import { CallHistory } from "~/app/(app)/@caller/_components/call-history/call-history";
 import { CurrentCallCluster } from "~/app/(app)/@caller/_components/current-call-cluster/current-call-cluster";
 
