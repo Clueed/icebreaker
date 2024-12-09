@@ -52,7 +52,11 @@ export const phoneCallRouter = {
         with: {
           guess: { columns: { phoneNumber: true, id: true } },
         },
-      }).then(findFirstOrThrow("find phone call"));
+      });
+
+      if (!phoneCall) {
+        return null;
+      }
 
       return transformPhoneCall(phoneCall);
     }),

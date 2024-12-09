@@ -42,7 +42,11 @@ export function Caller() {
     [currentSessionId, updatePhoneCall],
   );
 
-  useSyncCall({ phoneCall, timer, updatePhoneCall: handleUpdatePhoneCall });
+  useSyncCall({
+    phoneCall: phoneCall,
+    timer,
+    updatePhoneCall: handleUpdatePhoneCall,
+  });
 
   const { duration } = useCallTimer({ timer });
 

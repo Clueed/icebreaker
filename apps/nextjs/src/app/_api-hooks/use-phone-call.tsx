@@ -10,7 +10,9 @@ import { api } from "~/trpc/react";
 export const usePhoneCallBySessionIdQuery = (
   input: AppRouterInputs["phoneCall"]["bySessionId"] | typeof skipToken,
 ) => {
-  return api.phoneCall.bySessionId.useQuery(input);
+  return api.phoneCall.bySessionId.useQuery(input, {
+    select: (data) => data ?? undefined,
+  });
 };
 
 export const usePhoneCallUpdateMutation = () => {
