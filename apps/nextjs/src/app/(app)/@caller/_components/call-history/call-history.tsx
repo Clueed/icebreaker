@@ -6,10 +6,12 @@ import { useIntersectionObserver } from "usehooks-ts";
 import { cn } from "@icebreaker/ui";
 import { ArrowDownIcon, HistoryIcon, Loader2Icon } from "@icebreaker/ui/icons";
 
+import { useCurrentSessionIdQuery } from "~/app/_components/use-current-session-id";
 import { HistoryCallItem } from "~/app/(app)/@caller/_components/call-history/call-history-item";
 import { api } from "~/trpc/react";
 
 export const CallHistory = () => {
+  const { data: currentSessionId } = useCurrentSessionIdQuery();
   const {
     data: callsData,
     isSuccess,
@@ -26,7 +28,11 @@ export const CallHistory = () => {
     },
   );
 
-  const calls = isSuccess ? callsData.pages.flatMap((page) => page.data) : [];
+  const calls = isSuccess
+    ? callsData.pages
+        .flatMap((page) => page.data)
+        .filter((call) => call.sessionId !== currentSessionId)
+    : [];
   const [animateRef] = useAutoAnimate();
 
   const { ref: nextPageTriggerRef } = useIntersectionObserver({
