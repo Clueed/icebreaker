@@ -6,7 +6,7 @@ import { desc, eq, sql } from "@icebreaker/db";
 import { CreatePhoneCallSchema, Guess, PhoneCall } from "@icebreaker/db/schema";
 import { phoneNumberSchema } from "@icebreaker/validators/phone-number";
 
-import { findFirstOrThrow, takeUniqueOrThrow } from "../helpers";
+import { takeUniqueOrThrow } from "../helpers";
 import { protectedProcedure } from "../trpc";
 
 export const phoneCallRouter = {
