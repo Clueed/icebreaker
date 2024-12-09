@@ -15,7 +15,7 @@ import { RatingIcon } from "~/app/(app)/@caller/_components/rating-icon";
 
 export const CallRatingCluster = (props: {
   rating: PhoneCallRatingNullable;
-  sessionId?: string;
+  sessionId: string | null;
   disabled: boolean;
 }) => {
   const { mutate: updatePhoneCall } = usePhoneCallUpdateMutation();

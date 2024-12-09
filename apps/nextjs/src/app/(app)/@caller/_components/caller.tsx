@@ -76,6 +76,7 @@ export function Caller() {
         </div>
       </div>
       <CallRatingCluster
+        sessionId={currentSessionId}
         rating={phoneCall?.rating ?? null}
         disabled={!isActive}
       />

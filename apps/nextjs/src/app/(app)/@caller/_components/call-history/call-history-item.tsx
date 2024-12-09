@@ -83,7 +83,11 @@ export const HistoryCallItem = ({
 
           {call.rating !== null && (
             <div>
-              <CallRatingCluster rating={call.rating} disabled={false} />
+              <CallRatingCluster
+                sessionId={call.sessionId}
+                rating={call.rating}
+                disabled={false}
+              />
             </div>
           )}
         </>
