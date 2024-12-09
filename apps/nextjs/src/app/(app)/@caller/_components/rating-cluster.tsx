@@ -16,7 +16,7 @@ import { RatingIcon } from "~/app/(app)/@caller/_components/rating-icon";
 export const CallRatingCluster = (props: {
   rating: PhoneCallRatingNullable;
   sessionId: string | null;
-  disabled: boolean;
+  disabled?: boolean;
 }) => {
   const { mutate: updatePhoneCall } = usePhoneCallUpdateMutation();
   const handleUpdatePhoneCall = useCallback(
@@ -39,7 +39,7 @@ export const CallRatingCluster = (props: {
     <CallRatingUi
       rating={props.rating}
       setRating={handleUpdatePhoneCall}
-      disabled={props.disabled}
+      disabled={props.rating === null || props.disabled}
     />
   );
 };
@@ -47,7 +47,7 @@ export const CallRatingCluster = (props: {
 const CallRatingUi = (props: {
   rating: PhoneCallRatingNullable;
   setRating: (newRating: PhoneCallRating) => void;
-  disabled: boolean;
+  disabled?: boolean;
 }) => {
   const handleOnValueChange = (value: string) => {
     if (value === "") {
