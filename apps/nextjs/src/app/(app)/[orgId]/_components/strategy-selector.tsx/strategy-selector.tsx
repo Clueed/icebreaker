@@ -24,7 +24,7 @@ import { LoopAtValueSlider } from "~/app/(app)/[orgId]/_components/strategy-sele
 
 const GuesserStrategySelector = (props: {
   orgId: string;
-  onApplyExtensionStrategyOnce: (strategy: Strategy) => void;
+  //   onApplyExtensionStrategyOnce: (strategy: Strategy) => void;
 }) => {
   const { data: currentStrategy } = useCurrentStrategyQuery({
     id: props.orgId,
@@ -66,7 +66,7 @@ const GuesserStrategySelector = (props: {
               id={strategyId}
               onLongPress={() => handleLongPress(extensionStrategy)}
               onClick={() => {
-                props.onApplyExtensionStrategyOnce(extensionStrategy);
+                // props.onApplyExtensionStrategyOnce(extensionStrategy);
               }}
               key={index}
               variant={

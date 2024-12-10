@@ -1,3 +1,5 @@
+"use client";
+
 import { AnimatePresence, LayoutGroup } from "motion/react";
 
 import { ChartColumnIcon } from "@icebreaker/ui/icons";
