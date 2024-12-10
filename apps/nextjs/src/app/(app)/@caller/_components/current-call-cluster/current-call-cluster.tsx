@@ -9,7 +9,7 @@ import { PauseIcon } from "@icebreaker/ui/icons";
 
 import { useCall } from "~/app/_components/call-handler/use-current-call";
 import { AutoEndCall } from "~/app/(app)/@caller/_components/auto-end-call/auto-end-call";
-import { useAutoEndCall } from "~/app/(app)/@caller/_components/auto-end-call/auto-end-call-b";
+import { useAutoEndCall } from "~/app/(app)/@caller/_components/auto-end-call/use-auto-end-call";
 import { Caller } from "~/app/(app)/@caller/_components/caller";
 import { EndCallButton } from "~/app/(app)/@caller/_components/end-call-button";
 import { useCallTimer } from "~/app/(app)/@caller/_components/use-call-timer";
