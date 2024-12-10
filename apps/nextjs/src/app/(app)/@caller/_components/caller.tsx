@@ -4,7 +4,6 @@ import type { AppRouterInputs } from "node_modules/@icebreaker/api/dist/root";
 import { useCallback } from "react";
 import { skipToken } from "@tanstack/react-query";
 
-import { cn } from "@icebreaker/ui";
 import { PhoneNumberDisplay } from "@icebreaker/ui/custom/phone-number-display";
 
 import {
@@ -14,15 +13,9 @@ import {
 import { useCall } from "~/app/_components/call-handler/use-current-call";
 import { CallRatingCluster } from "~/app/(app)/@caller/_components/rating-cluster";
 import { useSyncCall } from "~/app/(app)/@caller/_components/sync-call";
-import { useCallTimer } from "~/app/(app)/@caller/_components/use-call-timer";
 
 export function Caller() {
-  const {
-    timer,
-    isActive,
-    phoneNumber,
-    sessionId: currentSessionId,
-  } = useCall();
+  const { timer, phoneNumber, sessionId: currentSessionId } = useCall();
 
   const { data: phoneCall } = usePhoneCallBySessionIdQuery(
     currentSessionId ? { sessionId: currentSessionId } : skipToken,
@@ -49,8 +42,6 @@ export function Caller() {
     updatePhoneCall: handleUpdatePhoneCall,
   });
 
-  const { duration } = useCallTimer({ timer });
-
   const phoneNumberToDisplay = phoneCall ? (
     <PhoneNumberDisplay phoneNumber={phoneCall.phoneNumber} />
   ) : (
@@ -63,18 +54,6 @@ export function Caller() {
         {phoneNumberToDisplay ?? (
           <div className="h-[3cap] w-full rounded-md bg-muted" />
         )}
-      </div>
-      <div className="flex justify-around">
-        <div
-          className={cn(
-            "size-[1.65cap] rounded-md bg-muted-foreground",
-            isActive && "animate-pulse",
-            timer?.answeredAt && "bg-green-500 dark:bg-green-200",
-          )}
-        />
-        <div className="tabular-nums">
-          {duration && <div>{duration.toFormat("mm:ss")}</div>}
-        </div>
       </div>
       <CallRatingCluster
         sessionId={currentSessionId}

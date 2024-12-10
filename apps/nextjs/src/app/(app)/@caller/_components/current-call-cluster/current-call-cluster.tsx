@@ -11,6 +11,7 @@ import { useCall } from "~/app/_components/call-handler/use-current-call";
 import { AutoEndCall } from "~/app/(app)/@caller/_components/auto-end-call/auto-end-call";
 import { useAutoEndCall } from "~/app/(app)/@caller/_components/auto-end-call/use-auto-end-call";
 import { Caller } from "~/app/(app)/@caller/_components/caller";
+import { CallDurationBadge } from "~/app/(app)/@caller/_components/current-call-cluster/call-duration-badge";
 import { EndCallButton } from "~/app/(app)/@caller/_components/end-call-button";
 import { useCallTimer } from "~/app/(app)/@caller/_components/use-call-timer";
 
@@ -27,7 +28,7 @@ export const CurrentCallCluster = () => {
       setBuffer((prev) => prev.plus(newBuffer)),
   });
 
-  const { hangup, timer } = useCall();
+  const { hangup, timer, isActive } = useCall();
   const { duration: callDuration } = useCallTimer({ timer });
   const { diff: diffAutoEndCall } = useAutoEndCall({
     enabled: autoEndEnabled && !isHovering,
@@ -46,7 +47,8 @@ export const CurrentCallCluster = () => {
 
   return (
     <div className="space-y-4">
-      <Card className="overflow-hidden" {...register}>
+      <Card className="relative" {...register}>
+        <CallDurationBadge callDuration={callDuration} answered={isActive} />
         <CardContent>
           <Caller />
           <EndCallButton progressValue={progressValue} />
