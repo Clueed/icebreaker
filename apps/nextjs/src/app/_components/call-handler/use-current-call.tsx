@@ -66,11 +66,13 @@ export const useCall = (props?: { selectedGuessId?: string }) => {
   const state = session ? session.state : undefined;
   const timer = sessionId ? sessionTimer[sessionId] : undefined;
   const phoneNumber = session ? getFriendlyPhoneNumber(session) : undefined;
+  const live = !!(isActive && timer?.answeredAt);
 
   return {
     state,
     isActive,
     hasActive: isActive,
+    live,
     timer,
     sessionId,
     phoneNumber,

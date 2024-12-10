@@ -14,7 +14,6 @@ import { usePhoneCallBySessionIdQuery } from "~/app/_api-hooks/use-phone-call";
 import { useCall } from "~/app/_components/call-handler/use-current-call";
 import { AutoEndCall } from "~/app/(app)/@caller/_components/auto-end-call/auto-end-call";
 import { useAutoEndCall } from "~/app/(app)/@caller/_components/auto-end-call/use-auto-end-call";
-import { CallDurationBadge } from "~/app/(app)/@caller/_components/current-call-cluster/call-duration-badge";
 import { CallPhoneNumberDisplay } from "~/app/(app)/@caller/_components/current-call-cluster/phone-number-display";
 import { EndCallButton } from "~/app/(app)/@caller/_components/end-call-button";
 import { CallRatingCluster } from "~/app/(app)/@caller/_components/rating-cluster";
@@ -22,8 +21,10 @@ import { useSyncCall } from "~/app/(app)/@caller/_components/sync-call";
 import { useCallTimer } from "~/app/(app)/@caller/_components/use-call-timer";
 
 export const CurrentCallCluster = () => {
-  const { hangup, timer, isActive, sessionId, phoneNumber } = useCall();
+  const { hangup, timer, sessionId, phoneNumber, live, isActive } = useCall();
   const { duration: callDuration } = useCallTimer({ timer });
+  //   const live = true;
+  //   const isActive = true;
 
   const { data: phoneCall } = usePhoneCallBySessionIdQuery(
     sessionId ? { sessionId } : skipToken,
@@ -60,8 +61,19 @@ export const CurrentCallCluster = () => {
   return (
     <div className="space-y-4">
       <Card className="relative" {...register}>
-        <CallDurationBadge callDuration={callDuration} answered={isActive} />
-        <CardHeader className="pb-4 pt-8 text-center align-middle">
+        <CardHeader
+          className={cn(
+            "text-center align-middle",
+            live && "text-primary-foreground",
+          )}
+        >
+          <div
+            className={cn(
+              "border-none text-center text-sm font-semibold tabular-nums tracking-widest",
+            )}
+          >
+            {callDuration ? callDuration.toFormat("mm:ss") : ":"}
+          </div>
           <CallPhoneNumberDisplay
             phoneCallPhoneNumber={phoneCall?.phoneNumber}
             sessionPhoneNumber={phoneNumber}
@@ -75,12 +87,16 @@ export const CurrentCallCluster = () => {
           <EndCallButton progressValue={decimalLeft} />
         </CardContent>
         <BorderBeam
-          colorFrom={"hsl(var(--muted-foreground))"}
-          colorTo={"hsl(var(--muted-foreground))"}
+          colorFrom={
+            live ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))"
+          }
+          colorTo={
+            live ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))"
+          }
           size={80}
-          duration={6}
+          duration={live ? 4 : 6}
           delay={0}
-          enabled={true}
+          enabled={isActive}
           className={cn(
             !isActive &&
               "opacity-0 transition-opacity duration-1000 ease-in-out",
@@ -88,11 +104,15 @@ export const CurrentCallCluster = () => {
         />
         <BorderBeam
           size={80}
-          duration={6}
-          delay={3}
-          colorFrom={"hsl(var(--muted-foreground))"}
-          colorTo={"hsl(var(--muted-foreground))"}
-          enabled={true}
+          duration={live ? 4 : 6}
+          delay={live ? 2 : 3}
+          colorFrom={
+            live ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))"
+          }
+          colorTo={
+            live ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))"
+          }
+          enabled={isActive}
           className={cn(
             !isActive &&
               "opacity-0 transition-opacity duration-1000 ease-in-out",
