@@ -6,6 +6,7 @@ import { DateTime, Duration } from "luxon";
 import { useSessionStorage } from "usehooks-ts";
 
 import { cn } from "@icebreaker/ui";
+import { BorderBeam } from "@icebreaker/ui/border-beam";
 import { Card, CardContent, CardHeader } from "@icebreaker/ui/card";
 import { PauseIcon } from "@icebreaker/ui/icons";
 
@@ -73,7 +74,32 @@ export const CurrentCallCluster = () => {
           />
           <EndCallButton progressValue={decimalLeft} />
         </CardContent>
+        <BorderBeam
+          colorFrom={"hsl(var(--muted-foreground))"}
+          colorTo={"hsl(var(--muted-foreground))"}
+          size={80}
+          duration={6}
+          delay={0}
+          enabled={true}
+          className={cn(
+            !isActive &&
+              "opacity-0 transition-opacity duration-1000 ease-in-out",
+          )}
+        />
+        <BorderBeam
+          size={80}
+          duration={6}
+          delay={3}
+          colorFrom={"hsl(var(--muted-foreground))"}
+          colorTo={"hsl(var(--muted-foreground))"}
+          enabled={true}
+          className={cn(
+            !isActive &&
+              "opacity-0 transition-opacity duration-1000 ease-in-out",
+          )}
+        />
       </Card>
+
       <div className="relative px-6 py-2">
         <div
           className={cn(

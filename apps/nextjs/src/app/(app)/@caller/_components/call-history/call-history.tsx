@@ -50,10 +50,12 @@ export const CallHistory = () => {
       </h2>
       <div
         ref={animateRef}
-        className="h-96 space-y-2 overflow-y-auto rounded-md border-y-[1px] p-4"
+        className="h-96 space-y-2 overflow-y-auto rounded-md p-4"
         style={{
           scrollbarWidth: "thin",
           scrollbarGutter: "stable",
+          maskImage:
+            "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
         }}
       >
         {isPending && (
