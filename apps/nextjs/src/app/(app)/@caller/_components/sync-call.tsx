@@ -4,8 +4,9 @@ import { useIsMutating } from "@tanstack/react-query";
 import { getMutationKey } from "@trpc/react-query";
 import { DateTime } from "luxon";
 
-import type { RouterInputs, RouterOutputs } from "@icebreaker/api";
+import type { RouterOutputs } from "@icebreaker/api";
 
+import { usePhoneCallUpdateMutation } from "~/app/_api-hooks/use-phone-call";
 import { api } from "~/trpc/react";
 
 const getSomethingIsDifferent = ({
@@ -76,12 +77,12 @@ const getSomethingIsDifferent = ({
 export const useSyncCall = ({
   phoneCall,
   timer,
-  updatePhoneCall,
 }: {
   phoneCall?: RouterOutputs["phoneCall"]["bySessionId"];
   timer?: Timer;
-  updatePhoneCall: (data: RouterInputs["phoneCall"]["update"]["data"]) => void;
 }) => {
+  const { mutate: updatePhoneCall } = usePhoneCallUpdateMutation();
+
   const { timerAnsweredAt, timerHungupAt } = getSomethingIsDifferent({
     phoneCall,
     timer,
@@ -94,6 +95,10 @@ export const useSyncCall = ({
     }) > 0;
 
   useEffect(() => {
+    if (!phoneCall) {
+      return;
+    }
+
     if (callIsUpdating) {
       console.debug("[sync] callIsUpdating");
       return;
@@ -105,21 +110,23 @@ export const useSyncCall = ({
     }
 
     updatePhoneCall({
-      hangupAt: timerHungupAt
-        ? timerHungupAt.toSQL({ includeOffset: true })
-        : undefined,
-      answeredAt: timerAnsweredAt
-        ? timerAnsweredAt.toSQL({ includeOffset: true })
-        : undefined,
-      rating:
-        !phoneCall?.rating && timerAnsweredAt ? "answered" : phoneCall?.rating,
+      sessionId: phoneCall.sessionId,
+      data: {
+        hangupAt: timerHungupAt
+          ? timerHungupAt.toSQL({ includeOffset: true })
+          : undefined,
+        answeredAt: timerAnsweredAt
+          ? timerAnsweredAt.toSQL({ includeOffset: true })
+          : undefined,
+        rating:
+          !phoneCall.rating && timerAnsweredAt ? "answered" : phoneCall.rating,
+      },
     });
   }, [
+    callIsUpdating,
+    phoneCall,
     timerAnsweredAt,
     timerHungupAt,
     updatePhoneCall,
-    timer,
-    callIsUpdating,
-    phoneCall?.rating,
   ]);
 };

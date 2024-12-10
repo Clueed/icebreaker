@@ -31,7 +31,12 @@ export const useAutoEndCall = (args: {
     }
   }
 
+  const decimalLeft = diff
+    ? (diff.toMillis() / inputs.maxDuration.toMillis()) * 100
+    : 100;
+
   return {
     diff,
+    decimalLeft,
   };
 };
