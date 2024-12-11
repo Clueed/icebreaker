@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import type { RouterInputs } from "@icebreaker/api";
 
@@ -16,6 +16,17 @@ export const useGuessNextQuery = (inputs: RouterInputs["guess"]["next"]) => {
 
     return data.pages.flatMap((page) => page.data);
   }, [data]);
+
+  const utils = api.useUtils();
+
+  useEffect(() => {
+    nextGuesses.forEach(
+      (guess) =>
+        void utils.guess.byId.prefetch({
+          id: guess.id,
+        }),
+    );
+  }, [nextGuesses, utils.guess.byId]);
 
   return {
     data: nextGuesses,
