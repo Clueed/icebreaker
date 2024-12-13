@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 import { CONNECT_STATUS, useSIPProvider } from "@icebreaker/sip";
 import { Button } from "@icebreaker/ui/button";
@@ -12,7 +13,7 @@ import {
 } from "@icebreaker/ui/popover";
 import { toast } from "@icebreaker/ui/toast";
 
-import { RegisterSipForm } from "~/app/(app)/@caller/_components/sip-cluster/register-sip-form";
+import { RegisterSipForm } from "~/app/_components/nav/register-sip-form";
 import { api } from "~/trpc/react";
 
 export const SipCluster = () => {
@@ -70,14 +71,12 @@ export const SipCluster = () => {
     connectAndRegister,
   ]);
 
+  const [animateRef] = useAutoAnimate();
   return (
     <div>
       <Popover>
         <PopoverTrigger className="ml-auto" asChild>
-          <Button
-            variant={connected ? "ghost" : "destructive"}
-            className="inline-flex items-center gap-x-2 [&>svg]:size-[1.65cap]"
-          >
+          <Button variant={connected ? "ghost" : "destructive"}>
             SIP{" "}
             <span className="sr-only">
               {connected
@@ -86,13 +85,15 @@ export const SipCluster = () => {
                   ? "disconnected"
                   : "not connected"}
             </span>
-            {connected ? (
-              <WifiIcon />
-            ) : disconnected ? (
-              <WifiOffIcon />
-            ) : (
-              <DotIcon />
-            )}
+            <span ref={animateRef} className="[&>svg]:size-[1.65cap]">
+              {connected ? (
+                <WifiIcon />
+              ) : disconnected ? (
+                <WifiOffIcon />
+              ) : (
+                <DotIcon />
+              )}
+            </span>
           </Button>
         </PopoverTrigger>
         <PopoverContent>

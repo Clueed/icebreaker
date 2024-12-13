@@ -1,20 +1,19 @@
+import "~/app/globals.css";
+
 import type { Metadata, Viewport } from "next";
+import { Urbanist, Victor_Mono } from "next/font/google";
 
 import { cn } from "@icebreaker/ui";
 import { ThemeProvider, ThemeToggle } from "@icebreaker/ui/theme";
 import { Toaster } from "@icebreaker/ui/toast";
 
-import { TRPCReactProvider } from "~/trpc/react";
-
-import "~/app/globals.css";
-
-import { Urbanist, Victor_Mono } from "next/font/google";
-
 import { AnimatedMain } from "~/app/_components/animated-main";
 import { CurrentSessionIdProvider } from "~/app/_components/call-handler/current-session-id-context";
+import { Nav } from "~/app/_components/nav/nav";
 import { PersistGate } from "~/app/_components/perists-gate";
 import SipProviderConfigured from "~/app/_components/sip-provider";
 import { env } from "~/env";
+import { TRPCReactProvider } from "~/trpc/react";
 
 const fontMono = Victor_Mono({
   subsets: ["latin"],
@@ -60,10 +59,19 @@ export default function RootLayout(props: { children: React.ReactNode }) {
           fontMono.variable,
         )}
       >
+        <div
+          className="fixed inset-0 -z-50 opacity-5"
+          style={{
+            backgroundSize: "109px",
+            backgroundImage: "url(/rR6HYXBrMmX4cRpXfXUOvpvpB0.png)",
+            backgroundRepeat: "repeat",
+          }}
+        />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <TRPCReactProvider>
             <SipProviderConfigured>
               <CurrentSessionIdProvider>
+                <Nav />
                 <AnimatedMain>
                   <PersistGate>{props.children}</PersistGate>
                 </AnimatedMain>
