@@ -16,8 +16,10 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 import type { Strategy } from "@icebreaker/validators/guessing-strategies";
+import type { Todo } from "@icebreaker/validators/todo";
 import { strategySchema } from "@icebreaker/validators/guessing-strategies";
 import { phoneCallRatingList } from "@icebreaker/validators/phone-call-rating";
+import { todoSchema } from "@icebreaker/validators/todo";
 
 import { encryptedText } from "./helpers/encrypted-text";
 
@@ -40,6 +42,11 @@ export const Org = pgTable("org", {
     .array()
     .notNull()
     .default(sql`'{}'::text[]`),
+  todos: jsonb("todos")
+    .array()
+    .notNull()
+    .default(sql`'{}'::jsonb[]`)
+    .$type<Todo[]>(),
   ...timeStampColumns,
 });
 
@@ -56,6 +63,7 @@ export const CreateOrgSchema = createInsertSchema(Org, {
   currentStrategy: strategySchema,
   selectedGuessId: z.string().uuid(),
   notes: z.string().array().optional(),
+  todos: todoSchema.array().optional(),
 }).omit({
   id: true,
   createdAt: true,

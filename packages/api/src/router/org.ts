@@ -73,6 +73,28 @@ export const orgRouter = {
       return ctx.db.update(Org).set(data).where(eq(Org.id, id));
     }),
 
+  todosById: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const org = await ctx.db.query.Org.findFirst({
+        where: eq(Org.id, input.id),
+        columns: {
+          todos: true,
+        },
+      }).then(findFirstOrThrow("Org byId"));
+
+      return org.todos;
+    }),
+  updateTodos: protectedProcedure
+    .input(
+      CreateOrgSchema.pick({ todos: true }).required().extend({
+        orgId: z.string(),
+      }),
+    )
+    .mutation(({ ctx, input: { orgId, todos } }) => {
+      return ctx.db.update(Org).set({ todos }).where(eq(Org.id, orgId));
+    }),
+
   create: protectedProcedure
     .input(CreateOrgSchema)
     .mutation(({ ctx, input }) => {
