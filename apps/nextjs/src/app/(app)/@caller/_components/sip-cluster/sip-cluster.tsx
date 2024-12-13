@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { CONNECT_STATUS, useSIPProvider } from "react-sipjs";
 
+import { CONNECT_STATUS, useSIPProvider } from "@icebreaker/sip";
 import { Button } from "@icebreaker/ui/button";
 import { DotIcon, WifiIcon, WifiOffIcon } from "@icebreaker/ui/icons";
 import {

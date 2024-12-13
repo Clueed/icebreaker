@@ -1,7 +1,8 @@
 import type { Duration } from "luxon";
-import type { Timer } from "react-sipjs";
 import { useEffect, useState } from "react";
 import { DateTime } from "luxon";
+
+import type { Timer } from "@icebreaker/sip";
 
 const getDuration = (timer?: Partial<Timer>) => {
   if (!timer?.createdAt) {

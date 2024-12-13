@@ -3,10 +3,10 @@
 import type { Session } from "sip.js";
 import type { SessionManager } from "sip.js/lib/platform/web";
 import { skipToken } from "@tanstack/react-query";
-import { useSIPProvider } from "react-sipjs";
 import { SessionState } from "sip.js";
 
 import type { PhoneNumber } from "@icebreaker/validators/phone-number";
+import { useSIPProvider } from "@icebreaker/sip";
 import { toast } from "@icebreaker/ui/toast";
 import { phoneNumberSchema } from "@icebreaker/validators/phone-number";
 
@@ -16,7 +16,7 @@ import { useCurrentSessionId } from "./current-session-id-context";
 
 export const useCall = (props?: { selectedGuessId?: string }) => {
   const { sessionId, setSessionId } = useCurrentSessionId();
-  const { sessions, sessionManager, sessionTimer } = useSIPProvider();
+  const { sessions, sessionManager, sessionTimers } = useSIPProvider();
 
   const _session = sessionId ? sessions[sessionId] : undefined;
   const session = _session ?? undefined;
@@ -64,7 +64,7 @@ export const useCall = (props?: { selectedGuessId?: string }) => {
   };
 
   const state = session ? session.state : undefined;
-  const timer = sessionId ? sessionTimer[sessionId] : undefined;
+  const timer = sessionId ? sessionTimers[sessionId] : undefined;
   const phoneNumber = session ? getFriendlyPhoneNumber(session) : undefined;
   const live = !!(isActive && timer?.answeredAt);
 

@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { SIPProvider } from "react-sipjs";
+
+import { SIPProvider } from "@icebreaker/sip";
 
 function SipProviderConfigured({ children }: { children: React.ReactNode }) {
   return (

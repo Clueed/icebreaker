@@ -3,9 +3,9 @@
 import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useSIPProvider } from "react-sipjs";
 import { z } from "zod";
 
+import { useSIPProvider } from "@icebreaker/sip";
 import { Button } from "@icebreaker/ui/button";
 import {
   Form,

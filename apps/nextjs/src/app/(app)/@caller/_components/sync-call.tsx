@@ -1,10 +1,10 @@
-import type { Timer } from "react-sipjs";
 import { useEffect } from "react";
 import { useIsMutating } from "@tanstack/react-query";
 import { getMutationKey } from "@trpc/react-query";
 import { DateTime } from "luxon";
 
 import type { RouterOutputs } from "@icebreaker/api";
+import type { Timer } from "@icebreaker/sip";
 
 import { usePhoneCallUpdateMutation } from "~/app/_api-hooks/use-phone-call";
 import { api } from "~/trpc/react";
