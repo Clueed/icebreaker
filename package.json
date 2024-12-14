@@ -21,7 +21,8 @@
     "test": "turbo run test",
     "postinstall": "pnpm lint:ws",
     "typecheck": "turbo run typecheck",
-    "ui-add": "turbo run ui-add"
+    "ui-add": "turbo run ui-add",
+    "ci:fix": "pnpm run typecheck && pnpm run lint:fix && pnpm run format:fix && pnpm run lint:ws -f"
   },
   "devDependencies": {
     "@icebreaker/prettier-config": "workspace:*",
