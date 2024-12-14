@@ -29,7 +29,6 @@ export const usePhoneCallUpdateMutation = () => {
             ? {
                 ...old,
                 ...payload.data,
-                updatedAt: new Date().toISOString(),
               }
             : undefined,
       );

@@ -17,22 +17,15 @@ import { useAutoEndCall } from "~/app/(app)/@caller/_components/auto-end-call/us
 import { CallPhoneNumberDisplay } from "~/app/(app)/@caller/_components/current-call-cluster/phone-number-display";
 import { EndCallButton } from "~/app/(app)/@caller/_components/end-call-button";
 import { CallRatingCluster } from "~/app/(app)/@caller/_components/rating-cluster";
-import { useSyncCall } from "~/app/(app)/@caller/_components/sync-call";
 import { useCallTimer } from "~/app/(app)/@caller/_components/use-call-timer";
 
 export const CurrentCallCluster = () => {
-  const { hangup, timer, sessionId, phoneNumber, live, isActive } = useCall();
+  const { hangup, timer, sessionId, phoneNumber, live, active } = useCall();
   const { duration: callDuration } = useCallTimer({ timer });
-  //   const live = true;
-  //   const isActive = true;
 
   const { data: phoneCall } = usePhoneCallBySessionIdQuery(
     sessionId ? { sessionId } : skipToken,
   );
-  useSyncCall({
-    phoneCall: phoneCall,
-    timer,
-  });
 
   const [autoEndEnabled, setAutoEndEnabled] = useSessionStorage(
     "autoEndEnabled",
@@ -96,10 +89,9 @@ export const CurrentCallCluster = () => {
           size={80}
           duration={live ? 4 : 6}
           delay={0}
-          enabled={isActive}
+          enabled={active}
           className={cn(
-            !isActive &&
-              "opacity-0 transition-opacity duration-1000 ease-in-out",
+            !active && "opacity-0 transition-opacity duration-1000 ease-in-out",
           )}
         />
         <BorderBeam
@@ -112,10 +104,9 @@ export const CurrentCallCluster = () => {
           colorTo={
             live ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))"
           }
-          enabled={isActive}
+          enabled={active}
           className={cn(
-            !isActive &&
-              "opacity-0 transition-opacity duration-1000 ease-in-out",
+            !active && "opacity-0 transition-opacity duration-1000 ease-in-out",
           )}
         />
       </Card>

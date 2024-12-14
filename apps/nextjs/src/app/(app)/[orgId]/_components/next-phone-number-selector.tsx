@@ -14,7 +14,7 @@ import {
   useSelectedGuessQuery,
   useSetSelectedGuessId,
 } from "~/app/_api-hooks/use-selected-guess";
-import { useCall } from "~/app/_components/call-handler/use-current-call";
+import { useStartCall } from "~/app/_components/call-handler/use-start-call";
 import { GuessDisplay } from "~/app/(app)/[orgId]/_components/guess-display";
 import { Ratatatata } from "~/app/(app)/[orgId]/_components/ratatata/ratatatata";
 
@@ -153,7 +153,7 @@ const GuessDisplayWrapper = ({
       block: "center",
     });
   };
-  const { startCall } = useCall({ selectedGuessId: guess.id });
+  const { startCall, disabled } = useStartCall({ selectedGuessId: guess.id });
 
   return (
     <div className="grid grid-cols-[auto_2.75rem] items-center gap-4">
@@ -174,7 +174,12 @@ const GuessDisplayWrapper = ({
           !selected && "opacity-0",
         )}
       >
-        <Button onClick={startCall} variant={"secondary"} size={"icon-lg"}>
+        <Button
+          onClick={startCall}
+          variant={"secondary"}
+          size={"icon-lg"}
+          disabled={disabled}
+        >
           <PhoneCallIcon />
         </Button>
       </div>

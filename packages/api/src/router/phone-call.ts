@@ -2,8 +2,9 @@ import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
 import type { PhoneNumber } from "@icebreaker/validators/phone-number";
-import { desc, eq, sql } from "@icebreaker/db";
-import { CreatePhoneCallSchema, Guess, PhoneCall } from "@icebreaker/db/schema";
+import { and, desc, eq, isNull, sql } from "@icebreaker/db";
+import { Guess, PhoneCall } from "@icebreaker/db/schema";
+import { phoneCallRatingSchema } from "@icebreaker/validators/phone-call-rating";
 import { phoneNumberSchema } from "@icebreaker/validators/phone-number";
 
 import { takeUniqueOrThrow } from "../helpers";
@@ -65,14 +66,24 @@ export const phoneCallRouter = {
     .input(
       z.object({
         sessionId: z.string().min(10).max(255),
-        data: CreatePhoneCallSchema.pick({
-          rating: true,
-          answeredAt: true,
-          hangupAt: true,
+        callSync: z.boolean().default(false),
+        data: z.object({
+          rating: phoneCallRatingSchema,
         }),
       }),
     )
-    .mutation(({ ctx, input: { sessionId, data } }) => {
+    .mutation(({ ctx, input: { sessionId, data, callSync } }) => {
+      if (callSync) {
+        return ctx.db
+          .update(PhoneCall)
+          .set(data)
+          .where(
+            and(eq(PhoneCall.sessionId, sessionId), isNull(PhoneCall.rating)),
+          )
+          .returning()
+          .then(takeUniqueOrThrow("update phone call"));
+      }
+
       return ctx.db
         .update(PhoneCall)
         .set(data)

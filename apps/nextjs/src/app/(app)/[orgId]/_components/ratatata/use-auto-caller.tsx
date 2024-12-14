@@ -4,7 +4,7 @@ import {
   useSelectedGuessIsPending,
   useSelectedGuessQuery,
 } from "~/app/_api-hooks/use-selected-guess";
-import { useCall } from "~/app/_components/call-handler/use-current-call";
+import { useStartCall } from "~/app/_components/call-handler/use-start-call";
 
 export const useAutoCaller = ({
   orgId,
@@ -17,7 +17,9 @@ export const useAutoCaller = ({
   const { id: selectedGuessId } = selectedGuess ?? {};
   const selectedGuessIsPending = useSelectedGuessIsPending({ orgId });
 
-  const { hasActive } = useCall();
+  const { startCall, disabled } = useStartCall({
+    selectedGuessId: selectedGuess?.id,
+  });
 
   const selectedGuessExists = !!selectedGuess;
   const selectedGuessHasCalls =
@@ -28,7 +30,7 @@ export const useAutoCaller = ({
   const shouldStartNextCall = useMemo(() => {
     if (!enabled) return "disabled";
     if (selectedGuessIsPending) return "network pending";
-    if (hasActive) return "waiting for current call to end";
+    if (disabled) return "waiting for current call to end";
     if (!selectedGuessExists) return "no selected guess";
     if (selectedGuessHasCalls) return "selected guess already has calls";
     if (callStratedOnGuessId === selectedGuessId) return "call started";
@@ -37,16 +39,12 @@ export const useAutoCaller = ({
   }, [
     callStratedOnGuessId,
     enabled,
-    hasActive,
+    disabled,
     selectedGuessExists,
     selectedGuessHasCalls,
     selectedGuessId,
     selectedGuessIsPending,
   ]);
-
-  const { startCall } = useCall({
-    selectedGuessId: selectedGuess?.id,
-  });
 
   const handleStartCall = useCallback(() => {
     void startCall();

@@ -1,6 +1,5 @@
 import { relations, sql } from "drizzle-orm";
 import {
-  check,
   index,
   jsonb,
   pgEnum,
@@ -18,7 +17,10 @@ import { z } from "zod";
 import type { Strategy } from "@icebreaker/validators/guessing-strategies";
 import type { Todo } from "@icebreaker/validators/todo";
 import { strategySchema } from "@icebreaker/validators/guessing-strategies";
-import { phoneCallRatingList } from "@icebreaker/validators/phone-call-rating";
+import {
+  phoneCallRatingList,
+  phoneCallRatingSchemaNullable,
+} from "@icebreaker/validators/phone-call-rating";
 import { todoSchema } from "@icebreaker/validators/todo";
 
 import { encryptedText } from "./helpers/encrypted-text";
@@ -133,10 +135,6 @@ export const PhoneCall = pgTable(
   (table) => [
     index("guess_id_index").on(table.guessId),
     index("rating_index").on(table.rating),
-    check(
-      "answered_constraint",
-      sql`(${table.answeredAt} IS NULL AND ${table.rating} IS NULL) OR (${table.answeredAt} IS NOT NULL AND ${table.rating} IS NOT NULL)`,
-    ),
   ],
 );
 
@@ -147,6 +145,7 @@ export const phoneCallRelation = relations(PhoneCall, ({ one }) => ({
 export const CreatePhoneCallSchema = createInsertSchema(PhoneCall, {
   sessionId: z.string().max(256),
   guessId: z.string().uuid(),
+  rating: phoneCallRatingSchemaNullable,
 }).omit({
   id: true,
   createdAt: true,

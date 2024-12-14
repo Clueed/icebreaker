@@ -8,7 +8,7 @@ import { PhoneOffIcon } from "@icebreaker/ui/icons";
 import { useCall } from "~/app/_components/call-handler/use-current-call";
 
 export const EndCallButton = (props: { progressValue: number }) => {
-  const { isActive, hangup } = useCall();
+  const { active, hangup } = useCall();
 
   return (
     <Button
@@ -16,7 +16,7 @@ export const EndCallButton = (props: { progressValue: number }) => {
       size={"lg"}
       variant={"destructive"}
       onClick={hangup}
-      disabled={!isActive}
+      disabled={!active}
     >
       <Progress value={props.progressValue} />
       <div className="z-50 flex items-center justify-center gap-1">

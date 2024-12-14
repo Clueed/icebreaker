@@ -23,6 +23,7 @@
     "preset": "@icebreaker/jest/node"
   },
   "dependencies": {
+    "@icebreaker/validators": "workspace:*",
     "react": "catalog:react18",
     "react-dom": "catalog:react18",
     "sip.js": "^0.21.2"

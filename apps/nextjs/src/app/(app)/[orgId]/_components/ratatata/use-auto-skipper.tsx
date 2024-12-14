@@ -38,7 +38,7 @@ export const useAutoSkipper = ({
     });
   }, [nextGuessId, orgId, selectedGuessId, setSelectedGuessId]);
 
-  const { hasActive } = useCall();
+  const { active } = useCall();
   const selectedGuessHasCalls = Boolean(selectedGuess?.phoneCallCount);
   const selectedGuessIsPending = useSelectedGuessIsPending({ orgId });
 
@@ -49,7 +49,7 @@ export const useAutoSkipper = ({
     if (selectedGuessIsPending) return "network pending";
     if (!selectedGuessId) return "selectedGuessId not found";
     if (!nextGuessId) return "nextGuessId not found";
-    if (hasActive) return "waiting for current call to end";
+    if (active) return "waiting for current call to end";
     if (!selectedGuessHasCalls)
       return "waiting for selected guess to have calls";
 
@@ -59,7 +59,7 @@ export const useAutoSkipper = ({
     selectedGuessIsPending,
     selectedGuessId,
     nextGuessId,
-    hasActive,
+    active,
     selectedGuessHasCalls,
   ]);
 
