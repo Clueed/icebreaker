@@ -48,3 +48,9 @@
     --ring: 196 100% 35.9%;
   }
 }
+
+@layer utilities {
+  .animation-state-paused {
+    animation-play-state: paused;
+  }
+}

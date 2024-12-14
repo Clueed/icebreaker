@@ -6,7 +6,6 @@ import { DateTime, Duration } from "luxon";
 import { useSessionStorage } from "usehooks-ts";
 
 import { cn } from "@icebreaker/ui";
-import { BorderBeam } from "@icebreaker/ui/border-beam";
 import { Card, CardContent, CardHeader } from "@icebreaker/ui/card";
 import { PauseIcon } from "@icebreaker/ui/icons";
 import { Skeleton } from "@icebreaker/ui/skeleton";
@@ -15,13 +14,18 @@ import { usePhoneCallBySessionIdQuery } from "~/app/_api-hooks/use-phone-call";
 import { useCall } from "~/app/_components/call-handler/use-current-call";
 import { AutoEndCall } from "~/app/(app)/@caller/_components/auto-end-call/auto-end-call";
 import { useAutoEndCall } from "~/app/(app)/@caller/_components/auto-end-call/use-auto-end-call";
+import { CurrentCallClusterBorderBeams } from "~/app/(app)/@caller/_components/current-call-cluster/current-call-cluster-border-beams";
 import { CallPhoneNumberDisplay } from "~/app/(app)/@caller/_components/current-call-cluster/phone-number-display";
 import { EndCallButton } from "~/app/(app)/@caller/_components/end-call-button";
 import { CallRatingCluster } from "~/app/(app)/@caller/_components/rating-cluster";
 import { useCallTimer } from "~/app/(app)/@caller/_components/use-call-timer";
 
 export const CurrentCallCluster = () => {
-  const { hangup, timer, sessionId, phoneNumber, live, active } = useCall();
+  const { hangup, timer, sessionId, phoneNumber } = useCall({
+    callbacks: {
+      onEnd: () => console.log("CALL ENDED"),
+    },
+  });
   const { duration: callDuration } = useCallTimer({ timer });
 
   const { data: phoneCall } = usePhoneCallBySessionIdQuery(
@@ -55,12 +59,7 @@ export const CurrentCallCluster = () => {
   return (
     <div className="space-y-4">
       <Card className="relative" {...register}>
-        <CardHeader
-          className={cn(
-            "text-center align-middle",
-            live && "text-primary-foreground",
-          )}
-        >
+        <CardHeader className={cn("text-center align-middle")}>
           <div
             className={cn(
               "border-none text-center text-sm font-semibold tabular-nums tracking-widest",
@@ -86,36 +85,7 @@ export const CurrentCallCluster = () => {
           />
           <EndCallButton progressValue={decimalLeft} />
         </CardContent>
-        <BorderBeam
-          colorFrom={
-            live ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))"
-          }
-          colorTo={
-            live ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))"
-          }
-          size={80}
-          duration={live ? 4 : 6}
-          delay={0}
-          enabled={active}
-          className={cn(
-            !active && "opacity-0 transition-opacity duration-1000 ease-in-out",
-          )}
-        />
-        <BorderBeam
-          size={80}
-          duration={live ? 4 : 6}
-          delay={live ? 2 : 3}
-          colorFrom={
-            live ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))"
-          }
-          colorTo={
-            live ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))"
-          }
-          enabled={active}
-          className={cn(
-            !active && "opacity-0 transition-opacity duration-1000 ease-in-out",
-          )}
-        />
+        <CurrentCallClusterBorderBeams />
       </Card>
 
       <div className="relative px-6 py-2">
