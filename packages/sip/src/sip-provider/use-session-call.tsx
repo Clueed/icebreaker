@@ -1,16 +1,38 @@
 import type { Session } from "sip.js";
 import type { SessionManager } from "sip.js/lib/platform/web";
+import { useEffect } from "react";
 import { Inviter, SessionState } from "sip.js";
 
 import { useSIPProvider } from ".";
 import { SessionDirection } from "../type";
 
-export const useSessionCall = (sessionId: string | null) => {
+export const useSessionCall = (
+  sessionId: string | null,
+  callbacks: {
+    onAnswer?: () => void;
+    onEnd?: () => void;
+  } = {},
+) => {
   const { sessions, sessionManager, sessionTimers } = useSIPProvider();
 
   const timer = sessionId ? sessionTimers[sessionId] : undefined;
   const session = sessionId ? sessions[sessionId] : undefined;
   const phoneNumber = session ? getFriendlyPhoneNumber(session) : undefined;
+
+  useEffect(() => {
+    const listener = (state: SessionState) => {
+      if (state === SessionState.Established) {
+        callbacks.onAnswer?.();
+      }
+      if (state === SessionState.Terminated) {
+        callbacks.onEnd?.();
+      }
+    };
+
+    session?.stateChange.addListener(listener);
+
+    return () => session?.stateChange.removeListener(listener);
+  }, [session]);
 
   const direction =
     session instanceof Inviter
