@@ -13,13 +13,10 @@ export const CallPhoneNumberDisplay = ({
   const [animateRef] = useAutoAnimate();
   return (
     <div ref={animateRef} className="text-xl">
-      {
-        !sessionPhoneNumber && (
-          // Array.from({ length: 10 }).map((_, index) => (
-          <Skeleton className="mx-0.5 inline-block h-[2cap] w-full animate-none" />
-        )
-        // ))
-      }
+      {!sessionPhoneNumber && (
+        // Array.from({ length: 10 }).map((_, index) => (
+        <Skeleton size={"char"} className="w-full" animate={false} />
+      )}
       {phoneCallPhoneNumber ? (
         <>
           <span className="text-nowrap opacity-50">

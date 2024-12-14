@@ -9,6 +9,7 @@ import { cn } from "@icebreaker/ui";
 import { BorderBeam } from "@icebreaker/ui/border-beam";
 import { Card, CardContent, CardHeader } from "@icebreaker/ui/card";
 import { PauseIcon } from "@icebreaker/ui/icons";
+import { Skeleton } from "@icebreaker/ui/skeleton";
 
 import { usePhoneCallBySessionIdQuery } from "~/app/_api-hooks/use-phone-call";
 import { useCall } from "~/app/_components/call-handler/use-current-call";
@@ -65,7 +66,13 @@ export const CurrentCallCluster = () => {
               "border-none text-center text-sm font-semibold tabular-nums tracking-widest",
             )}
           >
-            {callDuration ? callDuration.toFormat("mm:ss") : ":"}
+            {callDuration ? (
+              callDuration.toFormat("mm:ss")
+            ) : (
+              <>
+                <Skeleton className="w-[8ch]" size={"char"} animate={false} />
+              </>
+            )}
           </div>
           <CallPhoneNumberDisplay
             phoneCallPhoneNumber={phoneCall?.phoneNumber}
