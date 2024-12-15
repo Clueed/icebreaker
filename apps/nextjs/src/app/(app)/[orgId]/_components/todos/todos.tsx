@@ -159,6 +159,7 @@ const AddTodoForm = (props: { onSubmit: (todo: Todo) => void }) => {
     defaultValues: {
       name: "",
       description: "",
+      done: false,
     },
   });
 
@@ -199,6 +200,10 @@ const AddTodoForm = (props: { onSubmit: (todo: Todo) => void }) => {
         >
           <PlusIcon /> add
         </Button>
+        <div className="text-xs text-muted-foreground">
+          isDirty: {String(form.formState.isDirty)}, isValid:{" "}
+          {String(form.formState.isValid)}
+        </div>
       </form>
     </Form>
   );
