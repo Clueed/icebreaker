@@ -1,7 +1,7 @@
 "use client";
 
 import type { z } from "zod";
-import { useId } from "react";
+import { forwardRef, useEffect, useId, useRef } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -66,6 +66,13 @@ export const Todos = (props: { orgId: string }) => {
   };
 
   const [animateRef] = useAutoAnimate();
+  const firstUndoneTodoRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (todosQuery.isSuccess && firstUndoneTodoRef.current) {
+      firstUndoneTodoRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [todosQuery.isSuccess]);
 
   return (
     <ScrollContainer
@@ -75,12 +82,17 @@ export const Todos = (props: { orgId: string }) => {
     >
       {todosQuery.isLoading && <div>Loading...</div>}
       {todosQuery.isError && <div>Error: {todosQuery.error.message}</div>}
-      {todos.map((todo) => (
+      {todos.map((todo, index) => (
         <TodoItem
           key={todo.name}
           todo={todo}
           toggleDone={toogleDone}
           deleteTodo={deleteTodo}
+          ref={
+            !todo.done && todos.findIndex((t) => !t.done) === index
+              ? firstUndoneTodoRef
+              : undefined
+          }
         />
       ))}
       <Popover>
@@ -100,18 +112,17 @@ export const Todos = (props: { orgId: string }) => {
   );
 };
 
-const TodoItem = ({
-  todo,
-  toggleDone,
-  deleteTodo,
-}: {
-  todo: Todo;
-  toggleDone: (todo: Todo) => void;
-  deleteTodo: (todo: Todo) => void;
-}) => {
+const TodoItem = forwardRef<
+  HTMLDivElement,
+  {
+    todo: Todo;
+    toggleDone: (todo: Todo) => void;
+    deleteTodo: (todo: Todo) => void;
+  }
+>(({ todo, toggleDone, deleteTodo }, ref) => {
   const id = useId();
   return (
-    <div className="group flex items-center justify-between gap-2">
+    <div className="group flex items-center justify-between gap-2" ref={ref}>
       <div
         className={cn(
           "grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-1 transition-opacity duration-500",
@@ -154,7 +165,8 @@ const TodoItem = ({
       </Button>
     </div>
   );
-};
+});
+TodoItem.displayName = "TodoItem";
 
 const AddTodoForm = (props: { onSubmit: (todo: Todo) => void }) => {
   const form = useForm<z.infer<typeof todoSchema>>({
