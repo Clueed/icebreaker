@@ -1,4 +1,3 @@
-import type { DurationUnit } from "luxon";
 import { useState } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { DateTime } from "luxon";
@@ -6,6 +5,7 @@ import { DateTime } from "luxon";
 import type { RouterOutputs } from "@icebreaker/api";
 import { cn } from "@icebreaker/ui";
 
+import { getHumanReadablePastDuration } from "~/app/(app)/@caller/_components/call-history/get-human-readable-past-duration";
 import { CallRatingCluster } from "~/app/(app)/@caller/_components/rating-cluster";
 import { RatingEffect } from "~/app/(app)/@caller/_components/rating-effect";
 import { RatingIcon } from "~/app/(app)/@caller/_components/rating-icon";
@@ -27,8 +27,6 @@ export const HistoryCallItem = ({
           .diff(DateTime.fromSQL(call.answeredAt, { zone: "utc" }))
           .toFormat("mm:ss")
       : undefined;
-
-  const isToday = lastModified.hasSame(DateTime.local(), "day");
 
   const [expanded, setExpanded] = useState(initialExpanded);
 
@@ -66,11 +64,7 @@ export const HistoryCallItem = ({
           {call.phoneNumber.extension}
         </div>
         <div className="col-start-2 flex justify-start gap-4 text-nowrap text-xs text-muted-foreground">
-          <div>
-            {isToday
-              ? durationAgo(lastModified) + " ago"
-              : lastModified.toRelativeCalendar()}
-          </div>
+          <div>{getHumanReadablePastDuration(lastModified)}</div>
           <div>{duration && duration}</div>
         </div>
       </button>
@@ -94,17 +88,4 @@ export const HistoryCallItem = ({
       )}
     </div>
   );
-};
-
-const durationAgo = (timestamp: DateTime) => {
-  const diffNow = timestamp.diffNow().rescale();
-
-  const unit: DurationUnit = diffNow.get("hours") !== 0 ? "hours" : "minutes";
-
-  return timestamp
-    .diffNow([unit])
-    .negate()
-    .mapUnits((x) => Math.floor(x))
-    .rescale()
-    .toHuman({ compactDisplay: "short", unitDisplay: "short" });
 };

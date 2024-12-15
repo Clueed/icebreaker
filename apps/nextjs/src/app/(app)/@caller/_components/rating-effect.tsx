@@ -12,17 +12,15 @@ export const RatingEffect = ({
 }) => {
   const [animateRef] = useAutoAnimate();
   return (
-    <div
-      className={cn("relative", rating === null && "text-muted-foreground")}
-      ref={animateRef}
-    >
+    <div className={cn("relative")} ref={animateRef}>
       <div
         className={cn(
           "absolute inset-0 -z-50",
           "blur-lg",
-          rating === "voicemail" && "bg-blue-300",
-          rating === "person" && "bg-sky-500",
-          rating === "jackpot" && "bg-cyan-600",
+          rating === null && "text-muted-foreground",
+          rating === "voicemail" && "bg-blue-300 text-blue-100",
+          rating === "person" && "bg-sky-500 text-sky-100",
+          rating === "jackpot" && "bg-cyan-600 text-cyan-100",
         )}
       />
       {children}

@@ -26,7 +26,7 @@ export function OrgList() {
       className="grid grid-cols-[repeat(auto-fill,minmax(15rem,_1fr))] gap-8"
       ref={animateRef}
     >
-      <div className="col-start-1">
+      <div>
         <CreateOrgForm />
       </div>
       {isSuccess &&
@@ -36,7 +36,7 @@ export function OrgList() {
           </Link>
         ))}
       {isLoading &&
-        Array.from({ length: 3 }).map((_, i) => <LoadingOrgCard key={i} />)}
+        Array.from({ length: 6 }).map((_, i) => <LoadingOrgCard key={i} />)}
     </div>
   );
 }

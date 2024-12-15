@@ -1,8 +1,10 @@
 import type { AppRouterOutputs } from "node_modules/@icebreaker/api/dist/root";
 import { Fragment } from "react";
 
+import { cn } from "@icebreaker/ui";
 import { PhoneCallIcon } from "@icebreaker/ui/icons";
 import { Skeleton } from "@icebreaker/ui/skeleton";
+import { phoneCallRatingList } from "@icebreaker/validators/phone-call-rating";
 
 import { RatingEffect } from "~/app/(app)/@caller/_components/rating-effect";
 import { RatingIcon } from "~/app/(app)/@caller/_components/rating-icon";
@@ -37,37 +39,59 @@ export const OrgCardContent = ({
   const noCalls = isSuccess && rawStats.length === 0;
 
   return (
-    <div className="h-52">
-      {isLoading && <Skeleton className="h-full w-full" />}
+    <div className="h-full">
+      {isLoading && <Skeleton className="h-52 w-full" />}
       {isSuccess && (
         <>
-          {noCalls && (
-            <div className="flex h-full items-center justify-center text-muted-foreground">
-              no calls
-            </div>
-          )}
+          {noCalls && <div className="text-muted-foreground">no calls</div>}
           {!noCalls && (
             <div className="grid grid-cols-[auto_minmax(0,_1fr)_auto] items-center justify-center gap-x-4 gap-y-2 align-middle">
-              {stats.map((stat, i) => (
-                <Fragment key={i}>
-                  <div className="text-muted-foreground">
-                    <RatingEffect rating={stat.rating}>
-                      <RatingIcon
-                        rating={stat.rating}
-                        className="h-[1.25cap]"
-                      />
-                    </RatingEffect>
-                  </div>
-                  <div className="">{stat.rating}</div>
-                  <div className="text-right">{stat.count}</div>
-                </Fragment>
-              ))}
-              <div className="col-span-3 h-0.5 rounded-full bg-muted-foreground" />
-              <div className="">
+              <div className="mt-2">
                 <PhoneCallIcon className="h-[1.25cap]" />
               </div>
-              <div className="font-medium">total</div>
-              <div className="font-medium">{total}</div>
+              <div className="mt-2 font-medium">total</div>
+              <div className="mt-2 font-medium">{total}</div>
+              {phoneCallRatingList.map((rating) => {
+                const count =
+                  stats.find((stat) => stat.rating === rating)?.count ?? 0;
+
+                return (
+                  <Fragment key={rating}>
+                    <div
+                      className={cn(
+                        count === 0
+                          ? "text-muted-foreground"
+                          : "text-foreground",
+                      )}
+                    >
+                      <RatingEffect rating={count === 0 ? null : rating}>
+                        <RatingIcon rating={rating} className="h-[1.25cap]" />
+                      </RatingEffect>
+                    </div>
+                    <div
+                      className={cn(
+                        count === 0
+                          ? "text-muted-foreground"
+                          : "text-foreground",
+                        count > 0 && rating === "jackpot" && "font-medium",
+                      )}
+                    >
+                      {rating}
+                    </div>
+                    <div
+                      className={cn(
+                        "text-right",
+                        count === 0
+                          ? "text-muted-foreground"
+                          : "text-foreground",
+                        count > 0 && rating === "jackpot" && "font-medium",
+                      )}
+                    >
+                      {count}
+                    </div>
+                  </Fragment>
+                );
+              })}
             </div>
           )}
         </>

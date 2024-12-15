@@ -18,6 +18,7 @@ export const orgRouter = {
         updatedAt: true,
         name: true,
         id: true,
+        todos: true,
       },
     });
   }),

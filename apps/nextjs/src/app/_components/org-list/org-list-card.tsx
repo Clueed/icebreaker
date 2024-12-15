@@ -1,6 +1,7 @@
 import type { AppRouterOutputs } from "node_modules/@icebreaker/api/dist/root";
 import { DateTime } from "luxon";
 
+import { cn } from "@icebreaker/ui";
 import {
   Card,
   CardContent,
@@ -11,6 +12,7 @@ import {
 import { Skeleton } from "@icebreaker/ui/skeleton";
 
 import { OrgCardContent } from "~/app/_components/org-list/org-list-card-content";
+import { getHumanReadablePastDuration } from "~/app/(app)/@caller/_components/call-history/get-human-readable-past-duration";
 
 export const OrgCard = ({
   org,
@@ -21,13 +23,14 @@ export const OrgCard = ({
     <Card className="transition-colors duration-700 hover:bg-accent hover:text-accent-foreground">
       <CardHeader>
         <CardTitle className="h-[1.65cap] truncate">{org.name}</CardTitle>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <OrgCardDate org={org} />
+          <OrgCardTodos org={org} />
+        </div>
       </CardHeader>
       <CardContent>
         <OrgCardContent org={org} />
       </CardContent>
-      <CardFooter>
-        <OrgCardFooter org={org} />
-      </CardFooter>
     </Card>
   );
 };
@@ -40,21 +43,22 @@ export const LoadingOrgCard = () => {
     >
       <CardHeader>
         <CardTitle>
-          <Skeleton className="h-[1.65cap] w-40" />
+          <Skeleton className="h-[1.65cap] w-[20ch]" />
         </CardTitle>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <Skeleton className="h-[1.45cap] w-[10ch]" />
+          <Skeleton className="h-[1.45cap] w-[10ch]" />
+        </div>
       </CardHeader>
       <CardContent>
-        {" "}
         <Skeleton className="h-52 w-full" />
       </CardContent>
-      <CardFooter>
-        <Skeleton className="h-[1.65cap] w-full" />
-      </CardFooter>
+      <CardFooter></CardFooter>
     </Card>
   );
 };
 
-const OrgCardFooter = ({
+const OrgCardDate = ({
   org,
 }: {
   org: AppRouterOutputs["org"]["all"][number];
@@ -62,5 +66,32 @@ const OrgCardFooter = ({
   const compositeDate = org.updatedAt ?? org.createdAt;
   const date = DateTime.fromSQL(compositeDate);
   const formattedDate = date.toFormat("LLL dd, yyyy");
-  return <div className="text-xs text-muted-foreground">{formattedDate}</div>;
+  const humanReadablePast = getHumanReadablePastDuration(date);
+  return (
+    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+      <div className="">{humanReadablePast}</div>/
+      <div className="">{formattedDate}</div>
+    </div>
+  );
+};
+
+const OrgCardTodos = ({
+  org,
+}: {
+  org: AppRouterOutputs["org"]["all"][number];
+}) => {
+  const todos = org.todos;
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      {todos.map((todo) => (
+        <div
+          key={todo.name}
+          className={cn(
+            "size-2 rounded-sm",
+            todo.done ? "bg-secondary-foreground" : "bg-muted",
+          )}
+        />
+      ))}
+    </div>
+  );
 };
