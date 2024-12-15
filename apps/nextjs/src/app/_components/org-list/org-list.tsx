@@ -23,7 +23,7 @@ export function OrgList() {
 
   return (
     <div
-      className="grid grid-cols-[repeat(auto-fill,minmax(15rem,_1fr))] gap-8"
+      className="grid grid-cols-[repeat(auto-fill,minmax(15rem,_1fr))] items-stretch gap-8"
       ref={animateRef}
     >
       <div>

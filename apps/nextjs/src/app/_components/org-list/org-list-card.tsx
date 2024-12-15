@@ -20,7 +20,7 @@ export const OrgCard = ({
   org: AppRouterOutputs["org"]["all"][number];
 }) => {
   return (
-    <Card className="transition-colors duration-700 hover:bg-accent hover:text-accent-foreground">
+    <Card className="h-full transition-colors duration-700 hover:bg-accent hover:text-accent-foreground">
       <CardHeader>
         <CardTitle className="h-[1.65cap] truncate">{org.name}</CardTitle>
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -46,8 +46,8 @@ export const LoadingOrgCard = () => {
           <Skeleton className="h-[1.65cap] w-[20ch]" />
         </CardTitle>
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <Skeleton className="h-[1.45cap] w-[10ch]" />
-          <Skeleton className="h-[1.45cap] w-[10ch]" />
+          <Skeleton className="h-[1.45cap] w-[15ch]" />
+          <Skeleton className="h-[1.45cap] w-[5ch]" />
         </div>
       </CardHeader>
       <CardContent>
