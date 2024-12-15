@@ -1,14 +1,13 @@
 "use client";
 
+import type { UseSessionCallCallbacks } from "@icebreaker/sip";
 import { useSessionCall } from "@icebreaker/sip";
 
 import { useCurrentSessionId } from "./current-session-id-context";
 
 export const useCall = (
   props: {
-    callbacks: {
-      onEnd?: () => void;
-    };
+    callbacks: UseSessionCallCallbacks;
   } = { callbacks: {} },
 ) => {
   const { sessionId } = useCurrentSessionId();

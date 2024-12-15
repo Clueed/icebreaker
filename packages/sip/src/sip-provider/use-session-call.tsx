@@ -6,12 +6,15 @@ import { Inviter, SessionState } from "sip.js";
 import { useSIPProvider } from ".";
 import { SessionDirection } from "../type";
 
+export interface UseSessionCallCallbacks {
+  onEnd?: () => void;
+  onStart?: () => void;
+  onAnswer?: () => void;
+}
+
 export const useSessionCall = (
   sessionId: string | null,
-  callbacks: {
-    onAnswer?: () => void;
-    onEnd?: () => void;
-  } = {},
+  callbacks: UseSessionCallCallbacks = {},
 ) => {
   const { sessions, sessionManager, sessionTimers } = useSIPProvider();
 
@@ -20,6 +23,12 @@ export const useSessionCall = (
   const phoneNumber = session ? getFriendlyPhoneNumber(session) : undefined;
 
   useEffect(() => {
+    if (!session) {
+      return;
+    }
+
+    callbacks.onStart?.();
+
     const listener = (state: SessionState) => {
       if (state === SessionState.Established) {
         callbacks.onAnswer?.();
@@ -29,9 +38,9 @@ export const useSessionCall = (
       }
     };
 
-    session?.stateChange.addListener(listener);
+    session.stateChange.addListener(listener);
 
-    return () => session?.stateChange.removeListener(listener);
+    return () => session.stateChange.removeListener(listener);
   }, [session]);
 
   const direction =

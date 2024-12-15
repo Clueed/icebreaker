@@ -1,9 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import { skipToken } from "@tanstack/react-query";
-import { DateTime, Duration } from "luxon";
-import { useSessionStorage } from "usehooks-ts";
 
 import { cn } from "@icebreaker/ui";
 import { Card, CardContent, CardHeader } from "@icebreaker/ui/card";
@@ -21,44 +18,18 @@ import { CallRatingCluster } from "~/app/(app)/@caller/_components/rating-cluste
 import { useCallTimer } from "~/app/(app)/@caller/_components/use-call-timer";
 
 export const CurrentCallCluster = () => {
-  const { hangup, timer, sessionId, phoneNumber } = useCall({
-    callbacks: {
-      onEnd: () => console.log("CALL ENDED"),
-    },
-  });
+  const { timer, sessionId, phoneNumber } = useCall();
   const { duration: callDuration } = useCallTimer({ timer });
 
   const { data: phoneCall } = usePhoneCallBySessionIdQuery(
     sessionId ? { sessionId } : skipToken,
   );
 
-  const [autoEndEnabled, setAutoEndEnabled] = useSessionStorage(
-    "autoEndEnabled",
-    false,
-  );
-  const [maxDuration, setMaxDuration] = useSessionStorage(
-    "maxDuration",
-    Duration.fromObject({ seconds: 20 }),
-  );
-  const [buffer, setBuffer] = useState<Duration>(Duration.fromMillis(0));
-  const { register, isHovering } = useRecordTimeSpentOnMouse({
-    handleDurationOnLeave: (newBuffer) =>
-      setBuffer((prev) => prev.plus(newBuffer)),
-  });
-  const { decimalLeft } = useAutoEndCall({
-    enabled: autoEndEnabled && !isHovering,
-    hangup,
-    inputs: {
-      maxDuration,
-      callDuration,
-      buffer,
-    },
-    onEnd: () => setBuffer(Duration.fromMillis(0)),
-  });
+  const autoEnd = useAutoEndCall();
 
   return (
     <div className="space-y-4">
-      <Card className="relative" {...register}>
+      <Card className="relative" {...autoEnd.register}>
         <CardHeader className={cn("text-center align-middle")}>
           <div
             className={cn(
@@ -83,7 +54,7 @@ export const CurrentCallCluster = () => {
             sessionId={sessionId}
             rating={phoneCall?.rating ?? null}
           />
-          <EndCallButton progressValue={decimalLeft} />
+          <EndCallButton progressValue={autoEnd.percentLeft} />
         </CardContent>
         <CurrentCallClusterBorderBeams />
       </Card>
@@ -92,43 +63,21 @@ export const CurrentCallCluster = () => {
         <div
           className={cn(
             "absolute inset-0 z-10 flex items-center justify-center backdrop-blur-sm transition-opacity duration-500 ease-in-out",
-            !isHovering && "pointer-events-none opacity-0",
+            !autoEnd.isPaused && "pointer-events-none opacity-0",
           )}
         >
           <PauseIcon />
         </div>
 
         <AutoEndCall
-          maxDuration={maxDuration}
-          enabled={autoEndEnabled}
-          setEnabled={setAutoEndEnabled}
-          setMaxDuration={setMaxDuration}
+          maxDuration={autoEnd.maxDurationS}
+          setMaxDuration={autoEnd.setMaxDurationS}
+          enabled={autoEnd.enabled}
+          setEnabled={autoEnd.setEnabled}
+          resetOnAnswer={autoEnd.resetOnAnswer}
+          setResetOnAnswer={autoEnd.setResetOnAnswer}
         />
       </div>
     </div>
   );
-};
-
-const useRecordTimeSpentOnMouse = (props: {
-  handleDurationOnLeave: (duration: Duration<true>) => void;
-}) => {
-  const [startTime, setStartTime] = useState<DateTime | null>(null);
-  const [isHovering, setIsHovering] = useState(false);
-
-  return {
-    isHovering,
-    register: {
-      onMouseEnter: () => {
-        setIsHovering(true);
-        setStartTime(DateTime.now());
-      },
-      onMouseLeave: () => {
-        setIsHovering(false);
-        if (startTime) {
-          const duration = DateTime.now().diff(startTime);
-          props.handleDurationOnLeave(duration);
-        }
-      },
-    },
-  };
 };

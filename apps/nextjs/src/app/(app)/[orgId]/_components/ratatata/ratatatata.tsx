@@ -60,31 +60,35 @@ export const Ratatatata = (props: { orgId: string; nextGuessId?: string }) => {
           </Button>
         </PopoverTrigger>
         <PopoverContent>
-          <div className="space-y-4">
-            <div className="grid grid-cols-[auto_1fr] items-center space-x-2">
-              <Switch
-                id={autoCallerId}
-                checked={autoCallerEnabled}
-                onCheckedChange={setAutoCallerEnabled}
-              />
+          <div className="grid grid-cols-[auto_1fr] items-center gap-x-4">
+            <Switch
+              id={autoCallerId}
+              checked={autoCallerEnabled}
+              onCheckedChange={setAutoCallerEnabled}
+            />
 
-              <Label htmlFor={autoCallerId}>auto caller</Label>
-              <p className="col-start-2 row-start-2 text-xs text-muted-foreground">
-                {autoCallerStatus}
-              </p>
-            </div>
-            <div className="grid grid-cols-[auto_1fr] items-center space-x-2">
-              <Switch
-                id={autoSkipperId}
-                checked={autoSkipperEnabled}
-                onCheckedChange={setAutoSkipperEnabled}
-              />
+            <Label htmlFor={autoCallerId} className="col-start-2">
+              auto caller
+            </Label>
+            <p className="col-start-2 text-xs text-muted-foreground">
+              {autoCallerStatus}
+            </p>
 
-              <Label htmlFor={autoSkipperId}>auto guess skipper</Label>
-              <p className="col-start-2 row-start-2 text-xs text-muted-foreground">
-                {autoSkipperStatus}
-              </p>
-            </div>
+            {/* spacer */}
+            <div className="col-span-full h-4" />
+
+            <Switch
+              id={autoSkipperId}
+              checked={autoSkipperEnabled}
+              onCheckedChange={setAutoSkipperEnabled}
+            />
+
+            <Label htmlFor={autoSkipperId} className="col-start-2">
+              auto guess skipper
+            </Label>
+            <p className="col-start-2 text-xs text-muted-foreground">
+              {autoSkipperStatus}
+            </p>
           </div>
         </PopoverContent>
       </Popover>

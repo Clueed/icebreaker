@@ -1,42 +1,69 @@
 "use client";
 
-import type { Duration } from "luxon";
-import { useState } from "react";
+import type { HTMLAttributes } from "react";
+import { useSessionStorage } from "usehooks-ts";
 
-export const useAutoEndCall = (args: {
-  enabled: boolean;
-  hangup: (() => Promise<void> | undefined) | undefined;
-  inputs: {
-    callDuration: Duration<true> | null;
-    maxDuration: Duration<true>;
-    buffer: Duration<true>;
-  };
-  onEnd?: () => void;
-}) => {
-  const { inputs } = args;
-  const diff =
-    inputs.callDuration &&
-    inputs.maxDuration.minus(inputs.callDuration).plus(inputs.buffer);
+import { useCountdown } from "@icebreaker/ui/hooks/use-countdown";
 
-  const [lock, setLock] = useState(false);
+import { useCall } from "~/app/_components/call-handler/use-current-call";
 
-  if (args.enabled && diff) {
-    if (diff.toMillis() < 0 && lock === false) {
-      void args.hangup?.();
-      setLock(true);
-      args.onEnd?.();
-    }
-    if (diff.toMillis() > 0 && lock === true) {
-      setLock(false);
-    }
-  }
+export const useAutoEndCall = () => {
+  const [enabled, setEnabled] = useSessionStorage("autoEndEnabled", false);
+  const [resetOnAnswer, setResetOnAnswer] = useSessionStorage(
+    "autoEndResetOnAnswer",
+    true,
+  );
+  const [maxDurationS, setMaxDurationS] = useSessionStorage("maxDuration", 20);
 
-  const decimalLeft = diff
-    ? (diff.toMillis() / inputs.maxDuration.toMillis()) * 100
-    : 100;
+  const { active, hangup } = useCall({
+    callbacks: {
+      onStart: () => {
+        resetCountdown();
+        startCountdown();
+      },
+      onAnswer: () => {
+        if (!resetOnAnswer) {
+          return;
+        }
+        resetCountdown();
+        startCountdown();
+      },
+      onEnd: () => {
+        stopCountdown();
+        resetCountdown();
+      },
+    },
+  });
+
+  const [
+    countdown,
+    { isRunning, startCountdown, stopCountdown, resetCountdown },
+  ] = useCountdown({
+    countStart: maxDurationS,
+    countStop: 0,
+    isIncrement: false,
+    callbacks: {
+      onCountdownEnd: () => void hangup(),
+    },
+  });
+
+  const isPaused = enabled && active && !isRunning;
+  const register = {
+    onMouseOver: () => enabled && active && stopCountdown(),
+    onMouseOut: () => enabled && startCountdown(),
+  } satisfies HTMLAttributes<HTMLDivElement>;
+  const percentLeft =
+    enabled && active ? (countdown / maxDurationS) * 100 : 100;
 
   return {
-    diff,
-    decimalLeft,
+    setMaxDurationS,
+    maxDurationS,
+    enabled,
+    setEnabled,
+    isPaused,
+    percentLeft,
+    register,
+    resetOnAnswer,
+    setResetOnAnswer,
   };
 };
