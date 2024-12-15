@@ -6,11 +6,14 @@ export const useScrollBoundries = () => {
   const [isBetween, setIsBetween] = useState(false);
 
   const handleOnScroll = (event: React.UIEvent<HTMLDivElement>) => {
-    //@ts-expect-error - event are weird
+    // @ts-expect-error - event are weird
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const scrollTop = event.target.scrollTop;
-    //@ts-expect-error - event are weird
+    // @ts-expect-error - event are weird
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const scrollHeight = event.target.scrollHeight;
-    //@ts-expect-error - event are weird
+    // @ts-expect-error - event are weird
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const clientHeight = event.target.clientHeight;
     const top = scrollTop === 0;
     const between = scrollTop > 0 && clientHeight < scrollHeight - scrollTop;

@@ -71,7 +71,7 @@ export const Todos = (props: { orgId: string }) => {
     <ScrollContainer
       containerClassName="max-w-96"
       className="max-h-32 space-y-4"
-      // ref={animateRef}
+      ref={animateRef}
     >
       {todosQuery.isLoading && <div>Loading...</div>}
       {todosQuery.isError && <div>Error: {todosQuery.error.message}</div>}
