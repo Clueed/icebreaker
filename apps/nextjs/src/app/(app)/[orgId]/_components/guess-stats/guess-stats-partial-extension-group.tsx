@@ -106,7 +106,7 @@ const GuessStatsPartialExtensionGroupHeader = (props: {
       <div className="relative">
         <div className="absolute inset-0 flex items-center justify-center">
           <RatingEffect rating={rating}>
-            <RatingIcon rating={rating} className={cn("size-[20px]")} />
+            <RatingIcon rating={rating} className={cn("size-4")} />
           </RatingEffect>
         </div>
         <div className={cn(rating === null && "text-muted-foreground")}>
