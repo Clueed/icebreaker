@@ -3,6 +3,7 @@ import type {
   NextAuthConfig,
   Session as NextAuthSession,
 } from "next-auth";
+import type { Provider } from "next-auth/providers";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import google from "next-auth/providers/google";
 
@@ -25,15 +26,17 @@ const adapter = DrizzleAdapter(db, {
   sessionsTable: Session,
 });
 
+export const providers: Provider[] = [
+  google({
+    clientId: env.GOOGLE_CLIENT_ID,
+    clientSecret: env.GOOGLE_CLIENT_SECRET,
+  }),
+];
+
 export const authConfig = {
   adapter,
   secret: env.AUTH_SECRET,
-  providers: [
-    google({
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
-    }),
-  ],
+  providers,
   callbacks: {
     session: (opts) => {
       if (!("user" in opts))
@@ -60,7 +63,7 @@ export const authConfig = {
     },
   },
   pages: {
-    // signIn: "/api/auth/signin/google",
+    signIn: "/sign-in",
   },
 } satisfies NextAuthConfig;
 

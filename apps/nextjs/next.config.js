@@ -8,15 +8,6 @@ createJiti(fileURLToPath(import.meta.url))("./src/env");
 const config = {
   reactStrictMode: true,
 
-  /** Enables hot reloading for local packages without a build step */
-  transpilePackages: [
-    "@icebreaker/api",
-    "@icebreaker/auth",
-    "@icebreaker/db",
-    "@icebreaker/ui",
-    "@icebreaker/validators",
-  ],
-
   /** We already do linting and typechecking as separate tasks in CI */
   eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },

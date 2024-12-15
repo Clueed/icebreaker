@@ -54,3 +54,12 @@
     animation-play-state: paused;
   }
 }
+
+@layer utilities {
+  .background-noise {
+    background-size: 109px;
+    background-image: url(/rR6HYXBrMmX4cRpXfXUOvpvpB0.png);
+    background-repeat: repeat;
+    opacity: 10%;
+  }
+}
