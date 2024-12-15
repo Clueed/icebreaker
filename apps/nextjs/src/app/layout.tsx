@@ -4,7 +4,7 @@ import type { Metadata, Viewport } from "next";
 import { Urbanist, Victor_Mono } from "next/font/google";
 
 import { cn } from "@icebreaker/ui";
-import { ThemeProvider, ThemeToggle } from "@icebreaker/ui/theme";
+import { ThemeProvider } from "@icebreaker/ui/theme";
 import { Toaster } from "@icebreaker/ui/toast";
 
 import { AnimatedMain } from "~/app/_components/animated-main";
@@ -78,9 +78,6 @@ export default function RootLayout(props: { children: React.ReactNode }) {
               </CurrentSessionIdProvider>
             </SipProviderConfigured>
           </TRPCReactProvider>
-          <div className="absolute bottom-4 right-4">
-            <ThemeToggle />
-          </div>
           <Toaster />
         </ThemeProvider>
       </body>
