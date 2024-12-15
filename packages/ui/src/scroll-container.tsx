@@ -15,13 +15,13 @@ export const ScrollContainer = ({
     <div className={cn("relative overflow-hidden", containerClassName)}>
       <div
         className={cn(
-          "pointer-events-none absolute inset-x-0 top-0 h-20 w-full border-t-2 border-muted opacity-0 transition-opacity duration-500",
+          "pointer-events-none absolute inset-x-0 top-0 h-20 w-full border-t-2 border-muted/50 opacity-0 transition-opacity duration-500",
           (isBetween || isBottom) && "opacity-100",
         )}
       />
       <div
         className={cn(
-          "pointer-events-none absolute inset-x-0 bottom-0 h-20 w-full border-b-2 border-muted opacity-0 transition-opacity duration-500",
+          "pointer-events-none absolute inset-x-0 bottom-0 h-20 w-full border-b-2 border-muted/50 opacity-0 transition-opacity duration-500",
           (isBetween || isTop) && "opacity-100",
         )}
       />

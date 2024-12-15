@@ -111,7 +111,7 @@ const TodoItem = ({
 }) => {
   const id = useId();
   return (
-    <div className="group flex items-center gap-2">
+    <div className="group flex items-center justify-between gap-2">
       <div
         className={cn(
           "grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-1 transition-opacity duration-500",

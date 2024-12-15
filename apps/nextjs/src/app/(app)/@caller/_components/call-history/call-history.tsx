@@ -5,6 +5,7 @@ import { useIntersectionObserver } from "usehooks-ts";
 
 import { cn } from "@icebreaker/ui";
 import { ArrowDownIcon, HistoryIcon, Loader2Icon } from "@icebreaker/ui/icons";
+import { ScrollContainer } from "@icebreaker/ui/scroll-container";
 
 import { useCall } from "~/app/_components/call-handler/use-current-call";
 import { HistoryCallItem } from "~/app/(app)/@caller/_components/call-history/call-history-item";
@@ -48,15 +49,9 @@ export const CallHistory = () => {
       <h2 className={"mb-4 text-nowrap px-4 text-xs text-muted-foreground"}>
         <HistoryIcon className="inline size-[1.65cap]" /> call history
       </h2>
-      <div
+      <ScrollContainer
         ref={animateRef}
         className="h-96 space-y-2 overflow-y-auto rounded-md p-4"
-        style={{
-          scrollbarWidth: "thin",
-          scrollbarGutter: "stable",
-          maskImage:
-            "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
-        }}
       >
         {isPending && (
           <div className="flex h-full items-center justify-center">
@@ -68,7 +63,7 @@ export const CallHistory = () => {
           calls.map((call, index) => (
             <HistoryCallItem
               initialExpanded={index === 0}
-              key={call.id}
+              key={call.guessId + call.id}
               call={call}
             />
           ))}
@@ -82,7 +77,7 @@ export const CallHistory = () => {
           />
           {!hasNextPage && "the end"}
         </div>
-      </div>
+      </ScrollContainer>
     </div>
   );
 };
