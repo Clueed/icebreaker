@@ -25,6 +25,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@icebreaker/ui/popover";
+import { ScrollContainer } from "@icebreaker/ui/scroll-container";
 import { todoSchema } from "@icebreaker/validators/todo";
 
 import { api } from "~/trpc/react";
@@ -67,33 +68,35 @@ export const Todos = (props: { orgId: string }) => {
   const [animateRef] = useAutoAnimate();
 
   return (
-    <div>
-      <div className="max-w-52 space-y-4" ref={animateRef}>
-        {todosQuery.isLoading && <div>Loading...</div>}
-        {todosQuery.isError && <div>Error: {todosQuery.error.message}</div>}
-        {todos.map((todo) => (
-          <TodoItem
-            key={todo.name}
-            todo={todo}
-            toggleDone={toogleDone}
-            deleteTodo={deleteTodo}
-          />
-        ))}
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={"ghost"}
-              className="w-full justify-start gap-4 px-0.5 py-0"
-            >
-              <PlusIcon className="!size-[1.65cap]" /> add new
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent>
-            <AddTodoForm onSubmit={addTodo} />
-          </PopoverContent>
-        </Popover>
-      </div>
-    </div>
+    <ScrollContainer
+      containerClassName="max-w-96"
+      className="max-h-32 space-y-4"
+      // ref={animateRef}
+    >
+      {todosQuery.isLoading && <div>Loading...</div>}
+      {todosQuery.isError && <div>Error: {todosQuery.error.message}</div>}
+      {todos.map((todo) => (
+        <TodoItem
+          key={todo.name}
+          todo={todo}
+          toggleDone={toogleDone}
+          deleteTodo={deleteTodo}
+        />
+      ))}
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant={"ghost"}
+            className="w-full justify-start gap-4 px-0.5 py-0"
+          >
+            <PlusIcon className="!size-[1.65cap]" /> add new
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent>
+          <AddTodoForm onSubmit={addTodo} />
+        </PopoverContent>
+      </Popover>
+    </ScrollContainer>
   );
 };
 
