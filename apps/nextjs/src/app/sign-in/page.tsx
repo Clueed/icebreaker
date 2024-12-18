@@ -20,17 +20,17 @@ const SignInPage = async (props: {
           layout="fill"
         />
         <div className="background-noise absolute inset-0 z-50" />
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-gradient-to-bl from-black to-transparent"></div>
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-gradient-to-bl from-white to-transparent dark:from-black"></div>
       </div>
-      <div className="container flex h-svh flex-col justify-between px-8 py-32">
+      <div className="container flex h-svh flex-col justify-between px-8 py-[min(12vw,12rem)]">
         <div className="w-min">
-          <p className="max-w-full pr-4 text-4xl font-thin leading-normal md:text-7xl">
+          <p className="max-w-full pr-4 text-4xl font-thin leading-normal sm:text-5xl md:text-7xl">
             schrubben
           </p>
           <p className="text-right text-xs opacity-75 md:text-base">— Micha</p>
         </div>
         <div className="flex flex-wrap-reverse justify-between gap-x-32 gap-y-8">
-          <p className="self-end text-xs opacity-50">
+          <p className="self-end text-xs text-white opacity-50 dark:text-white">
             image by{" "}
             <Link
               href="https://unsplash.com/photos/red-and-orange-push-boroom-leaned-on-blue-door-CqXoj3mSAak"
