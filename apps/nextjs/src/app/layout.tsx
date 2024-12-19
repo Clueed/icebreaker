@@ -56,6 +56,10 @@ export default function RootLayout(props: { children: React.ReactNode }) {
         <div className="background-noise fixed inset-0 -z-50 opacity-5" />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {props.children}
+          <div className="container flex items-center justify-evenly py-16 text-center text-xs text-foreground/25">
+            <div>copywrite © {new Date().getFullYear()}</div>
+            {env.BUILD_ID && <div>{env.BUILD_ID}</div>}
+          </div>
           <Toaster />
         </ThemeProvider>
       </body>

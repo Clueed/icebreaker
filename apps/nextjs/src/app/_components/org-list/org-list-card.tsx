@@ -20,7 +20,7 @@ export const OrgCard = ({
   org: AppRouterOutputs["org"]["all"][number];
 }) => {
   return (
-    <Card className="h-full transition-colors duration-700 hover:bg-accent hover:text-accent-foreground">
+    <Card className="h-full transition-colors duration-700 hover:bg-accent/50">
       <CardHeader>
         <CardTitle className="h-[1.65cap] truncate">{org.name}</CardTitle>
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -38,7 +38,7 @@ export const OrgCard = ({
 export const LoadingOrgCard = () => {
   return (
     <Card
-      className="cursor-not-allowed transition-colors duration-700 hover:bg-accent hover:text-accent-foreground"
+      className="cursor-not-allowed transition-colors duration-700 hover:bg-accent/50"
       aria-disabled
     >
       <CardHeader>

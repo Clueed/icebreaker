@@ -9,6 +9,7 @@ import { useCall } from "~/app/_components/call-handler/use-current-call";
 
 export const EndCallButton = (props: { progressValue: number }) => {
   const { active, hangup } = useCall();
+  const disabled = !active;
 
   return (
     <Button
@@ -16,9 +17,12 @@ export const EndCallButton = (props: { progressValue: number }) => {
       size={"lg"}
       variant={"destructive"}
       onClick={hangup}
-      disabled={!active}
+      disabled={disabled}
     >
-      <Progress value={props.progressValue} />
+      <Progress
+        value={props.progressValue}
+        className={cn("transition-opacity", disabled && "opacity-0")}
+      />
       <div className="z-50 flex items-center justify-center gap-1">
         <PhoneOffIcon className="size-[1.65cap]" />
         <div>hangup</div>
