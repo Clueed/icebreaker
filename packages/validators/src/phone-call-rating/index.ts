@@ -33,7 +33,3 @@ export const getHighestRated = (
       : highest;
   }, null);
 };
-
-export const sortRatings = (ratings: PhoneCallRating[]) => {
-  return phoneCallRatingList.filter((r) => ratings.includes(r));
-};
