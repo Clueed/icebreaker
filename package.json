@@ -30,7 +30,7 @@
     "prettier": "catalog:",
     "turbo": "^2.3.3",
     "typescript": "catalog:",
-    "vercel": "^39.2.2"
+    "vercel": "^41.7.8"
   },
   "prettier": "@icebreaker/prettier-config"
 }
