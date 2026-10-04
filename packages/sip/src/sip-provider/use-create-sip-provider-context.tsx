@@ -94,6 +94,7 @@ export const useCreateSipProviderContext = (props: {
 
   return {
     sessionManager,
+    domain: props.options.domain,
     connectStatus,
     registerStatus,
     sessionTimers,

@@ -26,7 +26,12 @@ export const env = createEnv({
    * For them to be exposed to the client, prefix them with `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    // SIP registrar domain and its WebSocket (WSS) endpoint. Defaults to sipgate.
+    NEXT_PUBLIC_SIP_DOMAIN: z.string().min(1).default("sipgate.de"),
+    NEXT_PUBLIC_SIP_WEBSOCKET_SERVER: z
+      .string()
+      .url()
+      .default("wss://sip.sipgate.de"),
   },
   /**
    * Destructure all variables from `process.env` to make sure they aren't tree-shaken away.
@@ -34,8 +39,9 @@ export const env = createEnv({
   experimental__runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
     BUILD_ID: process.env.BUILD_ID,
-
-    // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+    NEXT_PUBLIC_SIP_DOMAIN: process.env.NEXT_PUBLIC_SIP_DOMAIN,
+    NEXT_PUBLIC_SIP_WEBSOCKET_SERVER:
+      process.env.NEXT_PUBLIC_SIP_WEBSOCKET_SERVER,
   },
   skipValidation:
     !!process.env.CI || process.env.npm_lifecycle_event === "lint",

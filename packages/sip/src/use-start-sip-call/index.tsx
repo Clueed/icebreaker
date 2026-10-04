@@ -6,7 +6,7 @@ import { phoneNumberSchema } from "@icebreaker/validators/phone-number";
 import { useSIPProvider } from "../sip-provider/sip-provider-context";
 
 export const useStartSipCall = () => {
-  const { sessionManager, sessions } = useSIPProvider();
+  const { sessionManager, sessions, domain } = useSIPProvider();
   const disabled = Object.values(sessions).some(
     (s) => s.state !== SessionState.Terminated,
   );
@@ -36,7 +36,7 @@ export const useStartSipCall = () => {
     }
 
     return await sessionManager.call(
-      `sip:${phoneNumber.base + phoneNumber.extension}@sipgate.de`,
+      `sip:${phoneNumber.base + phoneNumber.extension}@${domain}`,
     );
   };
 
