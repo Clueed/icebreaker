@@ -10,6 +10,16 @@ export const env = createEnv({
       process.env.NODE_ENV === "production"
         ? z.string().min(1)
         : z.string().min(1).optional(),
+    // comma-separated list of email domains allowed to sign in
+    AUTH_ALLOWED_EMAIL_DOMAINS: z
+      .string()
+      .default("stackgini.de")
+      .transform((domains) =>
+        domains
+          .split(",")
+          .map((domain) => domain.trim().toLowerCase())
+          .filter(Boolean),
+      ),
     NODE_ENV: z.enum(["development", "production"]).optional(),
   },
   client: {},

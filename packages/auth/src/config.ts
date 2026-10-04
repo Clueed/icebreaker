@@ -51,7 +51,8 @@ export const authConfig = {
       };
     },
     signIn: ({ profile }) => {
-      return profile?.email?.endsWith("@softwaregini.com") ?? false;
+      const domain = profile?.email?.split("@").pop()?.toLowerCase();
+      return !!domain && env.AUTH_ALLOWED_EMAIL_DOMAINS.includes(domain);
     },
     authorized({ auth }) {
       // require auth for every page (exceptions in middleware matcher)
