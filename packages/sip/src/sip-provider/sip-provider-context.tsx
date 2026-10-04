@@ -6,6 +6,7 @@ import type { SessionTimers, SIPAccount } from "../type";
 import { CONNECT_STATUS, RegisterStatus } from "../type";
 
 export interface IProviderContext {
+  domain: string;
   sessionManager: SessionManager | null;
   connectAndRegister: (sipAccount: SIPAccount) => void;
   connectStatus: CONNECT_STATUS;
@@ -15,6 +16,7 @@ export interface IProviderContext {
 }
 
 export const ProviderContext = createContext<IProviderContext>({
+  domain: "",
   sessionManager: null,
   connectAndRegister: () => {
     throw new Error("SIPcontext not initialized");

@@ -20,6 +20,8 @@ export const env = createEnv({
           .map((domain) => domain.trim().toLowerCase())
           .filter(Boolean),
       ),
+    // Local dev only: adds a "dev sign in" that skips Google (see tooling/localdev)
+    AUTH_DEV_LOGIN: z.enum(["true", "false"]).optional(),
     NODE_ENV: z.enum(["development", "production"]).optional(),
   },
   client: {},

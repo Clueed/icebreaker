@@ -30,6 +30,7 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^0.9.5",
     "@t3-oss/env-core": "^0.11.1",
     "@vercel/postgres": "^0.10.0",
     "crypto-js": "^4.2.0",

@@ -5,6 +5,7 @@ import { z } from "zod";
 export const env = createEnv({
   server: {
     CRYPTO_SECRET: z.string().min(1),
+    POSTGRES_WS_PROXY: z.string().optional(),
   },
   client: {},
   experimental__runtimeEnv: {},

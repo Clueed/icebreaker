@@ -15,7 +15,12 @@ const auth = cache(defaultAuth);
 
 export { handlers, auth, signIn, signOut };
 
-export { invalidateSessionToken, validateToken } from "./config";
+export {
+  createDevSession,
+  devLoginEnabled,
+  invalidateSessionToken,
+  validateToken,
+} from "./config";
 
 export const providerMap = providers
   .map((provider) => {
