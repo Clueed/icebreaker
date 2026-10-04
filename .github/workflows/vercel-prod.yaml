@@ -7,24 +7,37 @@ on:
     workflows: ["CI"]
     branches: [main]
     types: [completed]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: vercel-prod
+  cancel-in-progress: false
 jobs:
   Deploy-Production:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    # Only deploy after CI passed on a push to this repo's main branch.
+    # `branches: [main]` alone also matches pull requests from forks whose
+    # branch happens to be named main.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Deploy the exact commit CI tested, not whatever main is now
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Setup
         uses: ./tooling/github/setup
 
-      - name: Install Vercel CLI
-        run: pnpm install --global vercel@latest
-
       - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        run: pnpm exec vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build Project Artifacts
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: pnpm exec vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy Project Artifacts to Vercel
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: pnpm exec vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
