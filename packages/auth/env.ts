@@ -13,7 +13,7 @@ export const env = createEnv({
     // comma-separated list of email domains allowed to sign in
     AUTH_ALLOWED_EMAIL_DOMAINS: z
       .string()
-      .default("stackgini.de")
+      .min(1)
       .transform((domains) =>
         domains
           .split(",")
