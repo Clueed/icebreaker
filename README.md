@@ -11,7 +11,7 @@ pnpm db:push         # once, and after schema changes
 pnpm dev             # terminal 2
 ```
 
-Then open <http://localhost:3000>, click **dev sign in** (you become `dev@softwaregini.com`), open the **SIP** button and log in with `dev` / `dev` (or `dev2` / `dev2`).
+Then open <http://localhost:3000>, click **dev sign in** (you become `dev@example.com`), open the **SIP** button and log in with `dev` / `dev` (or `dev2` / `dev2`).
 
 The **last digit** of the dialed number decides what the fake network does (see `tooling/localdev/asterisk/extensions.conf`):
 

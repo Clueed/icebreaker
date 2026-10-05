@@ -6,7 +6,7 @@ import { createDevSession, devLoginEnabled } from "@icebreaker/auth";
 export const runtime = "edge";
 
 /**
- * Local dev only (AUTH_DEV_LOGIN=true): signs in as dev@softwaregini.com
+ * Local dev only (AUTH_DEV_LOGIN=true): signs in as dev@example.com
  * without Google by setting the same session cookie Auth.js would.
  */
 export const GET = async (req: NextRequest) => {

@@ -90,7 +90,7 @@ export const invalidateSessionToken = async (token: string) => {
 export const devLoginEnabled =
   env.NODE_ENV !== "production" && env.AUTH_DEV_LOGIN === "true";
 
-const DEV_USER_EMAIL = "dev@softwaregini.com";
+const DEV_USER_EMAIL = "dev@example.com";
 
 /**
  * Local dev only: find or create the dev user and open a database session for
