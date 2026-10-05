@@ -26,6 +26,11 @@ const adapter = DrizzleAdapter(db, {
   sessionsTable: Session,
 });
 
+const isAllowedEmail = (email: string | null | undefined) => {
+  const domain = email?.split("@").pop()?.toLowerCase();
+  return !!domain && env.AUTH_ALLOWED_EMAIL_DOMAINS.includes(domain);
+};
+
 export const providers: Provider[] = [
   google({
     clientId: env.GOOGLE_CLIENT_ID,
@@ -50,10 +55,7 @@ export const authConfig = {
         },
       };
     },
-    signIn: ({ profile }) => {
-      const domain = profile?.email?.split("@").pop()?.toLowerCase();
-      return !!domain && env.AUTH_ALLOWED_EMAIL_DOMAINS.includes(domain);
-    },
+    signIn: ({ profile }) => isAllowedEmail(profile?.email),
     authorized({ auth }) {
       // require auth for every page (exceptions in middleware matcher)
       const isLoggedIn = !!auth?.user;
@@ -85,4 +87,38 @@ export const validateToken = async (
 
 export const invalidateSessionToken = async (token: string) => {
   await adapter.deleteSession?.(token);
+};
+
+export const devLoginEnabled =
+  env.NODE_ENV !== "production" && env.AUTH_DEV_LOGIN === "true";
+
+const DEV_USER_EMAIL = "dev@example.com";
+
+/**
+ * Local dev only: find or create the dev user and open a database session for
+ * it, exactly like a successful Google sign-in would (same domain filter).
+ */
+export const createDevSession = async () => {
+  if (!devLoginEnabled) throw new Error("dev login is disabled");
+  // denied like a Google sign-in outside AUTH_ALLOWED_EMAIL_DOMAINS
+  if (!isAllowedEmail(DEV_USER_EMAIL)) return null;
+
+  const user =
+    (await adapter.getUserByEmail?.(DEV_USER_EMAIL)) ??
+    (await adapter.createUser?.({
+      id: crypto.randomUUID(),
+      email: DEV_USER_EMAIL,
+      name: "Dev User",
+      emailVerified: null,
+    }));
+  if (!user) throw new Error("could not create dev user");
+
+  const session = await adapter.createSession?.({
+    sessionToken: crypto.randomUUID(),
+    userId: user.id,
+    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+  });
+  if (!session) throw new Error("could not create dev session");
+
+  return session;
 };

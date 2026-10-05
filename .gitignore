@@ -44,3 +44,6 @@ dist/
 
 # local dev environment (host-specific nix container config)
 .devenv/
+
+# state of `pnpm localdev` (postgres data, asterisk runtime)
+.localdev/

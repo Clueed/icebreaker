@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { providerMap, signIn } from "@icebreaker/auth";
+import { devLoginEnabled, providerMap, signIn } from "@icebreaker/auth";
 import { Button } from "@icebreaker/ui/button";
 import { ArrowUpRight, ChevronRight } from "@icebreaker/ui/icons";
 
@@ -57,6 +57,17 @@ const SignInPage = async (props: {
                 </Button>
               </form>
             ))}
+            {devLoginEnabled && (
+              <Button asChild variant={"ghost"} size={"lg"}>
+                <a
+                  href={`/api/dev/sign-in?callbackUrl=${encodeURIComponent(
+                    searchParams.callbackUrl ?? "/",
+                  )}`}
+                >
+                  <span>dev sign in</span> <ChevronRight />
+                </a>
+              </Button>
+            )}
           </div>
         </div>
       </div>

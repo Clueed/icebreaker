@@ -31,11 +31,8 @@ export const useCreateSipProviderContext = (props: {
   const [sessionManager, setSessionManager] = useState<SessionManager | null>(
     null,
   );
-  const { statusPartialDelegate, connectStatus, registerStatus } = useSIPStatus(
-    {
-      sessionManager,
-    },
-  );
+  const { statusPartialDelegate, connectStatus, registerStatus } =
+    useSIPStatus();
   const [sessions, updateSession] = useSessions();
   const { sessionTimers, timersUpdates } = useSessionTimers();
   const { stateChangeListener } = usePhoneCallSideEffects({
@@ -89,10 +86,11 @@ export const useCreateSipProviderContext = (props: {
       },
     );
     setSessionManager(newSessionManager);
-    void newSessionManager.connect();
+    void newSessionManager.connect().then(() => newSessionManager.register());
   }, []);
 
   return {
+    domain: props.options.domain,
     sessionManager,
     connectStatus,
     registerStatus,

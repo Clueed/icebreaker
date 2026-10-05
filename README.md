@@ -1,5 +1,35 @@
 # create-t3-turbo
 
+## Local development (no Supabase, Google or sipgate)
+
+Everything runs on this machine. Postgres 16 stands in for Supabase, a "dev sign in" button stands in for Google, and Asterisk stands in for sipgate as a fake phone network. It has no trunk, so no real call can be placed.
+
+```bash
+cp .env.localdev.example .env
+pnpm localdev        # terminal 1: Postgres, ws proxy, Asterisk (needs nix; Ctrl-C stops all)
+pnpm db:push         # once, and after schema changes
+pnpm dev             # terminal 2
+```
+
+Then open <http://localhost:3000>, click **dev sign in** (you become `dev@example.com`), open the **SIP** button and log in with `dev` / `dev` (or `dev2` / `dev2`).
+
+The **last digit** of the dialed number decides what the fake network does (see `tooling/localdev/asterisk/extensions.conf`):
+
+| last digit | outcome                                                     |
+| ---------- | ----------------------------------------------------------- |
+| 0, 5-9     | rings 3s, answers, echoes your microphone until you hang up |
+| 1          | busy (486)                                                  |
+| 2          | rings 30s, nobody answers                                   |
+| 3          | answers, beeps for 10s, then the other side hangs up        |
+| 4          | network failure (503)                                       |
+
+How it fits together:
+
+- **DB**: the app talks to Postgres through `@vercel/postgres`, which uses WebSockets (needed for the edge runtime). `tooling/localdev/ws-proxy.js` forwards those to local Postgres on port 54322. `POSTGRES_WS_PROXY` turns this on in `packages/db/src/client.ts`. Data lives in `.localdev/` (delete it to reset).
+- **Auth**: `AUTH_DEV_LOGIN=true` enables `/api/dev/sign-in`, which creates a normal database session. It is always off when `NODE_ENV=production`.
+- **SIP**: `NEXT_PUBLIC_SIP_WS_URL` and `NEXT_PUBLIC_SIP_DOMAIN` choose the SIP server. They default to sipgate. Asterisk CLI: `asterisk -C $PWD/.localdev/asterisk/etc/asterisk.conf -rvvv`.
+- **Opening the app from another machine**: browsers only allow microphone access on `https` or `localhost`. Forward port 3000 and port 8088 to your machine's localhost. Asterisk sends call audio over UDP 10000-10100 straight to the container's IP, so those ports must be reachable too.
+
 > [!NOTE]
 >
 > NextAuth setup now works for Expo app!

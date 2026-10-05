@@ -13,6 +13,7 @@
     "db:studio": "turbo -F @icebreaker/db studio",
     "dev": "turbo watch dev",
     "dev:next": "turbo watch dev -F @icebreaker/nextjs...",
+    "localdev": "pnpm -F @icebreaker/localdev services",
     "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
     "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache",
     "lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",
