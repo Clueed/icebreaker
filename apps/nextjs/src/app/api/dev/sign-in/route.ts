@@ -15,6 +15,11 @@ export const GET = async (req: NextRequest) => {
   }
 
   const session = await createDevSession();
+  if (!session) {
+    return NextResponse.redirect(
+      new URL("/sign-in?error=AccessDenied", req.url),
+    );
+  }
 
   const callbackUrl = req.nextUrl.searchParams.get("callbackUrl") ?? "/";
   const secure = req.nextUrl.protocol === "https:";

@@ -26,6 +26,11 @@ const adapter = DrizzleAdapter(db, {
   sessionsTable: Session,
 });
 
+const isAllowedEmail = (email: string | null | undefined) => {
+  const domain = email?.split("@").pop()?.toLowerCase();
+  return !!domain && env.AUTH_ALLOWED_EMAIL_DOMAINS.includes(domain);
+};
+
 export const providers: Provider[] = [
   google({
     clientId: env.GOOGLE_CLIENT_ID,
@@ -50,10 +55,7 @@ export const authConfig = {
         },
       };
     },
-    signIn: ({ profile }) => {
-      const domain = profile?.email?.split("@").pop()?.toLowerCase();
-      return !!domain && env.AUTH_ALLOWED_EMAIL_DOMAINS.includes(domain);
-    },
+    signIn: ({ profile }) => isAllowedEmail(profile?.email),
     authorized({ auth }) {
       // require auth for every page (exceptions in middleware matcher)
       const isLoggedIn = !!auth?.user;
@@ -94,10 +96,12 @@ const DEV_USER_EMAIL = "dev@example.com";
 
 /**
  * Local dev only: find or create the dev user and open a database session for
- * it, exactly like a successful Google sign-in would.
+ * it, exactly like a successful Google sign-in would (same domain filter).
  */
 export const createDevSession = async () => {
   if (!devLoginEnabled) throw new Error("dev login is disabled");
+  // denied like a Google sign-in outside AUTH_ALLOWED_EMAIL_DOMAINS
+  if (!isAllowedEmail(DEV_USER_EMAIL)) return null;
 
   const user =
     (await adapter.getUserByEmail?.(DEV_USER_EMAIL)) ??
