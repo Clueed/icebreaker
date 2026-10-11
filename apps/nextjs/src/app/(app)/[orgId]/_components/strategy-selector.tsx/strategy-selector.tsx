@@ -37,7 +37,9 @@ const GuesserStrategySelector = (props: {
     ? getAvailableExtensionStrategies(currentPhoneNumber)
     : [];
 
-  const sortedStrategies = availbaleExtensionStrategies.sort(startStrategiesUi);
+  const sortedStrategies = [...availbaleExtensionStrategies].sort(
+    startStrategiesUi,
+  );
 
   const { mutate: setCurrentStrategy } = useCurrentStrategySetMutation();
   const handleLongPress = (strategy: Strategy) => {

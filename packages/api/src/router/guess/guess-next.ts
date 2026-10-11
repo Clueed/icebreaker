@@ -18,7 +18,7 @@ export const guessNextProcedure = protectedProcedure
       limit: z.number().min(1).max(50).default(10),
     }),
   )
-  .query(async ({ ctx, input }) => {
+  .mutation(async ({ ctx, input }) => {
     const { cursor, limit, strategy } = input;
     const guessId = cursor ?? input.guessId;
 
