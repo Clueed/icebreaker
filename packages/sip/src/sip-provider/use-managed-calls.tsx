@@ -5,6 +5,7 @@ import type { SIPProviderDependencies } from "./use-create-sip-provider-context"
 
 export const usePhoneCallSideEffects = ({
   updatePhoneCall,
+  onCallEnded,
 }: SIPProviderDependencies) => {
   const stateChangeListener = useCallback(
     (args: { sessionId: string; newState: SessionState }) => {
@@ -17,8 +18,11 @@ export const usePhoneCallSideEffects = ({
           },
         });
       }
+      if (args.newState === SessionState.Terminated) {
+        onCallEnded({ sessionId: args.sessionId });
+      }
     },
-    [updatePhoneCall],
+    [updatePhoneCall, onCallEnded],
   );
 
   return {

@@ -12,7 +12,7 @@ import { HistoryCallItem } from "~/app/(app)/@caller/_components/call-history/ca
 import { api } from "~/trpc/react";
 
 export const CallHistory = () => {
-  const { sessionId: currentSessionId } = useCall();
+  const { sessionId: currentSessionId, active } = useCall();
   const {
     data: callsData,
     isSuccess,
@@ -32,7 +32,8 @@ export const CallHistory = () => {
   const calls = isSuccess
     ? callsData.pages
         .flatMap((page) => page.data)
-        .filter((call) => call.sessionId !== currentSessionId)
+        // the current call is shown above while it is still going on
+        .filter((call) => !(active && call.sessionId === currentSessionId))
     : [];
   const [animateRef] = useAutoAnimate();
 
