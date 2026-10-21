@@ -28,6 +28,7 @@ export const RegisterSipForm = () => {
   const { connectAndRegister } = useSIPProvider();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: { username: "", password: "" },
   });
 
   const { mutate: setRemoteCredentials } = api.sipCredentials.set.useMutation();

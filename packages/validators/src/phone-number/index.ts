@@ -57,3 +57,29 @@ const phoneNumbersAreEqual = (
   phoneNumber1.extension === phoneNumber2.extension;
 
 export { phoneNumbersAreEqual };
+
+/**
+ * Turns a free-form phone number (e.g. "+49 (0) 30 1234-5610") into digits
+ * with a leading country code. Numbers without one are assumed to be German.
+ */
+const normalizePhoneNumber = (input: string) => {
+  const digits = input
+    .trim()
+    // the "(0)" trunk prefix is only dialed without the country code
+    .replace(/\(\s*0\s*\)/g, "")
+    .replace(/^\+/, "00")
+    .replace(/\D/g, "");
+
+  const withCountryCode = digits.startsWith("00")
+    ? "+" + digits.substring(2)
+    : digits.startsWith("0")
+      ? "+49" + digits.substring(1)
+      : digits.startsWith("49")
+        ? "+" + digits
+        : digits;
+
+  // "+49 030 ..." also carries the trunk prefix
+  return withCountryCode.replace(/^\+490/, "+49");
+};
+
+export { normalizePhoneNumber };

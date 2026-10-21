@@ -1,5 +1,9 @@
+import { normalizePhoneNumber } from "@icebreaker/validators/phone-number";
+
 export const getSimilarNotes = (notes: string[]) => {
-  const parsed = notes.map((note) => parseNumber(note)).filter(onlyUnique);
+  const parsed = notes
+    .map((note) => normalizePhoneNumber(note))
+    .filter(onlyUnique);
   const similar = checkSimilarities(parsed) ?? [];
 
   return Object.entries(similar);
@@ -35,15 +39,6 @@ const checkSimilarities = (list: string[]) => {
 
   return similar;
 };
-
-const parseNumber = (number: string) =>
-  number
-    .trim()
-    .replace(/\D/g, "")
-    .replace(/^0049/, "+49")
-    .replace(/^\+490/, "+49")
-    .replace(/^49/, "+49")
-    .replace(/^0/, "+49");
 
 function onlyUnique<T>(value: T, index: number, array: T[]) {
   return array.indexOf(value) === index;

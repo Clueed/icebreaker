@@ -30,6 +30,7 @@ export const AddNewGuessNotesForm = (props: { orgId: string }) => {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: { phoneNumberString: "" },
     disabled: isPending,
     mode: "onChange",
   });
