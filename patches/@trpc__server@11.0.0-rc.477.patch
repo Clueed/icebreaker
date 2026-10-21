@@ -1,0 +1,26 @@
+diff --git a/dist/unstable-core-do-not-import/stream/jsonl.js b/dist/unstable-core-do-not-import/stream/jsonl.js
+index d87557b4ea64f41424f9e807376c84dd34b0b40f..44843dd30e428676ac4ee3900eacd0308fb4cad7 100644
+--- a/dist/unstable-core-do-not-import/stream/jsonl.js
++++ b/dist/unstable-core-do-not-import/stream/jsonl.js
+@@ -48,7 +48,7 @@ function createBatchStreamProducer(opts) {
+             promise,
+             stream.cancelledPromise
+         ]).then((it)=>{
+-            if (it === null) {
++            if (stream.cancelled()) {
+                 return;
+             }
+             stream.controller.enqueue([
+diff --git a/dist/unstable-core-do-not-import/stream/jsonl.mjs b/dist/unstable-core-do-not-import/stream/jsonl.mjs
+index 230a54dfe64a527dd5a3ca5789c7c2a0b5ec5d84..3823477a24929924ed143271e3195b2b780b84ea 100644
+--- a/dist/unstable-core-do-not-import/stream/jsonl.mjs
++++ b/dist/unstable-core-do-not-import/stream/jsonl.mjs
+@@ -46,7 +46,7 @@ function createBatchStreamProducer(opts) {
+             promise,
+             stream.cancelledPromise
+         ]).then((it)=>{
+-            if (it === null) {
++            if (stream.cancelled()) {
+                 return;
+             }
+             stream.controller.enqueue([
