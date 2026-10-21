@@ -86,7 +86,11 @@ export const guessRouter = {
               : undefined,
           ),
         )
-        .orderBy(desc(Guess.updatedAt), desc(Guess.createdAt))
+        // offset pagination needs a unique order, many guesses share timestamps
+        .orderBy(
+          desc(sql`coalesce(${Guess.updatedAt}, ${Guess.createdAt})`),
+          desc(Guess.id),
+        )
         .leftJoin(PhoneCall, eq(Guess.id, PhoneCall.guessId))
         .groupBy(Guess.id);
 

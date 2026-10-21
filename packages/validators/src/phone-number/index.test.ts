@@ -1,4 +1,8 @@
-import { phoneNumbersAreEqual, phoneNumberSchema } from ".";
+import {
+  normalizePhoneNumber,
+  phoneNumbersAreEqual,
+  phoneNumberSchema,
+} from ".";
 
 describe("phoneNumberSchema", () => {
   it.each([
@@ -46,5 +50,21 @@ describe("phoneNumbersAreEqual", () => {
         { base: "+4940", extension: "12" },
       ),
     ).toBe(false);
+  });
+});
+
+describe("normalizePhoneNumber", () => {
+  it.each([
+    ["+49 (0) 30 1234 5610", "+493012345610"],
+    ["+49(0)30 1234 5610", "+493012345610"],
+    ["0049 (0) 30 1234 5610", "+493012345610"],
+    ["+49 30 1234-5610", "+493012345610"],
+    ["+49 030 1234 5610", "+493012345610"],
+    ["030 / 1234 5610", "+493012345610"],
+    ["49 30 1234 5610", "+493012345610"],
+    ["  +44 20 7946 0958 ", "+442079460958"],
+    ["0044 20 7946 0958", "+442079460958"],
+  ])("normalizes %s to %s", (input, expected) => {
+    expect(normalizePhoneNumber(input)).toBe(expected);
   });
 });

@@ -33,5 +33,10 @@
     "typescript": "catalog:",
     "vercel": "^39.2.2"
   },
-  "prettier": "@icebreaker/prettier-config"
+  "prettier": "@icebreaker/prettier-config",
+  "pnpm": {
+    "patchedDependencies": {
+      "@trpc/server@11.0.0-rc.477": "patches/@trpc__server@11.0.0-rc.477.patch"
+    }
+  }
 }

@@ -12,6 +12,8 @@ import { useSIPStatus } from "./use-sip-status";
 export interface SIPProviderOptions {
   webSocketServer: string;
   domain: string;
+  /** STUN/TURN urls. Every unreachable one delays each call by the ICE gathering timeout. */
+  iceServers: string[];
 }
 export interface SIPProviderDependencies {
   updatePhoneCall: (args: {
@@ -21,6 +23,7 @@ export interface SIPProviderDependencies {
       rating: PhoneCallRating;
     };
   }) => void;
+  onCallEnded: (args: { sessionId: string }) => void;
 }
 
 export const useCreateSipProviderContext = (props: {
@@ -35,9 +38,7 @@ export const useCreateSipProviderContext = (props: {
     useSIPStatus();
   const [sessions, updateSession] = useSessions();
   const { sessionTimers, timersUpdates } = useSessionTimers();
-  const { stateChangeListener } = usePhoneCallSideEffects({
-    updatePhoneCall: props.dependencies.updatePhoneCall,
-  });
+  const { stateChangeListener } = usePhoneCallSideEffects(props.dependencies);
 
   const connectAndRegister = useCallback((sipAccount: SIPAccount) => {
     const newSessionManager = new SessionManager(
@@ -47,6 +48,11 @@ export const useCreateSipProviderContext = (props: {
         userAgentOptions: {
           authorizationUsername: sipAccount.username,
           authorizationPassword: sipAccount.password,
+          sessionDescriptionHandlerFactoryOptions: {
+            peerConnectionConfiguration: {
+              iceServers: props.options.iceServers.map((urls) => ({ urls })),
+            },
+          },
         },
         media: {
           constraints: {

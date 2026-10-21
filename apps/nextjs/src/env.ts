@@ -28,6 +28,16 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_SIP_WS_URL: z.string().url().default("wss://sip.sipgate.de"),
     NEXT_PUBLIC_SIP_DOMAIN: z.string().min(1).default("sipgate.de"),
+    // comma separated STUN/TURN urls, empty for none (e.g. a SIP server on the local network)
+    NEXT_PUBLIC_SIP_ICE_SERVERS: z
+      .string()
+      .default("stun:stun.l.google.com:19302")
+      .transform((value) =>
+        value
+          .split(",")
+          .map((url) => url.trim())
+          .filter(Boolean),
+      ),
   },
   /**
    * Destructure all variables from `process.env` to make sure they aren't tree-shaken away.
@@ -37,6 +47,7 @@ export const env = createEnv({
     BUILD_ID: process.env.BUILD_ID,
     NEXT_PUBLIC_SIP_WS_URL: process.env.NEXT_PUBLIC_SIP_WS_URL,
     NEXT_PUBLIC_SIP_DOMAIN: process.env.NEXT_PUBLIC_SIP_DOMAIN,
+    NEXT_PUBLIC_SIP_ICE_SERVERS: process.env.NEXT_PUBLIC_SIP_ICE_SERVERS,
   },
   skipValidation:
     !!process.env.CI || process.env.npm_lifecycle_event === "lint",

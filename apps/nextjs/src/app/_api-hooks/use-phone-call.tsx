@@ -1,5 +1,6 @@
 import type { skipToken } from "@tanstack/react-query";
 import type { AppRouterInputs } from "node_modules/@icebreaker/api/dist/root";
+import { useCallback } from "react";
 import { useIsMutating } from "@tanstack/react-query";
 import { getMutationKey } from "@trpc/react-query";
 
@@ -81,8 +82,10 @@ export const usePhoneCallUpdateMutation = () => {
           : undefined,
       );
     },
-    onSettled(_err, _variables, ctx) {
-      void utils.phoneCall.bySessionId.invalidate({ sessionId: ctx.sessionId });
+    onSettled(_data, _err, variables) {
+      void utils.phoneCall.bySessionId.invalidate({
+        sessionId: variables.sessionId,
+      });
       void utils.phoneCall.history.invalidate({});
     },
   });
@@ -124,11 +127,29 @@ export const usePhoneCallCreateMutation = () => {
         // description: variables.phoneNumber,
       });
       void utils.phoneCall.history.invalidate();
+      void utils.guess.history.invalidate({ orgId: variables.orgId });
       void utils.phoneCall.bySessionId.invalidate({
         sessionId: variables.sessionId,
       });
     },
   });
+};
+
+/**
+ * Refreshes everything that shows past calls once a call ends, no matter
+ * whether it was hung up manually, automatically or by the other side.
+ */
+export const usePhoneCallEndedHandler = () => {
+  const utils = api.useUtils();
+  return useCallback(
+    ({ sessionId }: { sessionId: string }) => {
+      void utils.phoneCall.bySessionId.invalidate({ sessionId });
+      void utils.phoneCall.history.invalidate();
+      void utils.guess.history.invalidate();
+      void utils.guess.byId.invalidate();
+    },
+    [utils],
+  );
 };
 
 export const useCreateCallIsPending = () => {
