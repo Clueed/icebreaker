@@ -21,7 +21,7 @@ export const phoneCallRouter = {
     )
     .query(async ({ ctx, input }) => {
       const rawData = await ctx.db.query.PhoneCall.findMany({
-        orderBy: desc(PhoneCall.createdAt),
+        orderBy: [desc(PhoneCall.createdAt), desc(PhoneCall.id)],
         limit: input.limit,
         offset: input.cursor,
         with: {

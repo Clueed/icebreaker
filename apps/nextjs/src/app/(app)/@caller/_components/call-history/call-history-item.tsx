@@ -71,8 +71,8 @@ export const HistoryCallItem = ({
       {expanded && (
         <>
           <div className="flex justify-between whitespace-nowrap text-nowrap text-xs text-muted-foreground">
-            <div>{lastModified.toFormat("LLL dd")}</div>
-            <div>{lastModified.toFormat("hh:ss")} </div>
+            <div>{lastModified.toLocal().toFormat("LLL dd")}</div>
+            <div>{lastModified.toLocal().toFormat("HH:mm")} </div>
           </div>
 
           {call.rating !== null && (

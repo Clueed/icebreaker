@@ -37,9 +37,9 @@ export const GuessHistory = ({ orgId }: { orgId: string }) => {
   );
 
   const guesses = guessesData
-    ? guessesData.pages
-        .flatMap((page) => page.data)
-        .filter((guess) => selectedGuessId && guess.id !== selectedGuessId)
+    ? uniqueById(guessesData.pages.flatMap((page) => page.data)).filter(
+        (guess) => selectedGuessId && guess.id !== selectedGuessId,
+      )
     : [];
 
   const [containerElement, setContainerElement] =
@@ -115,3 +115,8 @@ export const GuessHistory = ({ orgId }: { orgId: string }) => {
     </div>
   );
 };
+
+// pages are fetched at different times, a guess that moved up can show up twice
+const uniqueById = <T extends { id: string }>(items: T[]) => [
+  ...new Map(items.map((item) => [item.id, item])).values(),
+];
