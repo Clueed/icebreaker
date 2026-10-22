@@ -15,7 +15,7 @@
   },
   "prettier": "@icebreaker/prettier-config",
   "devDependencies": {
-    "@eslint/compat": "^1.2.4",
+    "@eslint/compat": "^2.1.1",
     "@icebreaker/prettier-config": "workspace:*",
     "@icebreaker/tsconfig": "workspace:*",
     "@next/eslint-plugin-next": "^15.1.1",
