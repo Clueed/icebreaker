@@ -2,9 +2,9 @@
   "name": "icebreaker",
   "private": true,
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=22.23.4"
   },
-  "packageManager": "pnpm@9.6.0",
+  "packageManager": "pnpm@9.15.9",
   "scripts": {
     "build": "turbo run build",
     "clean": "git clean -xdf node_modules",
@@ -27,11 +27,11 @@
   },
   "devDependencies": {
     "@icebreaker/prettier-config": "workspace:*",
-    "@turbo/gen": "^2.3.3",
+    "@turbo/gen": "^2.11.10",
     "prettier": "catalog:",
-    "turbo": "^2.3.3",
+    "turbo": "^2.11.10",
     "typescript": "catalog:",
-    "vercel": "^39.2.2"
+    "vercel": "^39.4.2"
   },
   "prettier": "@icebreaker/prettier-config",
   "pnpm": {

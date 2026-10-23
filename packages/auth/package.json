@@ -19,8 +19,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@auth/core": "0.37.4",
-    "@auth/drizzle-adapter": "^1.4.1",
+    "@auth/core": "0.41.3",
+    "@auth/drizzle-adapter": "^1.11.3",
     "@icebreaker/db": "workspace:*",
     "@t3-oss/env-nextjs": "catalog:",
     "next": "catalog:",

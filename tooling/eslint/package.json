@@ -15,20 +15,20 @@
   },
   "prettier": "@icebreaker/prettier-config",
   "devDependencies": {
-    "@eslint/compat": "^1.2.4",
+    "@eslint/compat": "^1.4.1",
     "@icebreaker/prettier-config": "workspace:*",
     "@icebreaker/tsconfig": "workspace:*",
-    "@next/eslint-plugin-next": "^15.1.1",
+    "@next/eslint-plugin-next": "^15.5.28",
     "eslint": "catalog:",
-    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-compiler": "19.0.0-beta-df7b47d-20241124",
-    "eslint-plugin-react-hooks": "^5.1.0",
-    "eslint-plugin-turbo": "^2.3.3",
-    "eslint-plugin-unused-imports": "^4.1.4",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-turbo": "^2.11.10",
+    "eslint-plugin-unused-imports": "^4.4.1",
     "prettier": "catalog:",
     "typescript": "catalog:",
-    "typescript-eslint": "^8.18.1"
+    "typescript-eslint": "^8.72.0"
   }
 }
