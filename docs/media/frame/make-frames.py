@@ -7,7 +7,8 @@ GitHub strips CSS from READMEs, so the frame has to be part of the image.
   shadow is on a transparent background, so one file works on both themes.
 - GIFs: docs/media/raw/<name>.mp4 -> <name>.gif and <name>-dark.gif. GIF
   transparency is all or nothing, so each GIF is drawn on GitHub's light or
-  dark page color and the README picks one with <picture>.
+  dark page color and the README picks one with <picture>. The same cut is
+  also written to <name>.mp4, unframed, for uploading to GitHub as a video.
 
 Run from the repo root:
   nix-shell -p 'python3.withPackages (p: [p.pillow])' ffmpeg-headless \
@@ -41,7 +42,6 @@ THEMES = {
 GIFS = [
     # enter numbers, let ratatatata dial and rate calls, scroll to the results
     ("flow", [(0, 16, 1.5), (16, 148, 8), (148, 156, 4), (156, None, 1.25)]),
-    ("ratatatata", [(0, None, 3)]),
 ]
 GIF_WIDTH = 960
 GIF_FPS = 12
@@ -134,6 +134,21 @@ def frame_gif(name, segments, theme, tmp):
     subprocess.run([*ffmpeg, "-i", pal, "-filter_complex", f"{video}[f];[f][2:v]{use}", out], check=True)
 
 
+def export_mp4(name, segments):
+    """The same cut as the GIF as a plain video, for uploading to GitHub.
+
+    GitHub only plays videos uploaded through its web UI (user-attachments
+    links), and its player draws its own box, so this one has no frame.
+    """
+    subprocess.run(
+        ["ffmpeg", "-y", "-loglevel", "error", "-i", RAW / f"{name}.mp4",
+         "-filter_complex", f"{retime(segments)},fps=30,format=yuv420p",
+         "-an", "-c:v", "libx264", "-preset", "slow", "-crf", "24",
+         "-movflags", "+faststart", MEDIA / f"{name}.mp4"],
+        check=True,
+    )
+
+
 for src in sorted(RAW.glob("*.png")):
     frame_png(src)
     print(src.name)
@@ -143,3 +158,5 @@ with tempfile.TemporaryDirectory() as tmp:
         for theme in THEMES:
             frame_gif(name, segments, theme, tmp)
             print(f"{name} {theme}")
+        export_mp4(name, segments)
+        print(f"{name} mp4")

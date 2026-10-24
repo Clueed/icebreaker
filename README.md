@@ -42,13 +42,6 @@ Icebreaker is a tool that finds working phone numbers at a company. Enter a few 
 4. **Let it run.** Pick a strategy (`+1`, `+10` or random) and turn on **ratatatata** to dial guess after guess, ending each call automatically after a few seconds.
 5. **Read the stats** to see which ranges of numbers reach people, and which are dead, mailboxes or hotlines.
 
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/media/ratatatata-dark.gif">
-    <img src="docs/media/ratatatata.gif" alt="ratatatata dialing one extension after another" width="872">
-  </picture>
-</p>
-
 ## Screenshots
 
 <table>
