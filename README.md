@@ -31,7 +31,10 @@
 > This software is provided "as is", without warranty of any kind, express or implied. The authors and contributors accept no liability for any damages, costs, fines, legal claims or other consequences arising from its use or misuse. Nothing in this repository is legal advice. If you are not sure whether your use is lawful, do not use it.
 
 <p align="center">
-  <img src="docs/media/flow.gif" alt="Placing a guess, rating the call and moving to the next extension" width="800">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/media/flow-dark.gif">
+    <img src="docs/media/flow.gif" alt="Placing a guess, rating the call and moving to the next extension" width="872">
+  </picture>
 </p>
 
 ## How it works
@@ -43,7 +46,10 @@
 5. **Read the stats** to see which ranges of extensions reach real people, and which are dead, mailboxes or hotlines.
 
 <p align="center">
-  <img src="docs/media/ratatatata.gif" alt="ratatatata dialing one extension after another" width="800">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/media/ratatatata-dark.gif">
+    <img src="docs/media/ratatatata.gif" alt="ratatatata dialing one extension after another" width="872">
+  </picture>
 </p>
 
 ## Screenshots
