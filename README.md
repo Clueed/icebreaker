@@ -30,7 +30,7 @@ Icebreaker is a tool that finds working phone numbers at a company. Enter a few 
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/media/flow-dark.gif">
-    <img src="docs/media/flow.gif" alt="Placing a guess, rating the call and moving to the next extension" width="872">
+    <img src="docs/media/flow.gif" alt="Entering known numbers, turning on ratatatata, rating the calls and seeing the results" width="872">
   </picture>
 </p>
 
@@ -91,6 +91,13 @@ Icebreaker is a tool that finds working phone numbers at a company. Enter a few 
         <img src="docs/media/06-stats.png" alt="Guess statistics">
       </picture>
       <p align="center"><b>Statistics</b>: outcomes per base number</p>
+    </td>
+    <td width="50%">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="docs/media/07-stats-expanded-dark.png">
+        <img src="docs/media/07-stats-expanded.png" alt="Guess statistics with one range expanded">
+      </picture>
+      <p align="center"><b>Statistics, expanded</b>: every number in a range and its result</p>
     </td>
   </tr>
 </table>

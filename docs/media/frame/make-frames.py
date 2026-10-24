@@ -37,8 +37,12 @@ THEMES = {
     "dark": ((255, 255, 255, 30), 150, (13, 17, 23)),
 }
 
-# name, speed-up
-GIFS = [("flow", 1.5), ("ratatatata", 3)]
+# name, [(start s, end s or None, speed-up)] in the source video
+GIFS = [
+    # enter numbers, let ratatatata dial and rate calls, scroll to the results
+    ("flow", [(0, 16, 1.5), (16, 148, 8), (148, 156, 4), (156, None, 1.25)]),
+    ("ratatatata", [(0, None, 3)]),
+]
 GIF_WIDTH = 960
 GIF_FPS = 12
 
@@ -82,7 +86,17 @@ def frame_png(src):
     out.save(MEDIA / src.name, optimize=True)
 
 
-def frame_gif(name, speed, theme, tmp):
+def retime(segments):
+    """Filter graph that cuts the source into segments and speeds each one up."""
+    parts = []
+    for i, (start, end, speed) in enumerate(segments):
+        trim = f"trim=start={start}" + (f":end={end}" if end is not None else "")
+        parts.append(f"[0:v]{trim},setpts=(PTS-STARTPTS)/{speed}[s{i}]")
+    inputs = "".join(f"[s{i}]" for i in range(len(segments)))
+    return ";".join(parts) + f";{inputs}concat=n={len(segments)}:v=1:a=0"
+
+
+def frame_gif(name, segments, theme, tmp):
     """Pads the video with the page color and lays a frame overlay on top.
 
     The overlay is opaque outside the rounded card and transparent inside it,
@@ -100,7 +114,7 @@ def frame_gif(name, speed, theme, tmp):
     out = MEDIA / (f"{name}-dark.gif" if theme == "dark" else f"{name}.gif")
     color = "0x%02x%02x%02x" % page
     video = (
-        f"[0:v]setpts=PTS/{speed},fps={GIF_FPS},scale={w}:{h}:flags=lanczos,format=rgb24,"
+        f"{retime(segments)},fps={GIF_FPS},scale={w}:{h}:flags=lanczos,format=rgb24,"
         f"pad={mask.width}:{mask.height}:{pad}:{pad}:color={color}[v];"
         "[v][1:v]overlay=format=gbrp"
     )
@@ -125,7 +139,7 @@ for src in sorted(RAW.glob("*.png")):
     print(src.name)
 
 with tempfile.TemporaryDirectory() as tmp:
-    for name, speed in GIFS:
+    for name, segments in GIFS:
         for theme in THEMES:
-            frame_gif(name, speed, theme, tmp)
+            frame_gif(name, segments, theme, tmp)
             print(f"{name} {theme}")
