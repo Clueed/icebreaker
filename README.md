@@ -24,7 +24,7 @@ https://github.com/user-attachments/assets/5ba0807f-5321-4a79-ac02-286b45c117f1
 > **Experimental software that places real, billed phone calls.** You are responsible for every call and for following the law where you live. Read [Legal and safety](#legal-and-safety) before you dial a single number.
 
 > [!NOTE]
-> **Handwritten.** The app was written by hand from August to December 2024. In October 2026 it was revived with Claude Code to get it ready for open source: a license, CI hardening, tests, a fully local dev environment with a fake phone network, two bug fixes and this README. No features were added.
+> **Handwritten.** The app was written by hand from August to December 2024. In October 2026 it was revived with Claude Code to get it ready for open source: a license, CI hardening, tests, a fully local dev environment with a fake phone network, bug fixes and this README. No features were added.
 
 ## How it works
 

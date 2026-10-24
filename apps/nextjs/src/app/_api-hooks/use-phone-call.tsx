@@ -133,7 +133,6 @@ export const usePhoneCallCreateMutation = () => {
       void utils.phoneCall.bySessionId.invalidate({
         sessionId: variables.sessionId,
       });
-      void utils.guess.history.invalidate();
       void utils.guess.stats.invalidate();
     },
   });
