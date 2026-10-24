@@ -16,13 +16,13 @@
   </picture>
 </p>
 
-> [!NOTE]
-> **Handwritten.** The app was written by hand from August to December 2024. In October 2026 it was revived with Claude Code to get it ready for open source: a license, CI hardening, tests, a fully local dev environment with a fake phone network, two bug fixes and this README. No features were added.
-
 Icebreaker is a tool that finds working phone numbers at a company. Enter a few numbers you already know, such as hotlines. Icebreaker then calls other numbers at the company, one after another, using different strategies. After each call you note what happened: a person answered, it went to a mailbox, or nobody picked up. From these results Icebreaker shows which ranges of numbers reach people, so you know which numbers to call.
 
 > [!CAUTION]
 > **Experimental software that places real, billed phone calls.** You are responsible for every call and for following the law where you live. Read [Legal and safety](#legal-and-safety) before you dial a single number.
+
+> [!NOTE]
+> **Handwritten.** The app was written by hand from August to December 2024. In October 2026 it was revived with Claude Code to get it ready for open source: a license, CI hardening, tests, a fully local dev environment with a fake phone network, two bug fixes and this README. No features were added.
 
 https://github.com/user-attachments/assets/5ba0807f-5321-4a79-ac02-286b45c117f1
 
