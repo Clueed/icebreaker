@@ -27,12 +27,7 @@ Icebreaker is a tool that finds working phone numbers at a company. Enter a few 
 >
 > This software is provided "as is", without warranty of any kind, express or implied. The authors and contributors accept no liability for any damages, costs, fines, legal claims or other consequences arising from its use or misuse. Nothing in this repository is legal advice. If you are not sure whether your use is lawful, do not use it.
 
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/media/flow-dark.gif">
-    <img src="docs/media/flow.gif" alt="Entering known numbers, turning on ratatatata, rating the calls and seeing the results" width="872">
-  </picture>
-</p>
+https://github.com/user-attachments/assets/5ba0807f-5321-4a79-ac02-286b45c117f1
 
 ## How it works
 
