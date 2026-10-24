@@ -80,6 +80,14 @@ https://github.com/user-attachments/assets/5ba0807f-5321-4a79-ac02-286b45c117f1
   </tr>
 </table>
 
+## Tech stack
+
+- **App**: Next.js, React, tRPC, TanStack Query, Tailwind with Radix UI
+- **Data**: Postgres on Supabase, Drizzle ORM
+- **Auth**: Auth.js with Google sign-in
+- **Calls**: SIP.js in the browser, SIP over WebSocket
+- **Hosting**: Vercel
+
 ## Local development
 
 Everything runs on this machine. Postgres 16 stands in for Supabase, a "dev sign in" button stands in for Google, and Asterisk stands in for a real SIP provider as a fake phone network. Every call stays on this machine.
