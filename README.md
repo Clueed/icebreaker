@@ -12,10 +12,7 @@
   </picture>
 </p>
 
-<p align="center">
-  Find the direct extensions at a company that actually work, past the switchboard and the hotlines.<br>
-  Icebreaker dials <code>base + extension</code> guesses through a SIP account, lets you rate every call, and learns which ranges of numbers reach a real person.
-</p>
+Icebreaker is a tool that finds working phone numbers at a company. Enter a few numbers you already know, such as hotlines. Icebreaker then calls other numbers at the company, one after another, using different strategies. After each call you note what happened: a person answered, it went to a mailbox, or nobody picked up. From these results Icebreaker shows which ranges of numbers reach people, so you know which numbers to call.
 
 > [!CAUTION]
 > **Experimental software. Not production ready.**
@@ -39,11 +36,11 @@
 
 ## How it works
 
-1. **Add an org** and give it a base number.
-2. **Paste the numbers you already know** (from a website, an email signature, a business card). Icebreaker splits them into base and extension and suggests where to start guessing.
+1. **Add an org** for the company.
+2. **Enter the numbers you already know**, such as hotlines or numbers from a website or an email signature. Icebreaker suggests which numbers to call first.
 3. **Call.** Each guess is dialed over SIP. Rate the result: no answer, mailbox, a person, or the person you were looking for.
 4. **Let it run.** Pick a strategy (`+1`, `+10` or random) and turn on **ratatatata** to dial guess after guess, ending each call automatically after a few seconds.
-5. **Read the stats** to see which ranges of extensions reach real people, and which are dead, mailboxes or hotlines.
+5. **Read the stats** to see which ranges of numbers reach people, and which are dead, mailboxes or hotlines.
 
 <p align="center">
   <picture>
