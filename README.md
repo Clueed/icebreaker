@@ -95,10 +95,6 @@
       </picture>
       <p align="center"><b>Statistics</b>: outcomes per base number</p>
     </td>
-    <td width="50%">
-      <img src="docs/media/01-sign-in.png" alt="Sign in">
-      <p align="center"><b>Sign in</b></p>
-    </td>
   </tr>
 </table>
 
