@@ -8,24 +8,24 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/media/tag-dark.svg">
-    <img src="docs/media/tag.svg" alt="experimental, not production ready" height="22">
+    <img src="docs/media/tag.svg" alt="experimental" height="22">
   </picture>
 </p>
 
 Icebreaker is a tool that finds working phone numbers at a company. Enter a few numbers you already know, such as hotlines. Icebreaker then calls other numbers at the company, one after another, using different strategies. After each call you note what happened: a person answered, it went to a mailbox, or nobody picked up. From these results Icebreaker shows which ranges of numbers reach people, so you know which numbers to call.
 
 > [!CAUTION]
-> **Experimental software. Not production ready.**
+> **Experimental software.**
 >
-> Icebreaker is an experiment. It is incomplete, largely untested and may change or break at any time without notice. It is not intended, designed or supported for production use or for any commercial, business-critical or large-scale purpose.
+> Icebreaker is an experiment. It is incomplete, largely untested and may change or break at any time without notice. Use it for small personal experiments only.
 >
 > - **It places real phone calls.** Every call goes out through your own SIP account, is billed to you and reaches real people. Bugs can cause calls to be placed, repeated or ended unexpectedly.
 > - **You are solely responsible for every call.** Telephone sales and outreach are regulated in most countries. In Germany, for example, calls to businesses for sales purposes require at least presumed consent (§7 UWG), calls to private persons require prior express consent, and your caller ID must not be suppressed (§120 TKG). Know and follow the rules that apply to you before you dial a single number.
 > - **Respect the people you call.** Always show your caller ID, never call anyone who has asked you not to, and stop immediately if you are unsure whether a call is allowed.
 > - **Your data is your responsibility.** Phone numbers, notes and call ratings can be personal data under the GDPR and similar laws. You are the controller of anything you store and must have a legal basis for it.
-> - **No affiliation.** This project is not affiliated with, endorsed by or supported by sipgate or any other telephony provider. Using it may violate your provider's terms of service.
+> - **Independent project.** Icebreaker is an independent project, separate from sipgate and every other telephony provider. Using it may violate your provider's terms of service.
 >
-> This software is provided "as is", without warranty of any kind, express or implied. The authors and contributors accept no liability for any damages, costs, fines, legal claims or other consequences arising from its use or misuse. Nothing in this repository is legal advice. If you are not sure whether your use is lawful, do not use it.
+> This software is provided "as is", without warranty of any kind, express or implied. The authors and contributors accept no liability for any damages, costs, fines, legal claims or other consequences arising from its use or misuse. If you are unsure whether your use is lawful, stop and get legal advice first.
 
 https://github.com/user-attachments/assets/5ba0807f-5321-4a79-ac02-286b45c117f1
 
@@ -90,9 +90,9 @@ https://github.com/user-attachments/assets/5ba0807f-5321-4a79-ac02-286b45c117f1
   </tr>
 </table>
 
-## Local development (no Supabase, Google or sipgate)
+## Local development
 
-Everything runs on this machine. Postgres 16 stands in for Supabase, a "dev sign in" button stands in for Google, and Asterisk stands in for sipgate as a fake phone network. It has no trunk, so no real call can be placed.
+Everything runs on this machine. Postgres 16 stands in for Supabase, a "dev sign in" button stands in for Google, and Asterisk stands in for sipgate as a fake phone network. Every call stays on this machine.
 
 ```bash
 cp .env.localdev.example .env

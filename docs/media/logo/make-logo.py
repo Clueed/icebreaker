@@ -116,7 +116,7 @@ def tag(font):
     xh = x_height(font, size)
     baseline = (height + xh) / 2  # lowercase text: center the x-height
     text_x = pad_x + icon + gap
-    label, width = outline(font, "experimental · not production ready", size, text_x, baseline, 0.02)
+    label, width = outline(font, "experimental", size, text_x, baseline, 0.02)
     width += text_x + pad_x
     r = height / 2
     for suffix, c in THEMES.items():
@@ -124,7 +124,7 @@ def tag(font):
             f"tag{suffix}.svg",
             (0, 0, width, height),
             2,
-            f"""<title>experimental, not production ready</title>
+            f"""<title>experimental</title>
 <rect x=".5" y=".5" width="{width - 1:.3f}" height="{height - 1}" rx="{r - .5}" fill="{c['accent']}" fill-opacity=".08" stroke="{c['accent']}" stroke-opacity=".6"/>
 <g transform="translate({pad_x} {(height - icon) / 2}) scale({icon / 24})" fill="none" stroke="{c['accent']}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 {FLASK}
