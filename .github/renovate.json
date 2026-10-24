@@ -1,37 +1,4 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
-  "packageRules": [
-    {
-      "matchPackagePatterns": ["^@icebreaker/"],
-      "enabled": false
-    },
-    {
-      "groupName": "all minor dependencies",
-      "groupSlug": "all-minor",
-      "matchPackageNames": ["*"],
-      "matchUpdateTypes": ["minor"]
-    },
-    {
-      "groupName": "all patch dependencies",
-      "groupSlug": "all-patch",
-      "matchPackageNames": ["*"],
-      "matchUpdateTypes": ["patch"]
-    },
-    {
-      "groupName": "definitelyTyped",
-      "groupSlug": "types",
-      "matchPackageNames": ["@types/**"]
-    }
-  ],
-  "updateInternalDeps": true,
-  "rangeStrategy": "bump",
-  "automerge": false,
-  "npm": {
-    "fileMatch": [
-      "(^|/)package\\.json$",
-      "(^|/)pnpm-workspace\\.yaml$",
-      "(^|/)package\\.json\\.hbs$"
-    ]
-  }
+  "enabled": false
 }
