@@ -90,7 +90,7 @@ https://github.com/user-attachments/assets/5ba0807f-5321-4a79-ac02-286b45c117f1
 
 ## Local development
 
-Everything runs on this machine. No call leaves it.
+Each production service has a local stand-in:
 
 - **Data**: Postgres 16 instead of Supabase. `@vercel/postgres` connects over WebSockets, so `tooling/localdev/ws-proxy.js` forwards them to port 54322 (`POSTGRES_WS_PROXY`). Data lives in `.localdev/`; delete it to reset.
 - **Auth**: a **dev sign in** button instead of Google (`AUTH_DEV_LOGIN=true`, always off in production).
