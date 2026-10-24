@@ -87,6 +87,8 @@ export const usePhoneCallUpdateMutation = () => {
         sessionId: variables.sessionId,
       });
       void utils.phoneCall.history.invalidate({});
+      void utils.guess.history.invalidate();
+      void utils.guess.stats.invalidate();
     },
   });
 };
@@ -131,6 +133,8 @@ export const usePhoneCallCreateMutation = () => {
       void utils.phoneCall.bySessionId.invalidate({
         sessionId: variables.sessionId,
       });
+      void utils.guess.history.invalidate();
+      void utils.guess.stats.invalidate();
     },
   });
 };
