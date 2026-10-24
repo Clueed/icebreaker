@@ -90,7 +90,11 @@ https://github.com/user-attachments/assets/5ba0807f-5321-4a79-ac02-286b45c117f1
 
 ## Local development
 
-Everything runs on this machine. Postgres 16 stands in for Supabase, a "dev sign in" button stands in for Google, and Asterisk stands in for a real SIP provider as a fake phone network. Every call stays on this machine.
+Everything runs on this machine. No call leaves it.
+
+- **Data**: Postgres 16 instead of Supabase. `@vercel/postgres` connects over WebSockets, so `tooling/localdev/ws-proxy.js` forwards them to port 54322 (`POSTGRES_WS_PROXY`). Data lives in `.localdev/`; delete it to reset.
+- **Auth**: a **dev sign in** button instead of Google (`AUTH_DEV_LOGIN=true`, always off in production).
+- **Calls**: Asterisk instead of a real SIP provider (`NEXT_PUBLIC_SIP_WS_URL`, `NEXT_PUBLIC_SIP_DOMAIN`). Any provider with SIP over WebSocket works in production. `NEXT_PUBLIC_SIP_ICE_SERVERS` lists STUN/TURN servers (default: Google STUN); localdev sets it empty, because an unreachable STUN server delays every call by about 5 seconds.
 
 ```bash
 cp .env.localdev.example .env
@@ -111,12 +115,9 @@ The **last digit** of the dialed number decides what the fake network does (see 
 | 3          | answers, beeps for 10s, then the other side hangs up        |
 | 4          | network failure (503)                                       |
 
-How it fits together:
+Asterisk CLI: `asterisk -C $PWD/.localdev/asterisk/etc/asterisk.conf -rvvv`.
 
-- **DB**: the app talks to Postgres through `@vercel/postgres`, which uses WebSockets (needed for the edge runtime). `tooling/localdev/ws-proxy.js` forwards those to local Postgres on port 54322. `POSTGRES_WS_PROXY` turns this on in `packages/db/src/client.ts`. Data lives in `.localdev/` (delete it to reset).
-- **Auth**: `AUTH_DEV_LOGIN=true` enables `/api/dev/sign-in`, which creates a normal database session. It is always off when `NODE_ENV=production`.
-- **SIP**: `NEXT_PUBLIC_SIP_WS_URL` and `NEXT_PUBLIC_SIP_DOMAIN` choose the SIP server. Any provider that offers SIP over WebSocket works. `NEXT_PUBLIC_SIP_ICE_SERVERS` lists STUN/TURN servers (default: Google STUN); localdev sets it empty, because an unreachable STUN server delays every call by about 5 seconds. Asterisk CLI: `asterisk -C $PWD/.localdev/asterisk/etc/asterisk.conf -rvvv`.
-- **Opening the app from another machine**: browsers only allow microphone access on `https` or `localhost`. Forward port 3000 and port 8088 to your machine's localhost. Asterisk sends call audio over UDP 10000-10100 straight to the container's IP, so those ports must be reachable too.
+**Opening the app from another machine**: browsers only allow the microphone on `https` or `localhost`. Forward ports 3000 and 8088 to your localhost, and make UDP 10000-10100 on the container's IP reachable for call audio.
 
 ## Legal and safety
 
