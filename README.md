@@ -10,7 +10,13 @@
     <source media="(prefers-color-scheme: dark)" srcset="docs/media/tag-dark.svg">
     <img src="docs/media/tag.svg" alt="experimental" height="22">
   </picture>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/media/tag-handwritten-dark.svg">
+    <img src="docs/media/tag-handwritten.svg" alt="handwritten" height="22">
+  </picture>
 </p>
+
+<p align="center"><sub>Written by hand from August to December 2024, revived in 2026.</sub></p>
 
 Icebreaker is a tool that finds working phone numbers at a company. Enter a few numbers you already know, such as hotlines. Icebreaker then calls other numbers at the company, one after another, using different strategies. After each call you note what happened: a person answered, it went to a mailbox, or nobody picked up. From these results Icebreaker shows which ranges of numbers reach people, so you know which numbers to call.
 
